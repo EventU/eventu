@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/relCabecera"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#005f6b" >
+
+        <TextView
+            android:id="@+id/txtDetalleNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#FFF" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#343838" >
+
+        <RelativeLayout
+            android:id="@+id/relInformacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone" >
+
+            <ImageView
+                android:id="@+id/imgDetalleImagen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:contentDescription="@string/descImagen" />
+
+            <RelativeLayout
+                android:id="@+id/layAsistencia"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgDetalleImagen"
+                android:layout_marginTop="10dp"
+                android:background="#343838"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/txtDetalleAsistentes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
+
+                <ToggleButton
+                    android:id="@+id/togAsistencia"
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/toggle_bg"
+                    android:checked="false"
+                    android:textOff=""
+                    android:textOn=""
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <TabHost
+                android:id="@android:id/tabhost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/layAsistencia"
+                android:layout_marginTop="5dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        style="@style/CustomTabWidgetText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                    </TabWidget>
+
+                    <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#008C9E" >
+
+                        <RelativeLayout
+                            android:id="@+id/tab1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:padding="5dp" >
+
+                            <TextView
+                                android:id="@+id/txtDetaDescrip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="5dp"
+                                android:text="@string/crearEventoDescrip"
+                                android:textColor="#FFF"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleDesc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetaDescrip"
+                                android:paddingLeft="5dp"
+                                android:paddingRight="5dp"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/tab2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:padding="5dp" >
+
+                            <TextView
+                                android:id="@+id/txtDetalleTitDire"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/crearEventoLocalEvento"
+                                android:textColor="#FFF"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleDireccion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetalleTitDire"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+
+                            <fragment
+                                android:id="@+id/mapa"
+                                android:name="com.google.android.gms.maps.SupportMapFragment"
+                                android:layout_width="fill_parent"
+                                android:layout_height="400dp"
+                                android:layout_below="@+id/txtDetalleDireccion" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleDist"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/mapa"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleDistancia"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetalleDist"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/tab3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:padding="5dp" >
+
+                            <TextView
+                                android:id="@+id/txtDetalleTitFecha"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/crearEventoFechaDelEvento"
+                                android:textColor="#FFF"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleFechaIni"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetalleTitFecha"
+                                android:text="@string/crearEventoFechaInicio"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleFechaInicio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetalleTitFecha"
+                                android:layout_toRightOf="@+id/txtDetalleFechaIni"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleFechaFin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetalleFechaInicio"
+                                android:text="@string/crearEventoFechaFin"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+
+                            <TextView
+                                android:id="@+id/txtDetalleFechaFinal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtDetalleFechaInicio"
+                                android:layout_toRightOf="@+id/txtDetalleFechaFin"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFF" />
+                        </RelativeLayout>
+                    </FrameLayout>
+                </LinearLayout>
+            </TabHost>
+
+            <RelativeLayout
+                android:id="@+id/layComent"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@android:id/tabhost"
+                android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/comentarios"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="#ffffff" />
+
+                <Button
+                    android:id="@+id/btnOpinar"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@anim/anim_boton"
+                    android:padding="5dp"
+                    android:text="@string/opina"
+                    android:textColor="#ffffff" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/LayoutComentarios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layComent"
+                android:layout_marginTop="10dp"
+                android:background="#008C9E"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ProgressBar
+                    android:id="@+id/progressBarComentarios"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="70dp" />
+
+                <TextView
+                    android:id="@+id/textNoHayComentarios"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:text="@string/noHayComentarios"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnVerMasComentarios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/LayoutComentarios"
+                android:layout_marginTop="5dp"
+                android:background="@anim/anim_boton"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/verMasComentarios"
+                android:textColor="#ffffff"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingBottom="20dp"
+                android:paddingTop="70dp" />
+        </RelativeLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EventU</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Buscar</string>
+    <string name="fragment1">Fragment 1</string>
+    <string name="fragment2">Fragment 2</string>
+    <string name="fragment3">Fragment 3</string>
+    <string name="drawer_open">Menú Abierto</string>
+    <string name="drawer_close">Menú Cerrado</string>
+    <string name="descImagen">Imagen</string>
+    <string name="Radio">Radio</string>
+    <string name="hint_fecha">dd/mm/aaaa</string>
+    <string name="crearEventoComentarios">Comentarios del evento</string>
+    <string name="FiltroNombre">Nombre:</string>
+    <string name="FiltroCategoria">Categoria:</string>
+    <string name="FiltroFecha">Fecha:</string>
+    <string name="OpnVisualizacion">Opciones de visualización</string>
+    <string name="txtBuscar">Buscar</string>
+    <string name="EventosFallido">Error al mostrar evento</string>
+    <string name="Categorias">Categorias</string>
+
+    <!-- Ver evento -->
+    <string name="detalleEventoTitulo">Detalle evento</string>
+    <string name="detalleEventoSi">Si</string>
+    <string name="detalleEventoNo">No</string>
+    <string name="detalleEventoAsistencia"> personas asistiran, ¿iras?</string>
+    <string name="detalleEventoDir">Dirección: </string>
+    <string name="txtComentarios">Ver Comentarios</string>
+    <string name="opina">Opina</string>
+    <string name="comentarios">Comentarios</string>
+    <string name="verMasComentarios">Ver mas comentarios</string>
+
+    <!-- Crear evento -->
+    <string name="btn_inicio">Inicio</string>
+    <string name="crearEventoTitulo">Nuevo evento</string>
+    <string name="crearEventoHintDescrip">Detalles del evento</string>
+    <string name="crearEventoDatosEvento">Datos del evento</string>
+    <string name="crearEventoNombre">Nombre del evento</string>
+    <string name="crearEventoDescrip">Descripción</string>
+    <string name="crearEventoLocalEvento">Localización del evento</string>
+    <string name="crearEventoubicacion">Utilizar ubicación actual</string>
+    <string name="crearEventoCiudad">Ciudad</string>
+    <string name="crearEventoDireccion">Dirección</string>
+    <string name="crearEventoHintDireccion">Calle de los robles</string>
+    <string name="crearEventoNumero">Número</string>
+    <string name="crearEventoHintNumero">Nº</string>
+    <string name="crearEventoCategoria">Categoria del evento</string>
+    <string name="crearEventoFechaDelEvento">Fecha del evento</string>
+    <string name="crearEventoTodoElDia">Todo el día</string>
+    <string name="crearEventoHoraInicio">Hora inicio:</string>
+    <string name="crearEventoFechaInicio">Fecha inicio:</string>
+    <string name="crearEventoHoraFin">Hora fin</string>
+    <string name="crearEventoFechaFin">Fecha fin:</string>
+    <string name="crearEventoBoton">Crear evento</string>
+    <string name="crearEventoComentarios">Comentarios del evento</string>
+    <string name="crearEventoPerComentarios">Permitir comentarios</string>
+    <string name="crearEventoImagenes">Imágenes del evento</string>
+    <string name="crearEventoCargarImagen">Cargar imagen</string>
+    <string name="hint_hora">hh:mm</string>
+
+    <!-- Opiniones -->
+    <string name="dialogTitle">Comenta y puntua el evento</string>
+    <string name="btn_actualizar">Actualizar</string>
+    <string name="dialog_positive_text">Enviar</string>
+    <string name="dialog_negative_text">Cancelar</string>
+    <string name="OpinionHintOpinion">Escribe tu comentario</string>
+    <string name="dialogPuntua">Puntuacion:</string>
+    <string name="dialogComentario">Comentario:</string>
+    <string name="VerOpinionValoracion">Valoracion:</string>
+    <string name="noHayComentarios">Aun no hay comentarios. ¡Sé el primero!</string>
+    <string name="dialogEnviar">Enviar</string>
+    <string name="dialogCancelar">Cancelar</string>
+    <string name="dialogComentadoOK">Comentario enviado</string>
+    <string name="dialogComentadoNULL">Error al enviar el comentario. Intentelo mas tarde</string>
+    <string name="dialogNoComentado">El campo comentario no puede estar vacio</string>
+
+</resources>
