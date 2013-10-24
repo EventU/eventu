@@ -75,6 +75,7 @@ public class detalleEventoActivity extends FragmentActivity {
 	private ProgressBar progressBar;
 	private ImageView galeria;
 	private RelativeLayout relInformacion;
+	private RelativeLayout layComent;
 	private LinearLayout LayoutComentarios;
 	private Button btnVerMasComentarios;
 	private ProgressBar progressBarComentarios;
@@ -111,6 +112,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			togAsistencia = (ToggleButton) findViewById(R.id.togAsistencia);
 			progressBar = (ProgressBar) findViewById(R.id.progressBar);
 			relInformacion = (RelativeLayout) findViewById(R.id.relInformacion);
+			layComent = (RelativeLayout) findViewById(R.id.layComent);
 			LayoutComentarios = (LinearLayout) findViewById(R.id.LayoutComentarios);
 			btnOpinar = (Button) findViewById(R.id.btnOpinar);
 			progressBarComentarios = (ProgressBar) findViewById(R.id.progressBarComentarios);
@@ -295,6 +297,7 @@ public class detalleEventoActivity extends FragmentActivity {
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Posicion, 15));
 		relInformacion.setVisibility(View.VISIBLE);
 		LayoutComentarios.setVisibility(View.VISIBLE);
+		layComent.setVisibility(View.VISIBLE);
 		progressBar.setVisibility(View.GONE);
 
 		// Ver comentarios
@@ -311,6 +314,7 @@ public class detalleEventoActivity extends FragmentActivity {
 
 		} else {
 			LayoutComentarios.setVisibility(View.GONE);
+			layComent.setVisibility(View.GONE);
 		}
 	}
 

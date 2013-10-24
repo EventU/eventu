@@ -22,35 +22,24 @@
             android:text="@string/comentarios"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/background_light" />
-
-        <Button
-            android:id="@+id/btnActualizar"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:background="@anim/anim_boton_pequeno"
-            android:text="@string/btn_actualizar"
-            android:textColor="@android:color/background_light"
-            android:textSize="12sp" />
     </RelativeLayout>
 
-    <LinearLayout
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:id="@+id/listComentarios"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="#00000000"
+        android:fadingEdge="none"
+        android:fastScrollEnabled="false"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:padding="3dp"
+        android:smoothScrollbar="true" />
+
+    <RelativeLayout
+        android:id="@+id/textoFooter"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp" >
-
-        <ListView
-            android:id="@+id/listComentarios"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:cacheColorHint="@android:color/transparent"
-            android:divider="@android:color/transparent"
-            android:gravity="center" />
-    </LinearLayout>
+        android:gravity="center_horizontal" />
 
 </LinearLayout>

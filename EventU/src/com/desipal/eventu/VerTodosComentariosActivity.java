@@ -18,31 +18,32 @@ import org.json.JSONObject;
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Presentacion.verTodosComentariosAdapter;
 import com.desipal.eventu.R;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class VerTodosComentariosActivity extends FragmentActivity {
 
 	public long idEvento;
 	boolean bloquearPeticion = false;
-	public static int ELEMENTOSLISTA = 8;
 	public static List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
 	private int page = 0;
-	private ListView listComentarios;
+	private PullToRefreshListView listComentarios;
 	private boolean finlista = false;
+	private RelativeLayout layoutGencom;
 	private View footer;
-	private Button btnActualizar;
 
 	verTodosComentariosAdapter adaptador = new verTodosComentariosAdapter(this,
 			listaComentarios);
@@ -50,30 +51,34 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().setBackgroundDrawableResource(android.R.color.black);
 
 		footer = (View) getLayoutInflater().inflate(R.layout.footerlistview,
 				null);
 
-		getWindow().setBackgroundDrawableResource(android.R.color.black);
 		try {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.ver_todos_comentarios);
-			listComentarios = (ListView) findViewById(R.id.listComentarios);
-			btnActualizar = (Button) findViewById(R.id.btnActualizar);
+			layoutGencom = (RelativeLayout) findViewById(R.id.textoFooter);
 
-			btnActualizar.setOnClickListener(new OnClickListener() {				
-				@Override
-				public void onClick(View v) {
-					page = 0;
-					listComentarios.addFooterView(footer);
-					listaComentarios.clear();
-					hacerPeticion();
-				}
-			});
+			listComentarios = (PullToRefreshListView) findViewById(R.id.listComentarios);
+			listComentarios
+					.setOnRefreshListener(new OnRefreshListener<ListView>() {
+						@Override
+						public void onRefresh(
+								PullToRefreshBase<ListView> refreshView) {
+							listaComentarios.clear();
+							hacerPeticion();
+						}
+					});
+
+			// lv = listComentarios.getRefreshableView();
+			// view = (TextView)findViewById(R.id.textoFooter);
+
 			Bundle e = getIntent().getExtras();
 			idEvento = e.getLong("idEvento");
-			listComentarios.setOnScrollListener(new OnScrollListener() {
 
+			listComentarios.setOnScrollListener(new OnScrollListener() {
 				@Override
 				public void onScrollStateChanged(AbsListView view,
 						int scrollState) {
@@ -83,9 +88,10 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 				public void onScroll(AbsListView view, int firstVisibleItem,
 						int visibleItemCount, int totalItemCount) {
 					if (listaComentarios.size() % MainActivity.ELEMENTOSLISTA == 0
+							&& !bloquearPeticion
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
-							&& !bloquearPeticion && !finlista) {
-						listComentarios.addFooterView(footer);
+							&& !finlista) {
+						layoutGencom.addView(footer);
 						hacerPeticion();
 					}
 				}
@@ -102,9 +108,9 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 		bloquearPeticion = true;
 		ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
 		parametros.add(new BasicNameValuePair("idEvento", idEvento + ""));
-		parametros.add(new BasicNameValuePair("elementsPerPage", ELEMENTOSLISTA
-				+ ""));
-		page++;
+		parametros.add(new BasicNameValuePair("elementsPerPage",
+				MainActivity.ELEMENTOSLISTA + ""));
+		page = ((int) listaComentarios.size() / MainActivity.ELEMENTOSLISTA) + 1;
 		parametros.add(new BasicNameValuePair("page", page + ""));
 		String URL = "http://desipal.hol.es/app/eventos/listaComentarios.php";
 		peticionComentarios peticion = new peticionComentarios(parametros,
@@ -162,9 +168,10 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 		}
 
 		protected void onPostExecute(Void result) {
-			listComentarios.removeFooterView(footer);
+			layoutGencom.removeView(footer);
 			bloquearPeticion = false;
 			adaptador.notifyDataSetChanged();
+			listComentarios.onRefreshComplete();
 		}
 	}
 }

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -22,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -40,9 +43,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class Fragment1 extends Fragment {
-	private ListView listview;
+
 	// Carga de la lista
 	private List<miniEventoEN> lista = new ArrayList<miniEventoEN>();
 	private EventoAdaptador adaptador;
@@ -52,6 +58,7 @@ public class Fragment1 extends Fragment {
 	private boolean finlista = false;
 	public static View view;
 	private Activity Actividad;
+	private PullToRefreshListView listView;
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater,
@@ -61,16 +68,23 @@ public class Fragment1 extends Fragment {
 			try {
 				Actividad = getActivity();
 				view = inflater.inflate(R.layout.fragment_1, container, false);
-				listview = (ListView) view.findViewById(R.id.list);
-				listview.setFadingEdgeLength(0);
+				listView = (PullToRefreshListView) view
+						.findViewById(R.id.list);
+				listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 
-				// evento de la lista a leer mas
+					@Override
+					public void onRefresh(
+							PullToRefreshBase<ListView> refreshView) {
+						lista.clear();
+						realizarPeticion();
+
+					}
+				});
 				footer = inflater.inflate(R.layout.footerlistview, null);
-				listview.setOnScrollListener(new AbsListView.OnScrollListener() {
+				listView.setOnScrollListener(new OnScrollListener() {
 					@Override
 					public void onScrollStateChanged(AbsListView view,
 							int scrollState) {
-
 					}
 
 					@Override
@@ -82,15 +96,17 @@ public class Fragment1 extends Fragment {
 								&& (firstVisibleItem + visibleItemCount) == totalItemCount
 								&& !finlista) {
 							realizarPeticion();
-							listview.addFooterView(footer);
 						}
+
 					}
 				});
+
 				// Comienzo de llenado de listas
 				adaptador = new EventoAdaptador(getActivity(), lista);
-				listview.setAdapter(adaptador);
-				listview.setOnItemClickListener(new OnItemClickListener() {
+				listView.setAdapter(adaptador);
+				// listview.setListAdapter(adaptador);
 
+				listView.setOnItemClickListener(new OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View v,
 							int position, long id) {
@@ -100,6 +116,8 @@ public class Fragment1 extends Fragment {
 						startActivity(i);
 					}
 				});
+
+				// realizarPeticion();
 			} catch (InflateException e) {
 				// Si la vista ya existe retorna la anterior.
 			}
@@ -124,6 +142,15 @@ public class Fragment1 extends Fragment {
 		String URL = "http://desipal.hol.es/app/eventos/filtro.php";
 
 		parametros.add(new BasicNameValuePair("filtro", ""));
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.MONTH, 1);
+		String fechaMes = calendar.get(Calendar.DAY_OF_MONTH) + "/"
+				+ (calendar.get(Calendar.MONTH) + 1) + "/"
+				+ calendar.get(Calendar.YEAR);// + " 00:00:00";
+
+		parametros.add(new BasicNameValuePair("fechaMes", fechaMes));
 		parametros.add(new BasicNameValuePair("fecha", ""));
 		pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
@@ -192,6 +219,9 @@ public class Fragment1 extends Fragment {
 						}
 					} else if (lista.size() > 0)
 						finlista = true;
+					else {
+						finlista = true;
+					}
 
 				} catch (Exception e) {
 					Toast.makeText(
@@ -204,9 +234,11 @@ public class Fragment1 extends Fragment {
 		}
 
 		protected void onPostExecute(Void result) {
+
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
-			listview.removeFooterView(footer);
+			listView.onRefreshComplete();
+			// listView.removeFooterView(footer);
 		}
 	}
 }
