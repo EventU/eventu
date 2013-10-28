@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.desipal.eventu.Extras.categorias;
-import com.desipal.eventu.Localizacion.Localizacion;
 import com.desipal.eventu.PopUp.QuickAction;
 import com.desipal.eventu.Presentacion.EntryItem;
 import com.desipal.eventu.Presentacion.Item;
 import com.desipal.eventu.Presentacion.SectionItem;
 import com.desipal.eventu.Presentacion.adaptadorListaDrawer;
+import com.desipal.eventu.Servicios.Localizacion;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity {

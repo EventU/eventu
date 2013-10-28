@@ -3,7 +3,6 @@ package com.desipal.eventu;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.HttpResponse;
@@ -20,10 +19,6 @@ import com.desipal.eventu.Presentacion.EventoAdaptador;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,7 +50,7 @@ public class Fragment3 extends Fragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		if (view == null) {
 			try {
-				Actividad=getActivity();
+				Actividad = getActivity();
 				view = inflater.inflate(R.layout.fragment_3, container, false);
 
 				listview = (ListView) view.findViewById(R.id.listMisEvent);
@@ -100,9 +95,7 @@ public class Fragment3 extends Fragment {
 			} catch (InflateException e) {
 				// Si la vista ya existe retorna la anterior.
 			}
-		}
-		else
-		{
+		} else {
 			ViewGroup parent = (ViewGroup) view.getParent();
 			if (parent != null)
 				parent.removeView(view);
@@ -120,8 +113,8 @@ public class Fragment3 extends Fragment {
 		parametros.add(new BasicNameValuePair("idDispositivo",
 				MainActivity.IDDISPOSITIVO));
 
-		parametros.add(new BasicNameValuePair("itemsPerPage", MainActivity.ELEMENTOSLISTA
-				+ ""));
+		parametros.add(new BasicNameValuePair("itemsPerPage",
+				MainActivity.ELEMENTOSLISTA + ""));
 		String URL = "http://desipal.hol.es/app/eventos/misEventos.php";
 
 		parametros.add(new BasicNameValuePair("filtro", ""));
@@ -130,19 +123,16 @@ public class Fragment3 extends Fragment {
 
 		parametros.add(new BasicNameValuePair("page", pagina + ""));
 		parametros.add(new BasicNameValuePair("idCat", "1"));
-		peticion pet = new peticion(parametros,Actividad);
+		peticion pet = new peticion(parametros, Actividad);
 		pet.execute(new String[] { URL });
 	}
 
 	// Peticion de Servidor
 	public class peticion extends AsyncTask<String, Void, Void> {
-
-		private Context mContext;
 		private ArrayList<NameValuePair> parametros;
 
 		public peticion(ArrayList<NameValuePair> parametros, Context context) {
 			this.parametros = parametros;
-			this.mContext = context;
 		}
 
 		@Override
@@ -174,18 +164,18 @@ public class Fragment3 extends Fragment {
 							e.setUrl(jobj.getString("url"));
 							e.setLatitud(jobj.getDouble("latitud"));
 							e.setLongitud(jobj.getDouble("longitud"));
+							e.setUrlImagen(jobj.getString("imagen"));
 
-							if (!jobj.getString("imagen").equals("noimagen")) {
-								String ere = jobj.getString("imagen");
-								Bitmap bitmap = BitmapFactory
-										.decodeStream((InputStream) new URL(ere)
-												.getContent());
-								Drawable d = new BitmapDrawable(
-										mContext.getResources(), bitmap);
-								e.setImagen(d);
-							} else
-								e.setImagen(mContext.getResources()
-										.getDrawable(R.drawable.default_img));
+							/*
+							 * if (!jobj.getString("imagen").equals("noimagen"))
+							 * { String ere = jobj.getString("imagen"); Bitmap
+							 * bitmap = BitmapFactory
+							 * .decodeStream((InputStream) new URL(ere)
+							 * .getContent()); Drawable d = new BitmapDrawable(
+							 * mContext.getResources(), bitmap); e.setImagen(d);
+							 * } else e.setImagen(mContext.getResources()
+							 * .getDrawable(R.drawable.default_img));
+							 */
 
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
@@ -195,7 +185,10 @@ public class Fragment3 extends Fragment {
 						finlista = true;
 
 				} catch (Exception e) {
-					Toast.makeText(Actividad,"No se han podido recuperar eventos,pruebe pasados unos minutos",Toast.LENGTH_LONG).show();
+					Toast.makeText(
+							Actividad,
+							"No se han podido recuperar eventos,pruebe pasados unos minutos",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 			return null;

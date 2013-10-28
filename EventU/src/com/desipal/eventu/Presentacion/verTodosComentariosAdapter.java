@@ -20,7 +20,7 @@ public class verTodosComentariosAdapter extends BaseAdapter {
 	private Context mContext;
 	protected List<comentarioEN> items;
 
-	protected ArrayList<View> ArList;
+	public ArrayList<View> ArList;
 
 	public verTodosComentariosAdapter(Context c, List<comentarioEN> eventos) {
 		mContext = c;
@@ -43,17 +43,7 @@ public class verTodosComentariosAdapter extends BaseAdapter {
 	// create a new ImageView for each item referenced by the Adapter
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View vista = convertView;
-		View a;
-		try {
-			a = this.ArList.get(position);
-		} catch (Exception e) {
-			a = null;
-		}
-		if (a != null) {
-			vista = a;
-			return a;
-		}
+		View vista = convertView;		
 		try {
 			comentarioEN item = items.get(position);
 			LayoutInflater inflater = (LayoutInflater) mContext
@@ -77,8 +67,10 @@ public class verTodosComentariosAdapter extends BaseAdapter {
 			Animation animation = AnimationUtils.loadAnimation(mContext,
 					R.anim.push_up_in);
 
-			vista.startAnimation(animation);
-
+			if (!item.isMostrado())
+				vista.startAnimation(animation);
+			
+			item.setMostrado(true);
 			return vista;
 
 		} catch (Exception e) {

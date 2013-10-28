@@ -3,7 +3,6 @@ package com.desipal.eventu;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,11 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -65,10 +60,9 @@ public class Fragment2 extends Fragment {
 	public static List<miniEventoEN> eventos = new ArrayList<miniEventoEN>();
 
 	boolean bloquearPeticion = false;// bandera que bloquea para no poder jhacer
-										// la peticion	
+										// la peticion
 	private int ratio;
-	
-	
+
 	private int pagina = 0;
 	private ListView gridCerca;
 	private Button btnBuscarCerca;
@@ -85,6 +79,7 @@ public class Fragment2 extends Fragment {
 	private EventoAdaptador adaptador;
 	public static View view;
 	private Activity Actividad;
+
 	@Override
 	public View onCreateView(final LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
@@ -348,12 +343,10 @@ public class Fragment2 extends Fragment {
 
 	public class peticion extends AsyncTask<String, Void, Void> {
 
-		private Context mContext;
 		private ArrayList<NameValuePair> parametros;
 
 		public peticion(ArrayList<NameValuePair> parametros, Context context) {
 			this.parametros = parametros;
-			this.mContext = context;
 		}
 
 		@Override
@@ -385,18 +378,18 @@ public class Fragment2 extends Fragment {
 							e.setUrl(jobj.getString("url"));
 							e.setLatitud(jobj.getDouble("latitud"));
 							e.setLongitud(jobj.getDouble("longitud"));
+							e.setUrlImagen(jobj.getString("imagen"));
 
-							if (!jobj.getString("imagen").equals("noimagen")) {
-								String ere = jobj.getString("imagen");
-								Bitmap bitmap = BitmapFactory
-										.decodeStream((InputStream) new URL(ere)
-												.getContent());
-								Drawable d = new BitmapDrawable(
-										mContext.getResources(), bitmap);
-								e.setImagen(d);
-							} else
-								e.setImagen(mContext.getResources()
-										.getDrawable(R.drawable.default_img));
+							/*
+							 * if (!jobj.getString("imagen").equals("noimagen"))
+							 * { String ere = jobj.getString("imagen"); Bitmap
+							 * bitmap = BitmapFactory
+							 * .decodeStream((InputStream) new URL(ere)
+							 * .getContent()); Drawable d = new BitmapDrawable(
+							 * mContext.getResources(), bitmap); e.setImagen(d);
+							 * } else e.setImagen(mContext.getResources()
+							 * .getDrawable(R.drawable.default_img));
+							 */
 
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));

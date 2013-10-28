@@ -3,7 +3,6 @@ package com.desipal.eventu;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,10 +11,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -54,7 +49,6 @@ public class Fragment1 extends Fragment {
 	private EventoAdaptador adaptador;
 	private int pagina = 0;
 	private boolean bloquearPeticion = false;
-	private View footer;
 	private boolean finlista = false;
 	public static View view;
 	private Activity Actividad;
@@ -68,19 +62,18 @@ public class Fragment1 extends Fragment {
 			try {
 				Actividad = getActivity();
 				view = inflater.inflate(R.layout.fragment_1, container, false);
-				listView = (PullToRefreshListView) view
-						.findViewById(R.id.list);
+				listView = (PullToRefreshListView) view.findViewById(R.id.list);
 				listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 
 					@Override
 					public void onRefresh(
 							PullToRefreshBase<ListView> refreshView) {
 						lista.clear();
-						realizarPeticion();
+						adaptador.notifyDataSetChanged();
+						// realizarPeticion();
 
 					}
 				});
-				footer = inflater.inflate(R.layout.footerlistview, null);
 				listView.setOnScrollListener(new OnScrollListener() {
 					@Override
 					public void onScrollStateChanged(AbsListView view,
@@ -163,12 +156,10 @@ public class Fragment1 extends Fragment {
 	// Peticion de Servidor
 	public class peticion extends AsyncTask<String, Void, Void> {
 
-		private Context mContext;
 		private ArrayList<NameValuePair> parametros;
 
 		public peticion(ArrayList<NameValuePair> parametros, Context context) {
 			this.parametros = parametros;
-			this.mContext = context;
 		}
 
 		@Override
@@ -200,18 +191,19 @@ public class Fragment1 extends Fragment {
 							e.setUrl(jobj.getString("url"));
 							e.setLatitud(jobj.getDouble("latitud"));
 							e.setLongitud(jobj.getDouble("longitud"));
+							// nuevo
+							e.setUrlImagen(jobj.getString("imagen"));
 
-							if (!jobj.getString("imagen").equals("noimagen")) {
-								String ere = jobj.getString("imagen");
-								Bitmap bitmap = BitmapFactory
-										.decodeStream((InputStream) new URL(ere)
-												.getContent());
-								Drawable d = new BitmapDrawable(
-										mContext.getResources(), bitmap);
-								e.setImagen(d);
-							} else
-								e.setImagen(mContext.getResources()
-										.getDrawable(R.drawable.default_img));
+							/*
+							 * if (!jobj.getString("imagen").equals("noimagen"))
+							 * { String ere = jobj.getString("imagen"); Bitmap
+							 * bitmap = BitmapFactory
+							 * .decodeStream((InputStream) new URL(ere)
+							 * .getContent()); Drawable d = new BitmapDrawable(
+							 * mContext.getResources(), bitmap); e.setImagen(d);
+							 * } else e.setImagen(mContext.getResources()
+							 * .getDrawable(R.drawable.default_img));
+							 */
 
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));

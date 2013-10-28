@@ -61,6 +61,7 @@
 
     <style name="CustomTabWidgetText">
         <item name="android:background">#005f6b</item>
+        <item name="android:textColor">#fff</item>
     </style>
 
 </resources>

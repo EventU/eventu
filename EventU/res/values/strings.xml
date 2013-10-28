@@ -23,6 +23,7 @@
 
     <!-- Ver evento -->
     <string name="detalleEventoTitulo">Detalle evento</string>
+    <string name="cargandoInfo">Cargando información&#8230;</string>
     <string name="detalleEventoSi">Si</string>
     <string name="detalleEventoNo">No</string>
     <string name="detalleEventoAsistencia"> personas asistiran, ¿iras?</string>

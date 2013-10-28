@@ -16,6 +16,7 @@ public class miniEventoEN {
     private Drawable imagen;
     private double latitud;
     private double longitud;
+    private String urlImagen;//rutaCompleta de la imagen
 
     public int getIdEvento() {
         return idEvento;
@@ -88,4 +89,12 @@ public class miniEventoEN {
     public void setLongitud(double longitud) {
         this.longitud = longitud;
     }
+
+	public String getUrlImagen() {
+		return urlImagen;
+	}
+
+	public void setUrlImagen(String urlImagen) {
+		this.urlImagen = urlImagen;
+	}
 }

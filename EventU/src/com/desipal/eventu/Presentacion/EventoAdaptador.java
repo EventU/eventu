@@ -19,8 +19,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.desipal.eventu.Entidades.miniEventoEN;
+import com.desipal.eventu.Imagenes.ImageLoader;
 
 public class EventoAdaptador extends BaseAdapter {
 	private Context mContext;
@@ -29,10 +29,15 @@ public class EventoAdaptador extends BaseAdapter {
 			MainActivity.currentLocale);
 	private boolean[] array = new boolean[300];
 	boolean bandera = false;
+	public ImageLoader imageLoader;
+	private static LayoutInflater inflater = null;
 
 	public EventoAdaptador(Context c, List<miniEventoEN> eventos) {
 		mContext = c;
 		this.items = eventos;
+		inflater = (LayoutInflater) c
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		imageLoader = new ImageLoader(c.getApplicationContext());
 	}
 
 	public int getCount() {
@@ -58,14 +63,14 @@ public class EventoAdaptador extends BaseAdapter {
 			} else
 				bandera = false;
 
-			miniEventoEN item = items.get(position);
-			LayoutInflater inflater = (LayoutInflater) mContext
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			vista = inflater.inflate(R.layout.itemevento, null);
+			if (convertView == null)
+				vista = inflater.inflate(R.layout.itemevento, null);
 
+			miniEventoEN item = items.get(position);
 			ImageView imgEvento = (ImageView) vista
 					.findViewById(R.id.imgEvento);
-			imgEvento.setImageDrawable(item.getImagen());
+			imageLoader.DisplayImage(item.getUrlImagen(), imgEvento);
+			// new ImageDownloaderTask(imgEvento).execute(item.getUrlImagen());
 
 			TextView txtFecha = (TextView) vista
 					.findViewById(R.id.txtFechaEvento);

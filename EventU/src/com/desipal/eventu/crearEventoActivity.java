@@ -718,6 +718,8 @@ public class crearEventoActivity extends FragmentActivity {
 				finish();
 				Toast.makeText(crearEventoActivity.this, "Evento creado",
 						Toast.LENGTH_SHORT).show();
+				//Al crear evento fuerzas el refresco de lista de Mis Eventos
+				Fragment3.view = null;
 			} else {
 				if (crearEventoActivity.Creacionsatisfactoria == 1)
 					Toast.makeText(crearEventoActivity.this,

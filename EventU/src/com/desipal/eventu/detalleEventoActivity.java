@@ -80,13 +80,13 @@ public class detalleEventoActivity extends FragmentActivity {
 	private Button btnVerMasComentarios;
 	private ProgressBar progressBarComentarios;
 	private TextView textNoHayComentarios;
-
+	private ProgressBar progressBarGeneral;
 	public static boolean asiste;
 	public static long idEvento;
 	private List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
 
 	// /GALERIA
-	public static List<Drawable> fotosGaleria = null;
+	public static List<Drawable> fotosGaleria;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +95,7 @@ public class detalleEventoActivity extends FragmentActivity {
 		getWindow().setBackgroundDrawableResource(android.R.color.black);
 		try {
 			act = this;
+			fotosGaleria = null;
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.detalleevento);
 			Bundle e = getIntent().getExtras();
@@ -115,6 +116,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			layComent = (RelativeLayout) findViewById(R.id.layComent);
 			LayoutComentarios = (LinearLayout) findViewById(R.id.LayoutComentarios);
 			btnOpinar = (Button) findViewById(R.id.btnOpinar);
+			progressBarGeneral = (ProgressBar) findViewById(R.id.progressBarGeneral);
 			progressBarComentarios = (ProgressBar) findViewById(R.id.progressBarComentarios);
 			btnVerMasComentarios = (Button) findViewById(R.id.btnVerMasComentarios);
 			textNoHayComentarios = (TextView) findViewById(R.id.textNoHayComentarios);
@@ -239,6 +241,7 @@ public class detalleEventoActivity extends FragmentActivity {
 	}
 
 	public void verEvento() {
+		progressBarGeneral.setVisibility(View.GONE);
 		edNombre.setText(evento.getNombre());
 		edDesc.setText(evento.getDescripcion());
 		txtAsistentes.setText(evento.getAsistencia()
@@ -324,7 +327,10 @@ public class detalleEventoActivity extends FragmentActivity {
 				LayoutComentarios.addView(obtenerVistaComentarios(
 						listaComentarios, i, getApplicationContext()));
 			}
-			btnVerMasComentarios.setVisibility(View.VISIBLE);
+			if (listaComentarios.size() == 0)
+				textNoHayComentarios.setVisibility(View.VISIBLE);
+			else if (listaComentarios.size() > 2)
+				btnVerMasComentarios.setVisibility(View.VISIBLE);
 		} catch (Exception ex) {
 			textNoHayComentarios.setVisibility(View.VISIBLE);
 		} finally {

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -14,36 +13,30 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Presentacion.verTodosComentariosAdapter;
 import com.desipal.eventu.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class VerTodosComentariosActivity extends FragmentActivity {
 
 	public long idEvento;
 	boolean bloquearPeticion = false;
-	public static List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
+	private List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
 	private int page = 0;
 	private PullToRefreshListView listComentarios;
 	private boolean finlista = false;
-	private RelativeLayout layoutGencom;
-	private View footer;
 
 	verTodosComentariosAdapter adaptador = new verTodosComentariosAdapter(this,
 			listaComentarios);
@@ -53,14 +46,9 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		getWindow().setBackgroundDrawableResource(android.R.color.black);
 
-		footer = (View) getLayoutInflater().inflate(R.layout.footerlistview,
-				null);
-
 		try {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.ver_todos_comentarios);
-			layoutGencom = (RelativeLayout) findViewById(R.id.textoFooter);
-
 			listComentarios = (PullToRefreshListView) findViewById(R.id.listComentarios);
 			listComentarios
 					.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -68,12 +56,10 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 						public void onRefresh(
 								PullToRefreshBase<ListView> refreshView) {
 							listaComentarios.clear();
-							hacerPeticion();
+							adaptador.notifyDataSetChanged();
+							// hacerPeticion();
 						}
 					});
-
-			// lv = listComentarios.getRefreshableView();
-			// view = (TextView)findViewById(R.id.textoFooter);
 
 			Bundle e = getIntent().getExtras();
 			idEvento = e.getLong("idEvento");
@@ -91,7 +77,6 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 							&& !bloquearPeticion
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
 							&& !finlista) {
-						layoutGencom.addView(footer);
 						hacerPeticion();
 					}
 				}
@@ -168,7 +153,6 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 		}
 
 		protected void onPostExecute(Void result) {
-			layoutGencom.removeView(footer);
 			bloquearPeticion = false;
 			adaptador.notifyDataSetChanged();
 			listComentarios.onRefreshComplete();

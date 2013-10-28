@@ -56,7 +56,7 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCtM5pGcgN9bvtcvR-asPQMuAyRUplrgbo" />
 
-        <service android:name="com.desipal.eventu.Localizacion.Localizacion" />
+        <service android:name="com.desipal.eventu.Servicios.Localizacion" />
     </application>
 
 </manifest>
