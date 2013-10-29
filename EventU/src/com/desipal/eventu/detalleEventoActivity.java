@@ -7,11 +7,9 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -20,17 +18,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.Extras.Herramientas;
+import com.desipal.eventu.Imagenes.ImageLoader;
 import com.desipal.eventu.PopUp.ratingpicker;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -84,8 +80,8 @@ public class detalleEventoActivity extends FragmentActivity {
 	public static boolean asiste;
 	public static long idEvento;
 	private List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
-
 	// /GALERIA
+	private ImageLoader imglo;
 	public static List<Drawable> fotosGaleria;
 
 	@Override
@@ -96,6 +92,7 @@ public class detalleEventoActivity extends FragmentActivity {
 		try {
 			act = this;
 			fotosGaleria = null;
+			imglo = new ImageLoader(getApplicationContext());
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.detalleevento);
 			Bundle e = getIntent().getExtras();
@@ -430,15 +427,22 @@ public class detalleEventoActivity extends FragmentActivity {
 						if (!jsEvento.getString("urlImagenes").equals("null")) {
 							JSONObject jurls = new JSONObject(
 									jsEvento.getString("urlImagenes"));
+
 							for (int i = 0; i < jurls.length(); i++) {
-								Bitmap bitmap = BitmapFactory
-										.decodeStream((InputStream) new URL(
-												jurls.getString((i + 1) + ""))
-												.getContent());
+								String urlimagen = jurls
+										.getString((i + 1) + "");
+								Bitmap img = imglo
+										.obtenerImagenesDescargadas(urlimagen);
+								if (img == null) {
+									InputStream ip = (InputStream) new URL(
+											urlimagen).getContent();
+									img = imglo.cachearImagenesDescargadas(
+											urlimagen, ip);
+								}
 								Drawable d = new BitmapDrawable(
 										detalleEventoActivity.this
 												.getResources(),
-										bitmap);
+										img);
 								imagenes.add(d);
 							}
 						} else

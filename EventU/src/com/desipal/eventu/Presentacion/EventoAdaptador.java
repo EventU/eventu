@@ -1,8 +1,5 @@
 package com.desipal.eventu.Presentacion;
 
-/**
- * Created by Edu on 7/10/13.
- */
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -20,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.desipal.eventu.Entidades.miniEventoEN;
-import com.desipal.eventu.Imagenes.ImageLoader;
 
 public class EventoAdaptador extends BaseAdapter {
 	private Context mContext;
@@ -29,7 +25,6 @@ public class EventoAdaptador extends BaseAdapter {
 			MainActivity.currentLocale);
 	private boolean[] array = new boolean[300];
 	boolean bandera = false;
-	public ImageLoader imageLoader;
 	private static LayoutInflater inflater = null;
 
 	public EventoAdaptador(Context c, List<miniEventoEN> eventos) {
@@ -37,7 +32,6 @@ public class EventoAdaptador extends BaseAdapter {
 		this.items = eventos;
 		inflater = (LayoutInflater) c
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		imageLoader = new ImageLoader(c.getApplicationContext());
 	}
 
 	public int getCount() {
@@ -53,7 +47,10 @@ public class EventoAdaptador extends BaseAdapter {
 	}
 
 	// create a new ImageView for each item referenced by the Adapter
-
+	public void inicializarAnimacion()
+	{
+		array = new boolean[300];
+	}
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View vista = convertView;
 		try {
@@ -69,7 +66,7 @@ public class EventoAdaptador extends BaseAdapter {
 			miniEventoEN item = items.get(position);
 			ImageView imgEvento = (ImageView) vista
 					.findViewById(R.id.imgEvento);
-			imageLoader.DisplayImage(item.getUrlImagen(), imgEvento);
+			MainActivity.imageLoader.DisplayImage(item.getUrlImagen(), imgEvento);
 			// new ImageDownloaderTask(imgEvento).execute(item.getUrlImagen());
 
 			TextView txtFecha = (TextView) vista

@@ -54,7 +54,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCtM5pGcgN9bvtcvR-asPQMuAyRUplrgbo" />
+            android:value="AIzaSyBqXda-BUbDGPOXBstTm5TN9XJw79OdHN0" />
 
         <service android:name="com.desipal.eventu.Servicios.Localizacion" />
     </application>

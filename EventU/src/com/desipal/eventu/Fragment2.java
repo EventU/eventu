@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -14,7 +13,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.desipal.eventu.Entidades.miniEventoEN;
 import com.desipal.eventu.Extras.Herramientas;
 import com.desipal.eventu.Presentacion.EventoAdaptador;
@@ -27,7 +25,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -47,7 +44,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -69,7 +65,6 @@ public class Fragment2 extends Fragment {
 	private TextView txtKm;
 	private TextView txtErrorCerca;
 	private SeekBar seekRadio;
-	private ProgressBar progressCerca;
 	private ToggleButton togOpcionMapa;
 	private GoogleMap map;
 	private RelativeLayout LayoutMapa;
@@ -97,8 +92,6 @@ public class Fragment2 extends Fragment {
 
 				txtKm = (TextView) view.findViewById(R.id.txtKm);
 				seekRadio = (SeekBar) view.findViewById(R.id.seekRadio);
-				progressCerca = (ProgressBar) view
-						.findViewById(R.id.proResulCerca);
 				txtErrorCerca = (TextView) view
 						.findViewById(R.id.txtErrorCerca);
 				togOpcionMapa = (ToggleButton) view
@@ -193,8 +186,8 @@ public class Fragment2 extends Fragment {
 				btnBuscarCerca.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						adaptador.inicializarAnimacion();
 						btnBuscarCerca.setEnabled(false);
-						progressCerca.setVisibility(View.VISIBLE);
 						LayoutMapa.setVisibility(View.GONE);
 						gridCerca.setVisibility(View.GONE);
 						txtErrorCerca.setVisibility(View.GONE);
@@ -214,7 +207,6 @@ public class Fragment2 extends Fragment {
 									// MAPA
 									map.clear();
 									gridCerca.setVisibility(View.GONE);
-									progressCerca.setVisibility(View.GONE);
 									LayoutMapa.setVisibility(View.VISIBLE); // Pointer
 																			// de
 																			// mi
@@ -256,7 +248,6 @@ public class Fragment2 extends Fragment {
 									gridCerca.setVisibility(View.VISIBLE);
 									gridCerca.setAdapter(new EventoAdaptador(
 											getActivity(), eventos));
-									progressCerca.setVisibility(View.GONE);
 									togOpcionMapa.setEnabled(true);
 								}
 							}
@@ -295,7 +286,6 @@ public class Fragment2 extends Fragment {
 
 			if (togOpcionMapa.isChecked()) { // MAPA
 				map.clear();
-				progressCerca.setVisibility(View.GONE);
 				LayoutMapa.setVisibility(View.VISIBLE); // Pointer
 														// de mi
 														// posicion
@@ -330,14 +320,12 @@ public class Fragment2 extends Fragment {
 				btnBuscarCerca.setEnabled(true);
 			} else { // Lista
 				gridCerca.setVisibility(View.VISIBLE);
-				progressCerca.setVisibility(View.GONE);
 				togOpcionMapa.setEnabled(true);
 				btnBuscarCerca.setEnabled(true);
 			}
 		} else {
 			txtErrorCerca.setText("No hay servicios de ubicacion");
 			txtErrorCerca.setVisibility(View.VISIBLE);
-			progressCerca.setVisibility(View.GONE);
 		}
 	}
 

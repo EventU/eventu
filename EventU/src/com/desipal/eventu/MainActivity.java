@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.desipal.eventu.Extras.categorias;
+import com.desipal.eventu.Imagenes.ImageLoader;
 import com.desipal.eventu.PopUp.QuickAction;
 import com.desipal.eventu.Presentacion.EntryItem;
 import com.desipal.eventu.Presentacion.Item;
@@ -35,7 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class MainActivity extends ActionBarActivity {
 
 	ArrayList<Item> items = new ArrayList<Item>();
-	
+
 	private DrawerLayout drawerLayout;
 	private ListView drawerList;
 	private ActionBarDrawerToggle drawerToggle;
@@ -49,6 +50,7 @@ public class MainActivity extends ActionBarActivity {
 			"yyyy-MM-dd HH:mm:ss", currentLocale);
 	public static LatLng posicionActual = new LatLng(0, 0);
 	private Intent servicio;
+	public static ImageLoader imageLoader;// Cache de Imagenes General
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,30 +72,34 @@ public class MainActivity extends ActionBarActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setLogo(R.drawable.btnizquierdo);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		getSupportActionBar().setTitle("");
+		getSupportActionBar().setTitle("EventU");
 
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawerList = (ListView) findViewById(R.id.left_drawer);
 
 		drawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-                GravityCompat.START);
+				GravityCompat.START);
 		items.add(new SectionItem("Incio"));
-		//Eventos próximos=Inicio
-        items.add(new EntryItem(R.drawable.ic_menu_eventprox,"Eventos próximos", "Eventos con fecha  mas cercana"));
-        items.add(new EntryItem(R.drawable.ic_menu_eventcerca,"Cerca de ti", "Descubre lo que pasa a tu alrededor"));
-        
-        items.add(new SectionItem("Mi perfil"));
-        items.add(new EntryItem(R.drawable.ic_menu_miseventos,"Mis eventos", "Visualiza y modifica tus eventos"));
-        items.add(new EntryItem(R.drawable.ic_menu_nuevoevento,"Crear evento", "Comparte un nuevo evento"));
+		// Eventos próximos=Inicio
+		items.add(new EntryItem(R.drawable.ic_menu_eventprox,
+				"Eventos próximos", "Eventos con fecha  mas cercana"));
+		items.add(new EntryItem(R.drawable.ic_menu_eventcerca, "Cerca de ti",
+				"Descubre lo que pasa a tu alrededor"));
 
-        adaptadorListaDrawer adapter = new adaptadorListaDrawer(this, items);
-        drawerList.setAdapter(adapter);
-        
-        
-        ////////////////////////////////////////
-		/*drawerList.setAdapter(new ArrayAdapter<String>(getSupportActionBar()
-				.getThemedContext(), android.R.layout.simple_list_item_1,
-				opcionesMenu));
+		items.add(new SectionItem("Mi perfil"));
+		items.add(new EntryItem(R.drawable.ic_menu_miseventos, "Mis eventos",
+				"Visualiza y modifica tus eventos"));
+		items.add(new EntryItem(R.drawable.ic_menu_nuevoevento, "Crear evento",
+				"Comparte un nuevo evento"));
+
+		adaptadorListaDrawer adapter = new adaptadorListaDrawer(this, items);
+		drawerList.setAdapter(adapter);
+
+		// //////////////////////////////////////
+		/*
+		 * drawerList.setAdapter(new ArrayAdapter<String>(getSupportActionBar()
+		 * .getThemedContext(), android.R.layout.simple_list_item_1,
+		 * opcionesMenu));
 		 */
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -107,12 +113,15 @@ public class MainActivity extends ActionBarActivity {
 				if (PosicionActual != position) {
 					switch (position) {
 					case 1:
+						getSupportActionBar().setTitle("Eventos próximos");
 						fragment = new Fragment1();
 						break;
 					case 2:
+						getSupportActionBar().setTitle("Cerca de ti");
 						fragment = new Fragment2();
 						break;
 					case 4:
+						getSupportActionBar().setTitle("Mis Eventos");
 						fragment = new Fragment3();
 						break;
 					case 5:
@@ -140,7 +149,6 @@ public class MainActivity extends ActionBarActivity {
 				R.string.drawer_close) {
 
 			public void onDrawerClosed(View view) {
-				getSupportActionBar().setTitle("");
 				ActivityCompat.invalidateOptionsMenu(MainActivity.this);
 			}
 
@@ -157,7 +165,8 @@ public class MainActivity extends ActionBarActivity {
 		PosicionActual = 0;
 		drawerList.performItemClick(null, 1, 0);
 		PosicionActual = 1;
-
+		// Iniciamos cache general de imagenes
+		imageLoader = new ImageLoader(MainActivity.this);
 	}
 
 	@Override
@@ -179,9 +188,9 @@ public class MainActivity extends ActionBarActivity {
 			break;
 		case R.id.action_search:
 			View view = findViewById(R.id.action_search);
-			   QuickAction mQuickAction = new QuickAction(MainActivity.this,
-			     MainActivity.this);
-			   mQuickAction.show(view);
+			QuickAction mQuickAction = new QuickAction(MainActivity.this,
+					MainActivity.this);
+			mQuickAction.show(view);
 			break;
 		default:
 			return super.onOptionsItemSelected(item);
