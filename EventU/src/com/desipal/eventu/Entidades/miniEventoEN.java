@@ -12,6 +12,7 @@ public class miniEventoEN {
     private String descripcion;
     private double distancia;
     private Date fecha;
+    private Date fechaFin;
     private String url;
     private Drawable imagen;
     private double latitud;
@@ -96,5 +97,13 @@ public class miniEventoEN {
 
 	public void setUrlImagen(String urlImagen) {
 		this.urlImagen = urlImagen;
+	}
+
+	public Date getFechaFin() {
+		return fechaFin;
+	}
+
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
 	}
 }

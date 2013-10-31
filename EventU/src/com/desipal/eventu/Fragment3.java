@@ -48,58 +48,47 @@ public class Fragment3 extends Fragment {
 	public View onCreateView(final LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		if (view == null) {
-			try {
-				Actividad = getActivity();
-				view = inflater.inflate(R.layout.fragment_3, container, false);
 
-				listview = (ListView) view.findViewById(R.id.listMisEvent);
-				listview.setFadingEdgeLength(0);
+		try {
+			Actividad = getActivity();
+			view = inflater.inflate(R.layout.fragment_3, container, false);
 
-				// evento de la lista a leer mas
-				footer = inflater.inflate(R.layout.footerlistview, null);
-				listview.setOnScrollListener(new AbsListView.OnScrollListener() {
-					@Override
-					public void onScrollStateChanged(AbsListView view,
-							int scrollState) {
+			listview = (ListView) view.findViewById(R.id.listMisEvent);
+			listview.setFadingEdgeLength(0);
 
+			// evento de la lista a leer mas
+			footer = inflater.inflate(R.layout.footerlistview, null);
+			listview.setOnScrollListener(new AbsListView.OnScrollListener() {
+				@Override
+				public void onScrollStateChanged(AbsListView view,
+						int scrollState) {}
+				@Override
+				public void onScroll(AbsListView view, int firstVisibleItem,
+						int visibleItemCount, int totalItemCount) {
+					if (lista.size() % MainActivity.ELEMENTOSLISTA == 0
+							&& !bloquearPeticion
+							&& (firstVisibleItem + visibleItemCount) == totalItemCount
+							&& !finlista) {
+						realizarPeticion();
+						listview.addFooterView(footer);
 					}
-
-					@Override
-					public void onScroll(AbsListView view,
-							int firstVisibleItem, int visibleItemCount,
-							int totalItemCount) {
-						if (lista.size() % MainActivity.ELEMENTOSLISTA == 0
-								&& !bloquearPeticion
-								&& (firstVisibleItem + visibleItemCount) == totalItemCount
-								&& !finlista) {
-							realizarPeticion();
-							listview.addFooterView(footer);
-						}
-					}
-				});
-				// Comienzo de llenado de listas
-				adaptador = new EventoAdaptador(getActivity(), lista);
-				listview.setAdapter(adaptador);
-				listview.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View v,
-							int position, long id) {
-						Intent i = new Intent(getActivity(),
-								detalleEventoActivity.class);
-						i.putExtra("idEvento", id);
-						startActivity(i);
-					}
-				});
-			} catch (InflateException e) {
-				// Si la vista ya existe retorna la anterior.
-			}
-		} else {
-			ViewGroup parent = (ViewGroup) view.getParent();
-			if (parent != null)
-				parent.removeView(view);
-		}
+				}
+			});
+			
+			// Comienzo de llenado de listas
+			adaptador = new EventoAdaptador(getActivity(), lista);
+			listview.setAdapter(adaptador);
+			listview.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View v,
+						int position, long id) {
+					Intent i = new Intent(getActivity(),
+							detalleEventoActivity.class);
+					i.putExtra("idEvento", id);
+					startActivity(i);
+				}
+			});
+		} catch (InflateException e) {}
 		return view;
 	}
 
@@ -165,18 +154,6 @@ public class Fragment3 extends Fragment {
 							e.setLatitud(jobj.getDouble("latitud"));
 							e.setLongitud(jobj.getDouble("longitud"));
 							e.setUrlImagen(jobj.getString("imagen"));
-
-							/*
-							 * if (!jobj.getString("imagen").equals("noimagen"))
-							 * { String ere = jobj.getString("imagen"); Bitmap
-							 * bitmap = BitmapFactory
-							 * .decodeStream((InputStream) new URL(ere)
-							 * .getContent()); Drawable d = new BitmapDrawable(
-							 * mContext.getResources(), bitmap); e.setImagen(d);
-							 * } else e.setImagen(mContext.getResources()
-							 * .getDrawable(R.drawable.default_img));
-							 */
-
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
 							lista.add(e);

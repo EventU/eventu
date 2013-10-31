@@ -24,7 +24,6 @@ public class EventoAdaptador extends BaseAdapter {
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",
 			MainActivity.currentLocale);
 	private boolean[] array = new boolean[300];
-	boolean bandera = false;
 	private static LayoutInflater inflater = null;
 
 	public EventoAdaptador(Context c, List<miniEventoEN> eventos) {
@@ -47,18 +46,13 @@ public class EventoAdaptador extends BaseAdapter {
 	}
 
 	// create a new ImageView for each item referenced by the Adapter
-	public void inicializarAnimacion()
-	{
+	public void inicializarAnimacion() {
 		array = new boolean[300];
 	}
+
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View vista = convertView;
 		try {
-			if (array[position] == false) {
-				bandera = true;
-				array[position] = true;
-			} else
-				bandera = false;
 
 			if (convertView == null)
 				vista = inflater.inflate(R.layout.itemevento, null);
@@ -66,12 +60,18 @@ public class EventoAdaptador extends BaseAdapter {
 			miniEventoEN item = items.get(position);
 			ImageView imgEvento = (ImageView) vista
 					.findViewById(R.id.imgEvento);
-			MainActivity.imageLoader.DisplayImage(item.getUrlImagen(), imgEvento);
+			MainActivity.imageLoader.DisplayImage(item.getUrlImagen(),
+					imgEvento);
 			// new ImageDownloaderTask(imgEvento).execute(item.getUrlImagen());
 
 			TextView txtFecha = (TextView) vista
 					.findViewById(R.id.txtFechaEvento);
 			String fecha = dateFormat.format(item.getFecha());
+
+			// Si el evento tiene fecha de fin se agrega
+			if (item.getFechaFin() != null)
+				fecha = fecha + " - " + dateFormat.format(item.getFechaFin());
+
 			txtFecha.setText(fecha);
 			TextView txtDescrip = (TextView) vista
 					.findViewById(R.id.txtDescEvento);
@@ -92,8 +92,11 @@ public class EventoAdaptador extends BaseAdapter {
 
 			Animation animation = AnimationUtils.loadAnimation(mContext,
 					R.anim.push_up_in);
-			if (bandera)
+
+			if (array[position] == false) {
 				vista.startAnimation(animation);
+				array[position] = true;
+			} 
 
 		} catch (Exception e) {
 			AlertDialog.Builder alertaSimple = new AlertDialog.Builder(mContext);

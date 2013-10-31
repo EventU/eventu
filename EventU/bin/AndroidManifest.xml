@@ -51,10 +51,15 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" />
+         <activity
+            android:name="com.desipal.eventu.Imagenes.galeriaActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBqXda-BUbDGPOXBstTm5TN9XJw79OdHN0" />
+            android:value="AIzaSyCaH1JKF8WUkyu3xPvTPMJ2REjnEMANir4" />
 
         <service android:name="com.desipal.eventu.Servicios.Localizacion" />
     </application>

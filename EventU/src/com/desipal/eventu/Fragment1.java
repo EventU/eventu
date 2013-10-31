@@ -58,67 +58,54 @@ public class Fragment1 extends Fragment {
 	public View onCreateView(final LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		if (view == null) {
-			try {
-				Actividad = getActivity();
-				view = inflater.inflate(R.layout.fragment_1, container, false);
-				listView = (PullToRefreshListView) view.findViewById(R.id.list);
-				listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
+		try {
+			Actividad = getActivity();
+			view = inflater.inflate(R.layout.fragment_1, container, false);
+			listView = (PullToRefreshListView) view.findViewById(R.id.list);
+			listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
+				@Override
+				public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+					lista.clear();
+					adaptador.notifyDataSetChanged();
+				}
+			});
+			listView.setOnScrollListener(new OnScrollListener() {
+				@Override
+				public void onScrollStateChanged(AbsListView view,
+						int scrollState) {}
 
-					@Override
-					public void onRefresh(
-							PullToRefreshBase<ListView> refreshView) {
-						lista.clear();
-						adaptador.notifyDataSetChanged();
-						// realizarPeticion();
-
+				@Override
+				public void onScroll(AbsListView view, int firstVisibleItem,
+						int visibleItemCount, int totalItemCount) {
+					if (lista.size() % MainActivity.ELEMENTOSLISTA == 0
+							&& !bloquearPeticion
+							&& (firstVisibleItem + visibleItemCount) == totalItemCount
+							&& !finlista) {
+						realizarPeticion();
 					}
-				});
-				listView.setOnScrollListener(new OnScrollListener() {
-					@Override
-					public void onScrollStateChanged(AbsListView view,
-							int scrollState) {
-					}
+				}
+			});
 
-					@Override
-					public void onScroll(AbsListView view,
-							int firstVisibleItem, int visibleItemCount,
-							int totalItemCount) {
-						if (lista.size() % MainActivity.ELEMENTOSLISTA == 0
-								&& !bloquearPeticion
-								&& (firstVisibleItem + visibleItemCount) == totalItemCount
-								&& !finlista) {
-							realizarPeticion();
-						}
+			// Comienzo de llenado de listas
+			adaptador = new EventoAdaptador(getActivity(), lista);
+			listView.setAdapter(adaptador);
 
-					}
-				});
-
-				// Comienzo de llenado de listas
-				adaptador = new EventoAdaptador(getActivity(), lista);
-				listView.setAdapter(adaptador);
-				// listview.setListAdapter(adaptador);
-
-				listView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View v,
-							int position, long id) {
-						Intent i = new Intent(getActivity(),
+			listView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View v,
+						int position, long id) {
+					try {
+						Intent i = new Intent(Actividad,
 								detalleEventoActivity.class);
 						i.putExtra("idEvento", id);
 						startActivity(i);
+					} catch (Exception e) {
 					}
-				});
-
-				// realizarPeticion();
-			} catch (InflateException e) {
-				// Si la vista ya existe retorna la anterior.
-			}
-		} else {
-			ViewGroup parent = (ViewGroup) view.getParent();
-			if (parent != null)
-				parent.removeView(view);
-		}
+				}
+			});
+		} catch (InflateException e) {
+			// Si la vista ya existe retorna la anterior.
+		}		
 		return view;
 	}
 
@@ -193,7 +180,6 @@ public class Fragment1 extends Fragment {
 							e.setLongitud(jobj.getDouble("longitud"));
 							// nuevo
 							e.setUrlImagen(jobj.getString("imagen"));
-
 							/*
 							 * if (!jobj.getString("imagen").equals("noimagen"))
 							 * { String ere = jobj.getString("imagen"); Bitmap
@@ -204,9 +190,12 @@ public class Fragment1 extends Fragment {
 							 * } else e.setImagen(mContext.getResources()
 							 * .getDrawable(R.drawable.default_img));
 							 */
-
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
+
+							if (!jobj.getBoolean("todoElDia"))
+								e.setFechaFin(MainActivity.formatoFecha
+										.parse(jobj.getString("fechaFin")));
 							lista.add(e);
 						}
 					} else if (lista.size() > 0)
@@ -226,7 +215,6 @@ public class Fragment1 extends Fragment {
 		}
 
 		protected void onPostExecute(Void result) {
-
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
 			listView.onRefreshComplete();

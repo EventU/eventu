@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.desipal.eventu.Entidades.comentarioEN;
+import com.desipal.eventu.PopUp.ratingpicker;
 import com.desipal.eventu.Presentacion.verTodosComentariosAdapter;
 import com.desipal.eventu.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -22,10 +23,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 import android.view.Window;
+import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,6 +43,8 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 	private PullToRefreshListView listComentarios;
 	private boolean finlista = false;
 
+	private Button btnOpinar;
+
 	verTodosComentariosAdapter adaptador = new verTodosComentariosAdapter(this,
 			listaComentarios);
 
@@ -49,6 +56,8 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 		try {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.ver_todos_comentarios);
+
+			btnOpinar = (Button) findViewById(R.id.btnNuevoComentario);
 			listComentarios = (PullToRefreshListView) findViewById(R.id.listComentarios);
 			listComentarios
 					.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -81,6 +90,16 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 					}
 				}
 			});
+			
+			// Boton opinar
+			btnOpinar.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					DialogFragment newFragment = ratingpicker.newInstance();
+					newFragment.show(getSupportFragmentManager(), "dialog");
+				}
+			});
+			
 			adaptador = new verTodosComentariosAdapter(this, listaComentarios);
 			listComentarios.setAdapter(adaptador);
 		} catch (Exception ex) {

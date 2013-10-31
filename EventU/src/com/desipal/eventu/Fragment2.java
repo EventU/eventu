@@ -32,7 +32,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,187 +78,175 @@ public class Fragment2 extends Fragment {
 	public View onCreateView(final LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		if (view == null) {
-			try {
-				Actividad = getActivity();
+
+		try {
+			Actividad = getActivity();
+
+			if (view == null)
 				view = inflater.inflate(R.layout.fragment_2, container, false);
+			else {
+				ViewGroup parent = (ViewGroup) view.getParent();
+				if (parent != null)
+					parent.removeView(view);
+			}
 
-				footer = inflater.inflate(R.layout.footerlistview, null);
+			footer = inflater.inflate(R.layout.footerlistview, null);
 
-				gridCerca = (ListView) view
-						.findViewById(R.id.gridResultadosCerca);
-				gridCerca.setFadingEdgeLength(0);
+			gridCerca = (ListView) view.findViewById(R.id.gridResultadosCerca);
+			gridCerca.setFadingEdgeLength(0);
 
-				txtKm = (TextView) view.findViewById(R.id.txtKm);
-				seekRadio = (SeekBar) view.findViewById(R.id.seekRadio);
-				txtErrorCerca = (TextView) view
-						.findViewById(R.id.txtErrorCerca);
-				togOpcionMapa = (ToggleButton) view
-						.findViewById(R.id.togOpcionMapa);
-				btnBuscarCerca = (Button) view
-						.findViewById(R.id.btnBuscarCerca);
-				LayoutMapa = (RelativeLayout) view
-						.findViewById(R.id.relativeMapa);
+			txtKm = (TextView) view.findViewById(R.id.txtKm);
+			seekRadio = (SeekBar) view.findViewById(R.id.seekRadio);
+			txtErrorCerca = (TextView) view.findViewById(R.id.txtErrorCerca);
+			togOpcionMapa = (ToggleButton) view
+					.findViewById(R.id.togOpcionMapa);
+			btnBuscarCerca = (Button) view.findViewById(R.id.btnBuscarCerca);
+			LayoutMapa = (RelativeLayout) view.findViewById(R.id.relativeMapa);
 
-				gridCerca
-						.setOnScrollListener(new AbsListView.OnScrollListener() {
-							@Override
-							public void onScrollStateChanged(AbsListView view,
-									int scrollState) {
+			gridCerca.setOnScrollListener(new AbsListView.OnScrollListener() {
+				@Override
+				public void onScrollStateChanged(AbsListView view,
+						int scrollState) {
+				}
 
-							}
-
-							@Override
-							public void onScroll(AbsListView view,
-									int firstVisibleItem, int visibleItemCount,
-									int totalItemCount) {
-								if (eventos.size()
-										% MainActivity.ELEMENTOSLISTA == 0
-										&& !bloquearPeticion
-										&& (firstVisibleItem + visibleItemCount) == totalItemCount
-										&& !finlista) {
-									gridCerca.addFooterView(footer);
-									hacerPeticion();
-								}
-							}
-						});
-				adaptador = new EventoAdaptador(getActivity(), eventos);
-
-				map = ((SupportMapFragment) getActivity()
-						.getSupportFragmentManager().findFragmentById(
-								R.id.mapaCercanos)).getMap();
-
-				map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-
-					@Override
-					public void onInfoWindowClick(Marker marker) {
-						for (Marker item : listapuntos) {
-							if (item.equals(marker)) {
-								int i = listapuntos.indexOf(item);
-								miniEventoEN sel = Fragment2.eventos.get(i);
-								Intent ac = new Intent(getActivity(),
-										detalleEventoActivity.class);
-								ac.putExtra("idEvento",
-										(long) sel.getIdEvento());
-								startActivity(ac);
-								break;
-							}
-						}
-
-					}
-				});
-
-				txtKm.setText("50 Km");
-				seekRadio.setProgress(50);
-				seekRadio
-						.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-							@Override
-							public void onStopTrackingTouch(SeekBar seekBar) {
-							}
-
-							@Override
-							public void onStartTrackingTouch(SeekBar seekBar) {
-							}
-
-							@Override
-							public void onProgressChanged(SeekBar seekBar,
-									int progress, boolean fromUser) {
-								if (progress == 0)
-									txtKm.setText("Todos");
-								else
-									txtKm.setText(progress + " Km");
-							}
-						});
-
-				gridCerca.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View v,
-							int position, long id) {
-						Intent i = new Intent(getActivity(),
-								detalleEventoActivity.class);
-						i.putExtra("idEvento", id);
-						startActivity(i);
-					}
-				});
-
-				btnBuscarCerca.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						adaptador.inicializarAnimacion();
-						btnBuscarCerca.setEnabled(false);
-						LayoutMapa.setVisibility(View.GONE);
-						gridCerca.setVisibility(View.GONE);
-						txtErrorCerca.setVisibility(View.GONE);
-						togOpcionMapa.setEnabled(false);
-						eventos.clear();
-						bloquearPeticion = false;
+				@Override
+				public void onScroll(AbsListView view, int firstVisibleItem,
+						int visibleItemCount, int totalItemCount) {
+					if (eventos.size() % MainActivity.ELEMENTOSLISTA == 0
+							&& !bloquearPeticion
+							&& (firstVisibleItem + visibleItemCount) == totalItemCount
+							&& !finlista) {
+						gridCerca.addFooterView(footer);
 						hacerPeticion();
 					}
-				});
+				}
+			});
 
-				togOpcionMapa
-						.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-							@Override
-							public void onCheckedChanged(
-									CompoundButton buttonView, boolean isChecked) {
-								if (isChecked) {
-									// MAPA
-									map.clear();
-									gridCerca.setVisibility(View.GONE);
-									LayoutMapa.setVisibility(View.VISIBLE); // Pointer
-																			// de
-																			// mi
-																			// posicion
-									LatLng MiPosicion = MainActivity.posicionActual;
-									map.addMarker(new MarkerOptions().position(
-											MiPosicion).title("Estas aquí"));
-									listapuntos.clear();
-									for (miniEventoEN item : eventos) {
-										LatLng Posicion = new LatLng(item
-												.getLatitud(), item
-												.getLongitud());
-										listapuntos.add(map.addMarker(new MarkerOptions()
-												.position(Posicion)
-												.title(item.getNombre())
-												.icon(BitmapDescriptorFactory
-														.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
-									}
-									CircleOptions circleOptions = new CircleOptions()
-											.center(MiPosicion)
-											.radius(ratio * 1000)
-											// set radius in meters
-											.fillColor(
-													Color.argb(20, 0, 0, 255))
-											.strokeColor(Color.BLUE)
-											.strokeWidth((float) 1.5);
-									map.addCircle(circleOptions);
-									int zoom = Herramientas.calcularZoom(ratio);
-									map.moveCamera(CameraUpdateFactory
-											.newLatLngZoom(MiPosicion, zoom));
-									map.animateCamera(
-											CameraUpdateFactory.zoomTo(zoom),
-											2000, null);
+			map = ((SupportMapFragment) getActivity()
+					.getSupportFragmentManager().findFragmentById(
+							R.id.mapaCercanos)).getMap();
 
-									togOpcionMapa.setEnabled(true);
+			map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+				@Override
+				public void onInfoWindowClick(Marker marker) {
+					for (Marker item : listapuntos) {
+						if (item.equals(marker)) {
+							int i = listapuntos.indexOf(item);
+							miniEventoEN sel = Fragment2.eventos.get(i);
+							Intent ac = new Intent(getActivity(),
+									detalleEventoActivity.class);
+							ac.putExtra("idEvento", (long) sel.getIdEvento());
+							startActivity(ac);
+							break;
+						}
+					}
+				}
+			});
 
-								} else {
-									LayoutMapa.setVisibility(View.GONE);
-									gridCerca.setVisibility(View.VISIBLE);
-									gridCerca.setAdapter(new EventoAdaptador(
-											getActivity(), eventos));
-									togOpcionMapa.setEnabled(true);
+			txtKm.setText("50 Km");
+			seekRadio.setProgress(50);
+			seekRadio.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
+
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress,
+						boolean fromUser) {
+					if (progress == 0)
+						txtKm.setText("Todos");
+					else
+						txtKm.setText(progress + " Km");
+				}
+			});
+
+			gridCerca.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View v,
+						int position, long id) {
+					Intent i = new Intent(getActivity(),
+							detalleEventoActivity.class);
+					i.putExtra("idEvento", id);
+					startActivity(i);
+				}
+			});
+
+			btnBuscarCerca.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					adaptador.inicializarAnimacion();
+					btnBuscarCerca.setEnabled(false);
+					LayoutMapa.setVisibility(View.GONE);
+					gridCerca.setVisibility(View.GONE);
+					txtErrorCerca.setVisibility(View.GONE);
+					togOpcionMapa.setEnabled(false);
+					eventos.clear();
+					bloquearPeticion = false;
+					ratio = seekRadio.getProgress();
+					hacerPeticion();
+				}
+			});
+
+			togOpcionMapa
+					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(CompoundButton buttonView,
+								boolean isChecked) {
+							if (isChecked) {
+								// MAPA
+								map.clear();
+								gridCerca.setVisibility(View.GONE);
+								LayoutMapa.setVisibility(View.VISIBLE);
+								ratio = seekRadio.getProgress();
+								// Pointer de mi posicion
+								LatLng MiPosicion = MainActivity.posicionActual;
+								map.addMarker(new MarkerOptions().position(
+										MiPosicion).title("Estas aquí"));
+								listapuntos.clear();
+								for (miniEventoEN item : eventos) {
+									LatLng Posicion = new LatLng(item
+											.getLatitud(), item.getLongitud());
+									listapuntos.add(map.addMarker(new MarkerOptions()
+											.position(Posicion)
+											.title(item.getNombre())
+											.icon(BitmapDescriptorFactory
+													.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
 								}
+								CircleOptions circleOptions = new CircleOptions()
+										.center(MiPosicion)
+										.radius(ratio * 1000)
+										// set radius in meters
+										.fillColor(Color.argb(20, 0, 0, 255))
+										.strokeColor(Color.BLUE)
+										.strokeWidth((float) 1.5);
+								map.addCircle(circleOptions);
+								int zoom = Herramientas.calcularZoom(ratio);
+								map.moveCamera(CameraUpdateFactory
+										.newLatLngZoom(MiPosicion, zoom));
+								map.animateCamera(
+										CameraUpdateFactory.zoomTo(zoom), 2000,
+										null);
+
+								togOpcionMapa.setEnabled(true);
+
+							} else {
+								LayoutMapa.setVisibility(View.GONE);
+								gridCerca.setVisibility(View.VISIBLE);
+								gridCerca.setAdapter(new EventoAdaptador(
+										getActivity(), eventos));
+								togOpcionMapa.setEnabled(true);
 							}
-						});
-				gridCerca.setAdapter(adaptador);
-			} catch (InflateException e) {
-				// Si la vista ya existe retorna la anterior.
-			}
-		} else {
-			ViewGroup parent = (ViewGroup) view.getParent();
-			if (parent != null)
-				parent.removeView(view);
+						}
+					});
+			adaptador = new EventoAdaptador(getActivity(), eventos);
+			gridCerca.setAdapter(adaptador);
+		} catch (Exception e) {
+			// Si la vista ya existe retorna la anterior.
 		}
 		return view;
 	}
@@ -286,9 +273,8 @@ public class Fragment2 extends Fragment {
 
 			if (togOpcionMapa.isChecked()) { // MAPA
 				map.clear();
-				LayoutMapa.setVisibility(View.VISIBLE); // Pointer
-														// de mi
-														// posicion
+				LayoutMapa.setVisibility(View.VISIBLE);
+				// Pointer de mi posicion
 				LatLng MiPosicion = new LatLng(
 						MainActivity.posicionActual.latitude,
 						MainActivity.posicionActual.longitude);
@@ -305,6 +291,7 @@ public class Fragment2 extends Fragment {
 									.icon(BitmapDescriptorFactory
 											.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
 				}
+
 				CircleOptions circleOptions = new CircleOptions()
 						.center(MiPosicion).radius(ratio * 1000)
 						// set radius in meters
@@ -397,8 +384,8 @@ public class Fragment2 extends Fragment {
 		}
 
 		protected void onPostExecute(Void result) {
-			gridCerca.removeFooterView(footer);
 			adaptador.notifyDataSetChanged();
+			gridCerca.removeFooterView(footer);		
 			bloquearPeticion = false;
 			btnBuscarCerca.setEnabled(true);
 

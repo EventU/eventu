@@ -22,6 +22,17 @@
             android:text="@string/comentarios"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/background_light" />
+
+        <Button
+            android:id="@+id/btnNuevoComentario"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:background="@anim/anim_boton"
+            android:padding="5dp"
+            android:text="@string/opina"
+            android:textColor="#ffffff" />
     </RelativeLayout>
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView

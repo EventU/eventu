@@ -398,7 +398,7 @@
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="10dp"
                             android:background="@anim/anim_boton"
-                            android:drawableLeft="@android:drawable/ic_menu_camera"
+                            android:drawableLeft="@drawable/ic_menu_camera"
                             android:text="@string/crearEventoCargarImagen"
                             android:textColor="#fff" />
 
@@ -449,7 +449,7 @@
                             android:layout_height="40dp"
                             android:layout_marginTop="10dp"
                             android:background="@anim/anim_boton"
-                            android:drawableLeft="@android:drawable/ic_menu_add"
+                            android:drawableLeft="@drawable/ic_menu_add"
                             android:text="@string/crearEventoBoton"
                             android:textColor="#fff" />
                     </LinearLayout>

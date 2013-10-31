@@ -28,6 +28,6 @@
         android:layout_alignParentTop="true"
         android:background="@anim/anim_boton"
         android:contentDescription="@string/descImagen"
-        android:src="@android:drawable/ic_menu_delete" />
+        android:src="@drawable/ic_menu_delete" />
 
 </RelativeLayout>

@@ -22,6 +22,7 @@ import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.Extras.Herramientas;
 import com.desipal.eventu.Imagenes.ImageLoader;
+import com.desipal.eventu.Imagenes.galeriaActivity;
 import com.desipal.eventu.PopUp.ratingpicker;
 import android.app.Activity;
 import android.content.Context;
@@ -68,6 +69,7 @@ public class detalleEventoActivity extends FragmentActivity {
 	private TextView txtDetalleFechaFinal;
 	private Button btnOpinar;
 	private ToggleButton togAsistencia;
+
 	private ProgressBar progressBar;
 	private ImageView galeria;
 	private RelativeLayout relInformacion;
@@ -180,9 +182,9 @@ public class detalleEventoActivity extends FragmentActivity {
 			parametros.add(new BasicNameValuePair("idDispositivo", android_id));
 			galeria.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					// Intent i = new
-					// Intent(detalleEventoActivity.this,galeriaActivity.class);
-					// startActivity(i);
+					Intent i = new Intent(detalleEventoActivity.this,
+							galeriaActivity.class);
+					startActivity(i);
 				}
 			});
 
@@ -247,7 +249,7 @@ public class detalleEventoActivity extends FragmentActivity {
 						.getString(R.string.detalleEventoAsistencia));
 		fotosGaleria = evento.getImagenes();
 		galeria.setImageDrawable(evento.getImagenes().get(0));
-		// ///////////////////////////
+
 		String direccion = "";
 		String[] spidesc = evento.getDireccion().split(",");
 		if (spidesc.length == 6)
@@ -359,6 +361,20 @@ public class detalleEventoActivity extends FragmentActivity {
 			vi.setVisibility(View.GONE);
 
 		return vista;
+	}
+
+	private void cambiarAsistencia(String asis) {
+
+		if (togAsistencia.isChecked()) {
+			asiste = true;
+		} else {
+			asiste = false;
+		}
+		txtAsistentes.setText(asis
+				+ " "
+				+ detalleEventoActivity.this
+						.getString(R.string.detalleEventoAsistencia));
+
 	}
 
 	// Peticion para ver detalle evento
@@ -526,6 +542,7 @@ public class detalleEventoActivity extends FragmentActivity {
 
 		private ArrayList<NameValuePair> parametros;
 		private boolean todoOK;
+		private String asistencia;
 
 		public peticionAsistencia(ArrayList<NameValuePair> parametros,
 				Context context) {
@@ -551,8 +568,11 @@ public class detalleEventoActivity extends FragmentActivity {
 						total.append(line);
 					}
 
-					if (total.toString().equals("ok"))
+					if (total.toString().split(",")[0].equals("ok")) {
 						todoOK = true;
+						asistencia = total.toString().split(",")[1].toString();
+
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -562,11 +582,13 @@ public class detalleEventoActivity extends FragmentActivity {
 		}
 
 		protected void onPostExecute(Void result) {
-			if (!todoOK)
+			if (!todoOK) {
 				Toast.makeText(
 						detalleEventoActivity.this,
 						"No se ha podido contabilizar su asistencia, compruebe su conexión a internet",
 						Toast.LENGTH_SHORT).show();
+			}
+			cambiarAsistencia(asistencia);
 
 		}
 	}

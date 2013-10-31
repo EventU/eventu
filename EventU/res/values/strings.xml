@@ -11,8 +11,7 @@
     <string name="drawer_close">Menú Cerrado</string>
     <string name="descImagen">Imagen</string>
     <string name="Radio">Radio</string>
-    <string name="hint_fecha">dd/mm/aaaa</string>
-    <string name="crearEventoComentarios">Comentarios del evento</string>
+    <string name="hint_fecha">dd/mm/aaaa</string> 
     <string name="FiltroNombre">Nombre:</string>
     <string name="FiltroCategoria">Categoria:</string>
     <string name="FiltroFecha">Fecha:</string>

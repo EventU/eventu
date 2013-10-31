@@ -65,7 +65,7 @@ import android.widget.ToggleButton;
 
 public class crearEventoActivity extends FragmentActivity {
 
-	private int ESCALAMAXIMA = 400;// Tamaño máximo de las imagenes subidas
+	private int ESCALAMAXIMA = 300;// Tamaño máximo de las imagenes subidas
 	private SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"dd/MM/yyyy hh:mm", MainActivity.currentLocale);
 	private static Activity actividad;
