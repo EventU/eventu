@@ -11,10 +11,12 @@
     <string name="drawer_close">Menú Cerrado</string>
     <string name="descImagen">Imagen</string>
     <string name="Radio">Radio</string>
-    <string name="hint_fecha">dd/mm/aaaa</string> 
+    <string name="hint_fecha">dd/mm/aaaa</string>
     <string name="FiltroNombre">Nombre:</string>
+    <string name="hint_filtro">Nombre</string>
     <string name="FiltroCategoria">Categoria:</string>
     <string name="FiltroFecha">Fecha:</string>
+    <string name="hint_fecha">dd/mm/aaaa</string>
     <string name="OpnVisualizacion">Opciones de visualización</string>
     <string name="txtBuscar">Buscar</string>
     <string name="EventosFallido">Error al mostrar evento</string>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linear_filtro"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="#3E3E3E"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:visibility="gone" >
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:stretchColumns="1" >
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/txtfiltro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/FiltroNombre"
+                    android:textColor="#ffffff" />
+
+                <EditText
+                    android:id="@+id/campoFiltro"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/campo"
+                    android:ems="10"
+                    android:hint="@string/hint_filtro"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLength="30"
+                    android:minWidth="150dp"
+                    android:textSize="13sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:id="@+id/txtfecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/FiltroFecha"
+                    android:textColor="#fff" />
+
+                <EditText
+                    android:id="@+id/campoFecha"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/campo"
+                    android:focusable="false"
+                    android:hint="@string/hint_fecha"
+                    android:maxLength="10"
+                    android:textSize="13sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:id="@+id/txtCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/FiltroCategoria"
+                    android:textColor="#fff" />
+
+                <Spinner
+                    android:id="@+id/spiCategorias"
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@anim/anim_boton"
+                    android:prompt="@string/Categorias" />
+            </TableRow>
+        </TableLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" >
+
+            <Button
+                android:id="@+id/btnFiltroAv"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_toRightOf="@+id/btnLimpiar"
+                android:background="@anim/anim_boton"
+                android:drawableLeft="@drawable/ic_menu_search"
+                android:text="@string/txtBuscar"
+                android:textColor="@android:color/background_light"
+                android:textSize="12sp" />
+
+            <ImageButton
+                android:id="@+id/btnLimpiar"
+                android:layout_width="46dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@anim/anim_boton"
+                android:contentDescription="@string/descImagen"
+                android:src="@drawable/ic_menu_delete" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listResultados"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="5dp"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp" />
+
+</LinearLayout>

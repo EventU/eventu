@@ -1,5 +1,6 @@
 package com.desipal.eventu;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import java.util.Locale;
 
 import com.desipal.eventu.Extras.categorias;
 import com.desipal.eventu.Imagenes.ImageLoader;
-import com.desipal.eventu.PopUp.QuickAction;
 import com.desipal.eventu.Presentacion.EntryItem;
 import com.desipal.eventu.Presentacion.Item;
 import com.desipal.eventu.Presentacion.SectionItem;
@@ -33,7 +34,8 @@ import com.desipal.eventu.Presentacion.adaptadorListaDrawer;
 import com.desipal.eventu.Servicios.Localizacion;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+		OnQueryTextListener {
 
 	ArrayList<Item> items = new ArrayList<Item>();
 
@@ -51,6 +53,8 @@ public class MainActivity extends ActionBarActivity {
 	public static LatLng posicionActual = new LatLng(0, 0);
 	private Intent servicio;
 	public static ImageLoader imageLoader;// Cache de Imagenes General
+	public static String queryFiltro = "";// Query necesaria para el filtro
+	private MenuItem filAvanzadoItem;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,8 @@ public class MainActivity extends ActionBarActivity {
 				"Eventos próximos", "Eventos con fecha  mas cercana"));
 		items.add(new EntryItem(R.drawable.ic_menu_eventcerca, "Cerca de ti",
 				"Descubre lo que pasa a tu alrededor"));
+		items.add(new EntryItem(R.drawable.ic_menu_search, "Buscar eventos",
+				"Busqueda avanzada de eventos"));
 
 		items.add(new SectionItem("Mi perfil"));
 		items.add(new EntryItem(R.drawable.ic_menu_miseventos, "Mis eventos",
@@ -115,16 +121,25 @@ public class MainActivity extends ActionBarActivity {
 					case 1:
 						getSupportActionBar().setTitle("Eventos próximos");
 						fragment = new Fragment1();
+						if (filAvanzadoItem != null)
+							filAvanzadoItem.setVisible(false);
 						break;
 					case 2:
 						getSupportActionBar().setTitle("Cerca de ti");
 						fragment = new Fragment2();
+						filAvanzadoItem.setVisible(false);
 						break;
-					case 4:
-						getSupportActionBar().setTitle("Mis Eventos");
-						fragment = new Fragment3();
+					case 3:
+						getSupportActionBar().setTitle("Buscar eventos");
+						fragment = new filtroAvanzado();
+						filAvanzadoItem.setVisible(true);
 						break;
 					case 5:
+						getSupportActionBar().setTitle("Mis eventos");
+						fragment = new Fragment3();
+						filAvanzadoItem.setVisible(false);
+						break;
+					case 6:
 						intent = new Intent(getApplication(),
 								crearEventoActivity.class);
 						esActividad = true;
@@ -172,41 +187,46 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		filAvanzadoItem = menu.findItem(R.id.btn_filtro_avanzado);
 		return true;
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean retorno;
 		if (drawerToggle.onOptionsItemSelected(item)) {
-			return true;
+			retorno = true;
+		} else {
+			switch (item.getItemId()) {
+			case R.id.action_settings:
+				Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+				retorno = true;
+				break;
+
+			case R.id.btn_filtro_avanzado:
+				filtroAvanzado.recoger();
+				retorno = true;
+				break;
+			default:
+				retorno = super.onOptionsItemSelected(item);
+			}
 		}
-
-		switch (item.getItemId()) {
-		case R.id.action_settings:
-			Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-
-			break;
-		case R.id.action_search:
-			View view = findViewById(R.id.action_search);
-			QuickAction mQuickAction = new QuickAction(MainActivity.this,
-					MainActivity.this);
-			mQuickAction.show(view);
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-
-		return true;
+		return retorno;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean menuAbierto = drawerLayout.isDrawerOpen(drawerList);
 
-		if (menuAbierto)
-			menu.findItem(R.id.action_search).setVisible(false);
-		else
-			menu.findItem(R.id.action_search).setVisible(true);
+		if (PosicionActual != 3)
+			menu.findItem(R.id.btn_filtro_avanzado).setVisible(false);
+		else {
+			if (menuAbierto)
+				menu.findItem(R.id.btn_filtro_avanzado).setVisible(false);
+			else
+				menu.findItem(R.id.btn_filtro_avanzado).setVisible(true);
+		}
 
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -230,5 +250,23 @@ public class MainActivity extends ActionBarActivity {
 		Fragment1.view = null;
 		Fragment2.view = null;
 		Fragment3.view = null;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String arg0) {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String text) {
+		if (!text.equals("")) {
+			queryFiltro = text;
+			getSupportActionBar().setTitle("Buscar eventos");
+			Fragment filAvanzado = new filtroAvanzado();
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, filAvanzado).commit();
+		}
+		return false;
 	}
 }

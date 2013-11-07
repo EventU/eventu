@@ -128,10 +128,9 @@ public class Fragment1 extends Fragment {
 		calendar.add(Calendar.MONTH, 1);
 		String fechaMes = calendar.get(Calendar.DAY_OF_MONTH) + "/"
 				+ (calendar.get(Calendar.MONTH) + 1) + "/"
-				+ calendar.get(Calendar.YEAR);// + " 00:00:00";
+				+ calendar.get(Calendar.YEAR);
 
 		parametros.add(new BasicNameValuePair("fechaMes", fechaMes));
-		parametros.add(new BasicNameValuePair("fecha", ""));
 		pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
 		parametros.add(new BasicNameValuePair("page", pagina + ""));
