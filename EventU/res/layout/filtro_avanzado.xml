@@ -121,8 +121,8 @@
                 android:contentDescription="@string/descImagen"
                 android:src="@drawable/ic_menu_delete" />
         </RelativeLayout>
-    </LinearLayout>
-
+    </LinearLayout>  
+     
     <ListView
         android:id="@+id/listResultados"
         android:layout_width="fill_parent"

@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.Extras.Herramientas;
-import com.desipal.eventu.Imagenes.ImageLoader;
 import com.desipal.eventu.Imagenes.galeriaActivity;
 import com.desipal.eventu.PopUp.ratingpicker;
 import android.app.Activity;
@@ -30,6 +29,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
@@ -79,11 +79,12 @@ public class detalleEventoActivity extends FragmentActivity {
 	private ProgressBar progressBarComentarios;
 	private TextView textNoHayComentarios;
 	private ProgressBar progressBarGeneral;
+	private Button btnComoLlegar;
 	public static boolean asiste;
 	public static long idEvento;
+
 	private List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
 	// /GALERIA
-	private ImageLoader imglo;
 	public static List<Drawable> fotosGaleria;
 
 	@Override
@@ -94,7 +95,6 @@ public class detalleEventoActivity extends FragmentActivity {
 		try {
 			act = this;
 			fotosGaleria = null;
-			imglo = new ImageLoader(getApplicationContext());
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.detalleevento);
 			Bundle e = getIntent().getExtras();
@@ -119,6 +119,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			progressBarComentarios = (ProgressBar) findViewById(R.id.progressBarComentarios);
 			btnVerMasComentarios = (Button) findViewById(R.id.btnVerMasComentarios);
 			textNoHayComentarios = (TextView) findViewById(R.id.textNoHayComentarios);
+			btnComoLlegar = (Button) findViewById(R.id.btnComoLlegar);
 
 			TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
 			tabHost.setup();
@@ -240,83 +241,103 @@ public class detalleEventoActivity extends FragmentActivity {
 	}
 
 	public void verEvento() {
-		progressBarGeneral.setVisibility(View.GONE);
-		edNombre.setText(evento.getNombre());
-		edDesc.setText(evento.getDescripcion());
-		txtAsistentes.setText(evento.getAsistencia()
-				+ " "
-				+ detalleEventoActivity.this
-						.getString(R.string.detalleEventoAsistencia));
-		fotosGaleria = evento.getImagenes();
-		galeria.setImageDrawable(evento.getImagenes().get(0));
+		try {
+			progressBarGeneral.setVisibility(View.GONE);
+			edNombre.setText(evento.getNombre());
+			edDesc.setText(evento.getDescripcion());
+			txtAsistentes.setText(evento.getAsistencia()
+					+ " "
+					+ detalleEventoActivity.this
+							.getString(R.string.detalleEventoAsistencia));
+			fotosGaleria = evento.getImagenes();
+			galeria.setImageDrawable(evento.getImagenes().get(0));
 
-		String direccion = "";
-		String[] spidesc = evento.getDireccion().split(",");
-		if (spidesc.length == 6)
-			// Direccion=Calle,Numero Localidad(Provincia)
-			direccion = spidesc[4] + ", " + spidesc[5] + " " + spidesc[3]
-					+ " (" + spidesc[2] + ")";
-		else if (spidesc.length == 5)
-			// Direccion=Calle Localidad(Provincia)
-			direccion = spidesc[4] + " " + spidesc[3] + " (" + spidesc[2] + ")";
-		else
-			// Direccion= Provincia
-			direccion = spidesc[2];
-		txtDireccion.setText(direccion);
-		//
-		txtDetalleDist.setText("Distancia: ");
-		String distancia = new DecimalFormat("#.##").format(evento
-				.getDistancia()) + " Km.";
-		txtDetalleDistancia.setText(distancia);
+			String direccion = "";
+			String[] spidesc = evento.getDireccion().split(",");
+			if (spidesc.length == 6)
+				// Direccion=Calle,Numero Localidad(Provincia)
+				direccion = spidesc[4] + ", " + spidesc[5] + " " + spidesc[3]
+						+ " (" + spidesc[2] + ")";
+			else if (spidesc.length == 5)
+				// Direccion=Calle Localidad(Provincia)
+				direccion = spidesc[4] + " " + spidesc[3] + " (" + spidesc[2]
+						+ ")";
+			else
+				// Direccion= Provincia
+				direccion = spidesc[2];
+			txtDireccion.setText(direccion);
+			//
+			txtDetalleDist.setText("Distancia: ");
+			String distancia = new DecimalFormat("#.##").format(evento
+					.getDistancia()) + " Km.";
+			txtDetalleDistancia.setText(distancia);
 
-		String fechaI = MainActivity.formatoFecha.format(evento
-				.getFechaInicio());
-		String fechaF = MainActivity.formatoFecha.format(evento.getFechaFin());
+			String fechaI = MainActivity.formatoFecha.format(evento
+					.getFechaInicio());
+			String fechaF = MainActivity.formatoFecha.format(evento
+					.getFechaFin());
 
-		// txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
-		if (evento.isTodoElDia()) {
-			txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
-			txtDetalleFechaFin.setVisibility(View.GONE);
-			txtDetalleFechaFinal.setVisibility(View.GONE);
-		} else {
-			txtDetalleFechaInicio.setText(fechaI);
-			txtDetalleFechaFinal.setText(fechaF);
-		}
+			// txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
+			if (evento.isTodoElDia()) {
+				txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
+				txtDetalleFechaFin.setVisibility(View.GONE);
+				txtDetalleFechaFinal.setVisibility(View.GONE);
+			} else {
+				txtDetalleFechaInicio.setText(fechaI);
+				txtDetalleFechaFinal.setText(fechaF);
+			}
 
-		togAsistencia.setVisibility(View.VISIBLE);
+			togAsistencia.setVisibility(View.VISIBLE);
 
-		if (asiste) {
-			togAsistencia.setChecked(true);
-		} else {
-			togAsistencia.setChecked(false);
-		}
-		map = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.mapa)).getMap();
-		map.getUiSettings().setScrollGesturesEnabled(false);
-		Posicion = new LatLng(evento.getLatitud(), evento.getLongitud());
-		map.addMarker(new MarkerOptions().position(Posicion).title(
-				evento.getNombre()));
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Posicion, 15));
-		relInformacion.setVisibility(View.VISIBLE);
-		LayoutComentarios.setVisibility(View.VISIBLE);
-		layComent.setVisibility(View.VISIBLE);
-		progressBar.setVisibility(View.GONE);
+			if (asiste) {
+				togAsistencia.setChecked(true);
+			} else {
+				togAsistencia.setChecked(false);
+			}
+			map = ((SupportMapFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.mapa)).getMap();
+			map.getUiSettings().setScrollGesturesEnabled(false);
+			Posicion = new LatLng(evento.getLatitud(), evento.getLongitud());
+			map.addMarker(new MarkerOptions().position(Posicion).title(
+					evento.getNombre()));
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(Posicion, 15));
+			relInformacion.setVisibility(View.VISIBLE);
+			LayoutComentarios.setVisibility(View.VISIBLE);
+			layComent.setVisibility(View.VISIBLE);
+			progressBar.setVisibility(View.GONE);
 
-		// Ver comentarios
-		if (evento.isComentarios()) {
-			ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
-			parametros.add(new BasicNameValuePair("idEvento", idEvento + ""));
-			parametros.add(new BasicNameValuePair("elementsPerPage",
-					Herramientas.ComentariosEnDetalleEvento() + ""));
-			String URL = "http://desipal.hol.es/app/eventos/listaComentarios.php";
+			btnComoLlegar.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String url = "http://maps.google.com/maps?saddr="
+							+ MainActivity.posicionActual.latitude + ","
+							+ MainActivity.posicionActual.longitude + "&daddr="
+							+ evento.getLatitud() + "," + evento.getLongitud();
+					Intent intent = new Intent(
+							android.content.Intent.ACTION_VIEW, Uri.parse(url));
+					startActivity(intent);
+				}
+			});
 
-			peticionComentarios peticion = new peticionComentarios(parametros,
-					detalleEventoActivity.this);
-			peticion.execute(new String[] { URL });
+			// Ver comentarios
+			if (evento.isComentarios()) {
+				ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+				parametros
+						.add(new BasicNameValuePair("idEvento", idEvento + ""));
+				parametros.add(new BasicNameValuePair("elementsPerPage",
+						Herramientas.ComentariosEnDetalleEvento() + ""));
+				String URL = "http://desipal.hol.es/app/eventos/listaComentarios.php";
 
-		} else {
-			LayoutComentarios.setVisibility(View.GONE);
-			layComent.setVisibility(View.GONE);
+				peticionComentarios peticion = new peticionComentarios(
+						parametros, detalleEventoActivity.this);
+				peticion.execute(new String[] { URL });
+
+			} else {
+				LayoutComentarios.setVisibility(View.GONE);
+				layComent.setVisibility(View.GONE);
+			}
+		} catch (Exception ex) {
+			ex.toString();
 		}
 	}
 
@@ -447,13 +468,14 @@ public class detalleEventoActivity extends FragmentActivity {
 							for (int i = 0; i < jurls.length(); i++) {
 								String urlimagen = jurls
 										.getString((i + 1) + "");
-								Bitmap img = imglo
+								Bitmap img = MainActivity.imageLoader
 										.obtenerImagenesDescargadas(urlimagen);
 								if (img == null) {
 									InputStream ip = (InputStream) new URL(
 											urlimagen).getContent();
-									img = imglo.cachearImagenesDescargadas(
-											urlimagen, ip);
+									img = MainActivity.imageLoader
+											.cachearImagenesDescargadas(
+													urlimagen, ip);
 								}
 								Drawable d = new BitmapDrawable(
 										detalleEventoActivity.this
@@ -589,8 +611,12 @@ public class detalleEventoActivity extends FragmentActivity {
 						Toast.LENGTH_SHORT).show();
 			}
 			cambiarAsistencia(asistencia);
-
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+
+	}
 }

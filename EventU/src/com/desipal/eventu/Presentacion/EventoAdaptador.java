@@ -1,7 +1,6 @@
 package com.desipal.eventu.Presentacion;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.desipal.eventu.MainActivity;
@@ -21,8 +20,7 @@ import com.desipal.eventu.Entidades.miniEventoEN;
 public class EventoAdaptador extends BaseAdapter {
 	private Context mContext;
 	protected List<miniEventoEN> items;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",
-			MainActivity.currentLocale);
+	
 	private boolean[] array = new boolean[300];
 	private static LayoutInflater inflater = null;
 
@@ -66,11 +64,11 @@ public class EventoAdaptador extends BaseAdapter {
 
 			TextView txtFecha = (TextView) vista
 					.findViewById(R.id.txtFechaEvento);
-			String fecha = dateFormat.format(item.getFecha());
+			String fecha = MainActivity.formatoFechaMostrar.format(item.getFecha());
 
 			// Si el evento tiene fecha de fin se agrega
 			if (item.getFechaFin() != null)
-				fecha = fecha + " - " + dateFormat.format(item.getFechaFin());
+				fecha = fecha + " - " + MainActivity.formatoFechaMostrar.format(item.getFechaFin());
 
 			txtFecha.setText(fecha);
 			TextView txtDescrip = (TextView) vista

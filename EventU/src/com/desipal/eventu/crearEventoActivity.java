@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,6 +33,7 @@ import com.desipal.eventu.PopUp.timepicker;
 import com.desipal.eventu.Presentacion.listaImagenesAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -61,7 +65,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 
 public class crearEventoActivity extends FragmentActivity {
 
@@ -104,15 +107,18 @@ public class crearEventoActivity extends FragmentActivity {
 	private RelativeLayout relImagenes;
 	private GoogleMap mapaLocalizacion;
 	private RelativeLayout relativeMapa;
+	private RelativeLayout relBloquear;
 	private EditText[] editError = new EditText[] { edNombre, edDesc,
 			edDireccion, edCiudad, edFechaIni, edFechaFin };
 
 	// IdCategoria
 	int IdCategoriaSel = 0;
 	boolean errorspiner = true;
-	List<categoriaEN> listaCategorias = null;
+	private List<categoriaEN> listaCategorias = null;
 	private int NUMTOTALFOTOS = 5;
 	public static int contaFotos = 0;
+	private eventoEN EventoModificar = new eventoEN();
+	private boolean esModificar = false;
 
 	@Override
 	public void onBackPressed() {
@@ -128,6 +134,28 @@ public class crearEventoActivity extends FragmentActivity {
 		getWindow().setBackgroundDrawableResource(android.R.color.black);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.crearevento);
+		relBloquear = (RelativeLayout) findViewById(R.id.relBloquear);
+		// Modificar
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			relBloquear.setVisibility(View.VISIBLE);
+			EventoModificar.setIdEvento(extras.getInt("idEvento"));
+			esModificar = true;
+			// PETICION
+			ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+			parametros.add(new BasicNameValuePair("idEvento", EventoModificar
+					.getIdEvento() + ""));
+			parametros.add(new BasicNameValuePair("idDispositivo",
+					MainActivity.IDDISPOSITIVO));
+			parametros.add(new BasicNameValuePair("latitud",
+					MainActivity.posicionActual.latitude + ""));
+			parametros.add(new BasicNameValuePair("longitud",
+					MainActivity.posicionActual.longitude + ""));
+			String URL = "http://desipal.hol.es/app/eventos/verEvento.php";
+			peticionVerEvento petVerEvento = new peticionVerEvento(parametros,
+					crearEventoActivity.this);
+			petVerEvento.execute(new String[] { URL });
+		}
 		actividad = this;
 		arrayImagen = new ArrayList<Bitmap>();
 
@@ -163,7 +191,6 @@ public class crearEventoActivity extends FragmentActivity {
 				.findFragmentById(R.id.mapaLocalizacion)).getMap();
 
 		// Spinner catgorias
-
 		listaCategorias = Herramientas
 				.Obtenercategorias(crearEventoActivity.this);
 		String a[] = new String[listaCategorias.size()];
@@ -297,8 +324,13 @@ public class crearEventoActivity extends FragmentActivity {
 							recoger = true;
 						} else {
 							relativeMapa.setVisibility(View.VISIBLE);
-							Latitud = loc.latitude;
-							Longitud = loc.longitude;
+							if (esModificar) {
+								Latitud = EventoModificar.getLatitud();
+								Longitud = EventoModificar.getLongitud();
+							} else {
+								Latitud = loc.latitude;
+								Longitud = loc.longitude;
+							}
 							mapaLocalizacion.clear();
 							LatLng Posicion = new LatLng(Latitud, Longitud);
 							mapaLocalizacion.addMarker(new MarkerOptions()
@@ -345,10 +377,8 @@ public class crearEventoActivity extends FragmentActivity {
 								actividad,
 								"La primera imagen seleccionada se utilizara como imagen principal",
 								Toast.LENGTH_LONG).show();
-				}
-				else
-					Toast.makeText(
-							actividad,
+				} else
+					Toast.makeText(actividad,
 							"Se ha cumplido el maximo de fotos",
 							Toast.LENGTH_LONG).show();
 			}
@@ -386,6 +416,7 @@ public class crearEventoActivity extends FragmentActivity {
 	@SuppressWarnings("deprecation")
 	protected boolean crearEvento() {
 		try {
+			relBloquear.setVisibility(View.VISIBLE);
 			eventoEN evento = new eventoEN();
 
 			editError[0] = edNombre;
@@ -538,10 +569,6 @@ public class crearEventoActivity extends FragmentActivity {
 					int i = 1;
 					for (Bitmap imagen : arrayImagen) {
 						ByteArrayOutputStream bao = new ByteArrayOutputStream();
-						/*
-						 * imagen = Herramientas.disminuirImagen(imagen,
-						 * ESCALAMAXIMA);
-						 */
 						imagen.compress(Bitmap.CompressFormat.JPEG, 80, bao);
 						byte[] ba = bao.toByteArray();
 						String ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
@@ -590,9 +617,14 @@ public class crearEventoActivity extends FragmentActivity {
 								"0"));
 					}
 					crearEventoActivity.Creacionsatisfactoria = 1;
-					String URL = "http://desipal.hol.es/app/eventos/alta.php";
-					creacionEvento peticion = new creacionEvento(
-							nameValuePairs);
+					String URL = "";
+					if (esModificar) {
+						URL = "http://desipal.hol.es/app/eventos/modificar.php";
+						nameValuePairs.add(new BasicNameValuePair("idEvento",
+								EventoModificar.getIdEvento() + ""));
+					} else
+						URL = "http://desipal.hol.es/app/eventos/alta.php";
+					creacionEvento peticion = new creacionEvento(nameValuePairs);
 					peticion.execute(new String[] { URL });
 
 				} catch (Exception e) {
@@ -605,11 +637,13 @@ public class crearEventoActivity extends FragmentActivity {
 				Toast.makeText(actividad, "Rellene todos los campos",
 						Toast.LENGTH_SHORT).show();
 				btnCrearEvento.setEnabled(true);
+				relBloquear.setVisibility(View.GONE);
 			}
 		} catch (Exception e) {
 			btnCrearEvento.setEnabled(true);
 			Toast.makeText(actividad, "Error:" + e.getMessage(),
 					Toast.LENGTH_LONG).show();
+			relBloquear.setVisibility(View.GONE);
 			error = true;
 		}
 
@@ -617,16 +651,20 @@ public class crearEventoActivity extends FragmentActivity {
 	}
 
 	public static void refrescarLista() {
-		GridView gridview = (GridView) actividad
-				.findViewById(R.id.listImagenes);
-		gridview.setAdapter(new listaImagenesAdapter(actividad, arrayImagen));
-		float altura = Herramientas.convertDpToPixel(55 * arrayImagen.size(),
-				actividad);// Tamaño de la imagen
-		if (altura > 0)
-			gridview.setVisibility(View.VISIBLE);
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
-				(int) altura);
-		gridview.setLayoutParams(params);
+		try {
+			GridView gridview = (GridView) actividad
+					.findViewById(R.id.listImagenes);
+			gridview.setAdapter(new listaImagenesAdapter(actividad, arrayImagen));
+			float altura = Herramientas.convertDpToPixel(
+					55 * arrayImagen.size(), actividad);// Tamaño de la imagen
+			if (altura > 0)
+				gridview.setVisibility(View.VISIBLE);
+			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+					(int) altura);
+			gridview.setLayoutParams(params);
+		} catch (Exception e) {
+			e.toString();
+		}
 	}
 
 	protected void ventanaModal() {
@@ -652,7 +690,7 @@ public class crearEventoActivity extends FragmentActivity {
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
 	}
-	
+
 	public class creacionEvento extends AsyncTask<String, Void, Void> {
 
 		private ArrayList<NameValuePair> parametros;
@@ -671,7 +709,8 @@ public class crearEventoActivity extends FragmentActivity {
 
 					HttpResponse execute = client.execute(httppost);
 					InputStream content = execute.getEntity().getContent();
-					BufferedReader r = new BufferedReader(new InputStreamReader(content));
+					BufferedReader r = new BufferedReader(
+							new InputStreamReader(content));
 					StringBuilder total = new StringBuilder();
 					String line;
 					while ((line = r.readLine()) != null) {
@@ -682,21 +721,28 @@ public class crearEventoActivity extends FragmentActivity {
 					} else {
 						if (total.toString().equals("ERROR_NO_RESULTS_FOUND"))
 							crearEventoActivity.Creacionsatisfactoria = 2;
-						else if (total.toString().contains("ERROR_TOO_MANY_RESULTS")) {
+						else if (total.toString().contains(
+								"ERROR_TOO_MANY_RESULTS")) {
 							JSONObject jobj = new JSONObject(total.toString());
-							JSONArray jlist = new JSONArray(jobj.getString("list"));
-							crearEventoActivity.opcionesDireccion = new seleccionUbicacionEN[jlist.length()];
+							JSONArray jlist = new JSONArray(
+									jobj.getString("list"));
+							crearEventoActivity.opcionesDireccion = new seleccionUbicacionEN[jlist
+									.length()];
 							for (int i = 0; i < jlist.length(); i++) {
-								JSONObject item = new JSONObject(jlist.get(i).toString());
+								JSONObject item = new JSONObject(jlist.get(i)
+										.toString());
 								seleccionUbicacionEN ubi = new seleccionUbicacionEN();
 								ubi.setDireccion(item.getString("direccion"));
-								ubi.setLongitud(Double.valueOf(item.getString("longitud")));
-								ubi.setLatitud(Double.valueOf(item.getString("latitud")));
+								ubi.setLongitud(Double.valueOf(item
+										.getString("longitud")));
+								ubi.setLatitud(Double.valueOf(item
+										.getString("latitud")));
 								crearEventoActivity.opcionesDireccion[i] = ubi;
 							}
 							crearEventoActivity.Creacionsatisfactoria = 3;
 
-						} else if (total.toString().equals("ERROR_NO_RESULT_VERIFIED"))
+						} else if (total.toString().equals(
+								"ERROR_NO_RESULT_VERIFIED"))
 							crearEventoActivity.Creacionsatisfactoria = 4;
 						else
 							crearEventoActivity.Creacionsatisfactoria = 1;
@@ -709,40 +755,176 @@ public class crearEventoActivity extends FragmentActivity {
 			}
 			return null;
 		}
+
 		@Override
 		protected void onPostExecute(Void result) {
-			// TODO Auto-generated method stub
 			super.onPostExecute(result);
+			relBloquear.setVisibility(View.GONE);
 			if (crearEventoActivity.Creacionsatisfactoria == 0) {
 				arrayImagen.clear();
 				finish();
 				Toast.makeText(crearEventoActivity.this, "Evento creado",
 						Toast.LENGTH_SHORT).show();
-				//Al crear evento fuerzas el refresco de lista de Mis Eventos
+				// Al crear evento fuerzas el refresco de lista de Mis Eventos
 				Fragment3.view = null;
 			} else {
 				if (crearEventoActivity.Creacionsatisfactoria == 1)
 					Toast.makeText(crearEventoActivity.this,
-							"Error al crear evento",
-							Toast.LENGTH_SHORT).show();
+							"Error al crear evento", Toast.LENGTH_SHORT).show();
 				else if (crearEventoActivity.Creacionsatisfactoria == 2)
-					Toast.makeText(
-							crearEventoActivity.this,
+					Toast.makeText(crearEventoActivity.this,
 							"No se ha encontrado la dirección especificada.",
 							Toast.LENGTH_SHORT).show();
 				else if (crearEventoActivity.Creacionsatisfactoria == 3) {
-					Toast.makeText(
-							crearEventoActivity.this,
+					Toast.makeText(crearEventoActivity.this,
 							"La dirección devuelve varios resultados.",
 							Toast.LENGTH_SHORT).show();
 					ventanaModal();
-				}else if(crearEventoActivity.Creacionsatisfactoria == -1)
+				} else if (crearEventoActivity.Creacionsatisfactoria == -1)
 					Toast.makeText(
 							crearEventoActivity.this,
 							"Imposible conectar con el servidor, intentalo pasados unos minutos",
 							Toast.LENGTH_SHORT).show();
 				btnCrearEvento.setEnabled(true);
 			}
+		}
+	}
+
+	public class peticionVerEvento extends AsyncTask<String, Void, Void> {
+		private ArrayList<NameValuePair> parametros;
+
+		public peticionVerEvento(ArrayList<NameValuePair> parametros,
+				Context context) {
+			this.parametros = parametros;
+		}
+
+		@Override
+		protected Void doInBackground(String... urls) {
+			for (String url : urls) {
+				try {
+					DefaultHttpClient client = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(url);
+					httppost.setEntity(new UrlEncodedFormEntity(parametros));
+
+					HttpResponse execute = client.execute(httppost);
+					InputStream content = execute.getEntity().getContent();
+					BufferedReader r = new BufferedReader(
+							new InputStreamReader(content));
+					StringBuilder total = new StringBuilder();
+
+					String line;
+					while ((line = r.readLine()) != null) {
+						total.append(line);
+					}
+
+					if (!total.toString().equals("null")) {
+						JSONObject jobj = new JSONObject(total.toString());
+						JSONObject jsEvento = new JSONObject(
+								jobj.getString("evento"));
+						eventoEN e = new eventoEN();
+
+						e.setIdEvento(jsEvento.getInt("idEvento"));
+						e.setIdCreador(jsEvento.getString("idCreador"));
+						e.setNombre(jsEvento.getString("nombre"));
+						e.setDescripcion(jsEvento.getString("descripcion"));
+						e.setLatitud(jsEvento.getDouble("latitud"));
+						e.setLongitud(jsEvento.getDouble("longitud"));
+						e.setAsistencia(jsEvento.getInt("asistencia"));
+						int temp = jsEvento.getInt("validado");
+						boolean val = temp == 1 ? true : false;
+						e.setValidado(val);
+						temp = jsEvento.getInt("comentarios");
+						val = temp == 1 ? true : false;
+						e.setComentarios(val);
+						e.setDireccion(jsEvento.getString("direccion"));
+						e.setIdCategoria(jsEvento.getInt("idCategoria"));
+						e.setDistancia(jsEvento.getDouble("distancia"));
+						e.setFechaInicio(MainActivity.formatoFecha
+								.parse(jsEvento.getString("fechaInicio")));
+						e.setFechaFin(MainActivity.formatoFecha.parse(jsEvento
+								.getString("fechaFin")));
+						temp = jsEvento.getInt("todoElDia");
+						val = temp == 1 ? true : false;
+						e.setTodoElDia(val);
+						e.setUrl(jsEvento.getString("url"));
+
+						if (!jsEvento.getString("urlImagenes").equals("null")) {
+							JSONObject jurls = new JSONObject(
+									jsEvento.getString("urlImagenes"));
+
+							for (int i = 0; i < jurls.length(); i++) {
+								String urlimagen = jurls
+										.getString((i + 1) + "");
+								Bitmap img = MainActivity.imageLoader
+										.obtenerImagenesDescargadas(urlimagen);
+								if (img == null) {
+									InputStream ip = (InputStream) new URL(
+											urlimagen).getContent();
+									img = MainActivity.imageLoader
+											.cachearImagenesDescargadas(
+													urlimagen, ip);
+								}
+								arrayImagen.add(img);
+							}
+						}
+						contaFotos = arrayImagen.size();
+						EventoModificar = e;
+					}
+
+				} catch (Exception e) {
+					EventoModificar = null;
+				}
+			}
+			return null;
+		}
+
+		protected void onPostExecute(Void result) {
+			if (EventoModificar != null)
+				verEventoParaModificar();
+		}
+	}
+
+	private void verEventoParaModificar() {
+		try {
+			edNombre.setText(EventoModificar.getNombre());
+			edDesc.setText(EventoModificar.getDescripcion());
+			relativeMapa.setVisibility(View.VISIBLE);
+			tgUbicacion.setChecked(true);
+			// Fechas
+			Date fecha = EventoModificar.getFechaInicio();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(fecha);
+			SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm",
+					MainActivity.currentLocale);
+			if (EventoModificar.isTodoElDia()) {
+				chTodoElDia.setChecked(true);
+				String fechaini = MainActivity.formatoFechaMostrar
+						.format(EventoModificar.getFechaInicio());
+				edFechaIni.setText(fechaini);
+				String horaini = formatoHora.format(EventoModificar
+						.getFechaInicio());
+				edHoraIni.setText(horaini);
+			} else {
+				Date fechaFin = EventoModificar.getFechaFin();
+				Calendar calfin = Calendar.getInstance();
+				calfin.setTime(fechaFin);
+				String fechafin = MainActivity.formatoFechaMostrar
+						.format(EventoModificar.getFechaFin());
+				edFechaFin.setText(fechafin);
+				String horafin = formatoHora.format(EventoModificar
+						.getFechaFin());
+				edHoraFin.setText(horafin);
+			}
+			spiCategoria.setSelection(EventoModificar.getIdCategoria());
+			if (EventoModificar.isComentarios())
+				tgComentarios.setSelected(true);
+			// Pendiente realizar imagenes
+
+			refrescarLista();
+			btnCrearEvento.setText("Modificar");
+			relBloquear.setVisibility(View.GONE);
+		} catch (Exception e) {
+			e.toString();
 		}
 	}
 }

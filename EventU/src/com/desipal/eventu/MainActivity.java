@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,19 +19,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.desipal.eventu.Extras.InicioMuestraDrawer;
 import com.desipal.eventu.Extras.categorias;
 import com.desipal.eventu.Imagenes.ImageLoader;
 import com.desipal.eventu.Presentacion.EntryItem;
 import com.desipal.eventu.Presentacion.Item;
 import com.desipal.eventu.Presentacion.SectionItem;
 import com.desipal.eventu.Presentacion.adaptadorListaDrawer;
+import com.desipal.eventu.Servicios.EstadoConexion;
 import com.desipal.eventu.Servicios.Localizacion;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -43,13 +48,16 @@ public class MainActivity extends ActionBarActivity implements
 	private ListView drawerList;
 	private ActionBarDrawerToggle drawerToggle;
 	private int PosicionActual;
-	public static int ELEMENTOSLISTA = 8;
+	public static int ELEMENTOSLISTA = 20;
 	public static Locale currentLocale = new Locale("es", "ES");
 	public static String IDDISPOSITIVO = null;
 	public static boolean errorServicios = false;
+	public static boolean estadoConexion = false;
 	public static String fCategorias = "categorias.json";
 	public static SimpleDateFormat formatoFecha = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss", currentLocale);
+	public static SimpleDateFormat formatoFechaMostrar = new SimpleDateFormat(
+			"dd/MM/yyyy", MainActivity.currentLocale);
 	public static LatLng posicionActual = new LatLng(0, 0);
 	private Intent servicio;
 	public static ImageLoader imageLoader;// Cache de Imagenes General
@@ -60,6 +68,8 @@ public class MainActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		EstadoConexion e = new EstadoConexion();
+		e.onReceive(this, null);
 		// Localizacion
 		servicio = new Intent(this, Localizacion.class);
 		startService(servicio);
@@ -83,6 +93,8 @@ public class MainActivity extends ActionBarActivity implements
 
 		drawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
+
+		// ///
 		items.add(new SectionItem("Incio"));
 		// Eventos próximos=Inicio
 		items.add(new EntryItem(R.drawable.ic_menu_eventprox,
@@ -157,6 +169,7 @@ public class MainActivity extends ActionBarActivity implements
 
 				drawerLayout.closeDrawer(drawerList);
 			}
+
 		});
 
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
@@ -168,8 +181,6 @@ public class MainActivity extends ActionBarActivity implements
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				// getSupportActionBar().setTitle(R.string.quedeseaver);
-				// <string name="quedeseaver">¿Que desea ver?</string>
 				ActivityCompat.invalidateOptionsMenu(MainActivity.this);
 			}
 		};
@@ -182,6 +193,13 @@ public class MainActivity extends ActionBarActivity implements
 		PosicionActual = 1;
 		// Iniciamos cache general de imagenes
 		imageLoader = new ImageLoader(MainActivity.this);
+
+		InicioMuestraDrawer Pinicion = new InicioMuestraDrawer(
+				MainActivity.this, drawerLayout, drawerList);
+		Pinicion.run();
+
+		// Funcion para establecer el ancho del gesto para desplegar el menu
+		this.establecerAnchoMenu();
 	}
 
 	@Override
@@ -241,6 +259,41 @@ public class MainActivity extends ActionBarActivity implements
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		drawerToggle.onConfigurationChanged(newConfig);
+		establecerAnchoMenu();
+	}
+
+	protected void establecerAnchoMenu() {
+		// Extender el evento para mostrar el menú
+		try {
+
+			Field mDragger = drawerLayout.getClass().getDeclaredField(
+					"mLeftDragger");// mRightDragger for right obvio usly
+			mDragger.setAccessible(true);
+			ViewDragHelper draggerObj = (ViewDragHelper) mDragger
+					.get(drawerLayout);
+
+			Display display = getWindowManager().getDefaultDisplay();
+
+			int ancho = display.getWidth();
+
+			/*
+			 * Point size = new Point(); display.getSize(size); int width =
+			 * size.x;
+			 */
+			Field mEdgeSize = draggerObj.getClass().getDeclaredField(
+					"mEdgeSize");
+
+			mEdgeSize.setAccessible(true);
+			// int edge = mEdgeSize.getInt(draggerObj);
+
+			mEdgeSize.setInt(draggerObj, ancho / 3);
+		} catch (NoSuchFieldException en) {
+			en.printStackTrace();
+		} catch (IllegalArgumentException en) {
+			en.printStackTrace();
+		} catch (IllegalAccessException en) {
+			en.printStackTrace();
+		}
 	}
 
 	@Override

@@ -34,428 +34,448 @@
             android:textSize="12sp" />
     </RelativeLayout>
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/relCabecera"
-        android:background="#ddd" >
+        android:layout_below="@+id/relCabecera" >
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp" >
+            android:layout_height="fill_parent"
+            android:background="#ddd" >
 
-            <!-- DATOS DEL EVENTO -->
-
-            <TextView
-                android:id="@+id/txtDatosEvento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/crearEventoDatosEvento"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txtNombre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/crearEventoNombre" />
-
-            <EditText
-                android:id="@+id/editNombre"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/campo"
-                android:hint="@string/crearEventoNombre"
-                android:inputType="text"
-                android:lines="1"
-                android:maxLength="30" >
+                android:orientation="vertical"
+                android:padding="10dp" >
 
-                <requestFocus />
-            </EditText>
-
-            <TextView
-                android:id="@+id/txtDescrip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/crearEventoDescrip" />
-
-            <EditText
-                android:id="@+id/editDescrip"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/campo"
-                android:hint="@string/crearEventoHintDescrip"
-                android:inputType="textMultiLine" />
-
-            <TextView
-                android:id="@+id/txtCategoria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/crearEventoCategoria" />
-
-            <Spinner
-                android:id="@+id/spiCategorias"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="5dp"
-                android:background="@anim/anim_boton"
-                android:minWidth="100dp"
-                android:prompt="@string/Categorias" />
-
-            <!-- LOCALIZACION -->
-
-            <TextView
-                android:id="@+id/txtLocalizacionEvento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/crearEventoLocalEvento"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
+                <!-- DATOS DEL EVENTO -->
 
                 <TextView
-                    android:id="@+id/txtUbicacion"
+                    android:id="@+id/txtDatosEvento"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/togUbicacion"
-                    android:layout_marginRight="5dp"
-                    android:text="@string/crearEventoubicacion" />
-
-                <ToggleButton
-                    android:id="@+id/togUbicacion"
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toRightOf="@+id/txtUbicacion"
-                    android:background="@drawable/toggle_bg"
-                    android:checked="false"
-                    android:textOff=""
-                    android:textOn="" />
-            </RelativeLayout>
-
-            <TableLayout
-                android:id="@+id/tableLocalizacion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="*" >
-
-                <TableRow
-                    android:id="@+id/tableRow1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:id="@+id/txtDireccion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/crearEventoDireccion" />
-
-                    <TextView
-                        android:id="@+id/txtNumero"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/crearEventoNumero" />
-
-                    <TextView
-                        android:id="@+id/txtCiudad"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/crearEventoCiudad" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/tableRow2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <EditText
-                        android:id="@+id/editDireccion"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/campo"
-                        android:hint="@string/crearEventoHintDireccion"
-                        android:inputType="text"
-                        android:lines="1"
-                        android:maxLength="30" />
-
-                    <EditText
-                        android:id="@+id/editNumero"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/campo"
-                        android:hint="@string/crearEventoHintNumero"
-                        android:inputType="number"
-                        android:lines="1"
-                        android:maxLength="4"
-                        android:maxWidth="100dp" />
-
-                    <EditText
-                        android:id="@+id/editCiudad"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/campo"
-                        android:hint="@string/crearEventoCiudad"
-                        android:inputType="text"
-                        android:lines="1"
-                        android:maxLength="25" />
-                </TableRow>
-            </TableLayout>
-
-            <RelativeLayout
-                android:id="@+id/relativeMapa"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" 
-                android:visibility="gone"
-                android:paddingTop="10dp">
-
-                <fragment
-                    android:id="@+id/mapaLocalizacion"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="fill_parent"
-                    android:layout_height="120dp" />
-            </RelativeLayout>
-
-            <!-- FECHA DEL EVENTO -->
-
-            <RelativeLayout
-                android:id="@+id/relFechas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:id="@+id/txtFechaEvento"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/crearEventoFechaDelEvento"
+                    android:text="@string/crearEventoDatosEvento"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <CheckBox
-                    android:id="@+id/chTodoElDia"
+                <TextView
+                    android:id="@+id/txtNombre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtFechaEvento"
-                    android:text="@string/crearEventoTodoElDia"
-                    android:textStyle="normal" />
+                    android:layout_marginTop="5dp"
+                    android:text="@string/crearEventoNombre" />
+
+                <EditText
+                    android:id="@+id/editNombre"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/campo"
+                    android:hint="@string/crearEventoNombre"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLength="30" >
+
+                    <requestFocus />
+                </EditText>
+
+                <TextView
+                    android:id="@+id/txtDescrip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/crearEventoDescrip" />
+
+                <EditText
+                    android:id="@+id/editDescrip"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/campo"
+                    android:hint="@string/crearEventoHintDescrip"
+                    android:inputType="textMultiLine" />
+
+                <TextView
+                    android:id="@+id/txtCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/crearEventoCategoria" />
+
+                <Spinner
+                    android:id="@+id/spiCategorias"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@anim/anim_boton"
+                    android:minWidth="100dp"
+                    android:prompt="@string/Categorias" />
+
+                <!-- LOCALIZACION -->
+
+                <TextView
+                    android:id="@+id/txtLocalizacionEvento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/crearEventoLocalEvento"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/txtUbicacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/togUbicacion"
+                        android:layout_marginRight="5dp"
+                        android:text="@string/crearEventoubicacion" />
+
+                    <ToggleButton
+                        android:id="@+id/togUbicacion"
+                        android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toRightOf="@+id/txtUbicacion"
+                        android:background="@drawable/toggle_bg"
+                        android:checked="false"
+                        android:textOff=""
+                        android:textOn="" />
+                </RelativeLayout>
 
                 <TableLayout
-                    android:id="@+id/tableFecha"
+                    android:id="@+id/tableLocalizacion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/chTodoElDia"
                     android:stretchColumns="*" >
 
                     <TableRow
-                        android:id="@+id/table2Row1"
+                        android:id="@+id/tableRow1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" >
 
                         <TextView
-                            android:id="@+id/txtFechaInicio"
+                            android:id="@+id/txtDireccion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
                             android:layout_marginTop="5dp"
-                            android:text="@string/crearEventoFechaInicio" />
+                            android:text="@string/crearEventoDireccion" />
 
                         <TextView
-                            android:id="@+id/txtHoraInicio"
+                            android:id="@+id/txtNumero"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginTop="5dp"
+                            android:text="@string/crearEventoNumero" />
+
+                        <TextView
+                            android:id="@+id/txtCiudad"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_marginTop="5dp"
-                            android:text="@string/crearEventoHoraInicio" />
+                            android:text="@string/crearEventoCiudad" />
                     </TableRow>
 
                     <TableRow
-                        android:id="@+id/table2Row2"
+                        android:id="@+id/tableRow2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" >
 
                         <EditText
-                            android:id="@+id/editFechaInicio"
+                            android:id="@+id/editDireccion"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="5dp"
                             android:layout_marginTop="5dp"
                             android:background="@drawable/campo"
-                            android:focusable="false"
-                            android:hint="@string/hint_fecha"
-                            android:maxLength="10" />
+                            android:hint="@string/crearEventoHintDireccion"
+                            android:inputType="text"
+                            android:lines="1"
+                            android:maxLength="30" />
 
                         <EditText
-                            android:id="@+id/editHoraInicio"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:background="@drawable/campo"
-                            android:focusable="false"
-                            android:hint="@string/hint_hora"
-                            android:maxLength="5" />
-                    </TableRow>
-
-                    <TableRow
-                        android:id="@+id/table2Row3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-
-                        <TextView
-                            android:id="@+id/txtFechaFin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:text="@string/crearEventoFechaFin" />
-
-                        <TextView
-                            android:id="@+id/txtHoraFin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:text="@string/crearEventoHoraFin" />
-                    </TableRow>
-
-                    <TableRow
-                        android:id="@+id/table2Row4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-
-                        <EditText
-                            android:id="@+id/editFechaFin"
-                            android:layout_width="fill_parent"
+                            android:id="@+id/editNumero"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="5dp"
                             android:layout_marginTop="5dp"
                             android:background="@drawable/campo"
-                            android:focusable="false"
-                            android:hint="@string/hint_fecha"
-                            android:maxLength="10" />
+                            android:hint="@string/crearEventoHintNumero"
+                            android:inputType="number"
+                            android:lines="1"
+                            android:maxLength="4"
+                            android:maxWidth="100dp" />
 
                         <EditText
-                            android:id="@+id/editHoraFin"
+                            android:id="@+id/editCiudad"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_marginTop="5dp"
                             android:background="@drawable/campo"
-                            android:focusable="false"
-                            android:hint="@string/hint_hora"
-                            android:maxLength="5" />
+                            android:hint="@string/crearEventoCiudad"
+                            android:inputType="text"
+                            android:lines="1"
+                            android:maxLength="25" />
                     </TableRow>
                 </TableLayout>
 
                 <RelativeLayout
-                    android:id="@+id/relImagenes"
+                    android:id="@+id/relativeMapa"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tableFecha" >
+                    android:paddingTop="10dp"
+                    android:visibility="gone" >
 
-                    <LinearLayout
+                    <fragment
+                        android:id="@+id/mapaLocalizacion"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="fill_parent"
+                        android:layout_height="120dp" />
+                </RelativeLayout>
+
+                <!-- FECHA DEL EVENTO -->
+
+                <RelativeLayout
+                    android:id="@+id/relFechas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/txtFechaEvento"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" >
+                        android:layout_marginTop="10dp"
+                        android:text="@string/crearEventoFechaDelEvento"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/txtSubirImagenes"
+                    <CheckBox
+                        android:id="@+id/chTodoElDia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txtFechaEvento"
+                        android:text="@string/crearEventoTodoElDia"
+                        android:textStyle="normal" />
+
+                    <TableLayout
+                        android:id="@+id/tableFecha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/chTodoElDia"
+                        android:stretchColumns="*" >
+
+                        <TableRow
+                            android:id="@+id/table2Row1"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/crearEventoImagenes"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <Button
-                            android:id="@+id/btnSubirImagen"
-                            android:layout_width="fill_parent"
-                            android:layout_height="40dp"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginTop="10dp"
-                            android:background="@anim/anim_boton"
-                            android:drawableLeft="@drawable/ic_menu_camera"
-                            android:text="@string/crearEventoCargarImagen"
-                            android:textColor="#fff" />
-
-                        <com.desipal.eventu.Extras.ExpandableHeightGridView
-                            android:id="@+id/listImagenes"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/txtComentariosEvento"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/crearEventoComentarios"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <RelativeLayout
-                            android:id="@+id/relComentarios"
-                            android:layout_width="fill_parent"
                             android:layout_height="wrap_content" >
 
                             <TextView
-                                android:id="@+id/txtComentarios"
+                                android:id="@+id/txtFechaInicio"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignBaseline="@+id/togComentarios"
-                                android:layout_marginRight="5dp"
-                                android:text="@string/crearEventoPerComentarios" />
-
-                            <ToggleButton
-                                android:id="@+id/togComentarios"
-                                android:layout_width="80dp"
-                                android:layout_height="30dp"
                                 android:layout_marginLeft="5dp"
                                 android:layout_marginTop="5dp"
-                                android:layout_toRightOf="@+id/txtComentarios"
-                                android:background="@drawable/toggle_bg"
-                                android:checked="false"
-                                android:textOff=""
-                                android:textOn="" />
-                        </RelativeLayout>
+                                android:text="@string/crearEventoFechaInicio" />
 
-                        <Button
-                            android:id="@+id/btnCrearEvento"
+                            <TextView
+                                android:id="@+id/txtHoraInicio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/crearEventoHoraInicio" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/table2Row2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" >
+
+                            <EditText
+                                android:id="@+id/editFechaInicio"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/campo"
+                                android:focusable="false"
+                                android:hint="@string/hint_fecha"
+                                android:maxLength="10" />
+
+                            <EditText
+                                android:id="@+id/editHoraInicio"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/campo"
+                                android:focusable="false"
+                                android:hint="@string/hint_hora"
+                                android:maxLength="5" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/table2Row3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/txtFechaFin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/crearEventoFechaFin" />
+
+                            <TextView
+                                android:id="@+id/txtHoraFin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/crearEventoHoraFin" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/table2Row4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" >
+
+                            <EditText
+                                android:id="@+id/editFechaFin"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/campo"
+                                android:focusable="false"
+                                android:hint="@string/hint_fecha"
+                                android:maxLength="10" />
+
+                            <EditText
+                                android:id="@+id/editHoraFin"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/campo"
+                                android:focusable="false"
+                                android:hint="@string/hint_hora"
+                                android:maxLength="5" />
+                        </TableRow>
+                    </TableLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/relImagenes"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tableFecha" >
+
+                        <LinearLayout
                             android:layout_width="fill_parent"
-                            android:layout_height="40dp"
-                            android:layout_marginTop="10dp"
-                            android:background="@anim/anim_boton"
-                            android:drawableLeft="@drawable/ic_menu_add"
-                            android:text="@string/crearEventoBoton"
-                            android:textColor="#fff" />
-                    </LinearLayout>
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" >
+
+                            <TextView
+                                android:id="@+id/txtSubirImagenes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="@string/crearEventoImagenes"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <Button
+                                android:id="@+id/btnSubirImagen"
+                                android:layout_width="fill_parent"
+                                android:layout_height="40dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@anim/anim_boton"
+                                android:drawableLeft="@drawable/ic_menu_camera"
+                                android:text="@string/crearEventoCargarImagen"
+                                android:textColor="#fff" />
+
+                            <com.desipal.eventu.Extras.ExpandableHeightGridView
+                                android:id="@+id/listImagenes"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/txtComentariosEvento"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="@string/crearEventoComentarios"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <RelativeLayout
+                                android:id="@+id/relComentarios"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content" >
+
+                                <TextView
+                                    android:id="@+id/txtComentarios"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignBaseline="@+id/togComentarios"
+                                    android:layout_marginRight="5dp"
+                                    android:text="@string/crearEventoPerComentarios" />
+
+                                <ToggleButton
+                                    android:id="@+id/togComentarios"
+                                    android:layout_width="80dp"
+                                    android:layout_height="30dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_toRightOf="@+id/txtComentarios"
+                                    android:background="@drawable/toggle_bg"
+                                    android:checked="false"
+                                    android:textOff=""
+                                    android:textOn="" />
+                            </RelativeLayout>
+
+                            <Button
+                                android:id="@+id/btnCrearEvento"
+                                android:layout_width="fill_parent"
+                                android:layout_height="40dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@anim/anim_boton"
+                                android:drawableLeft="@drawable/ic_menu_add"
+                                android:text="@string/crearEventoBoton"
+                                android:textColor="#fff" />
+                        </LinearLayout>
+                    </RelativeLayout>
                 </RelativeLayout>
-            </RelativeLayout>
-        </LinearLayout>
-    </ScrollView>
+            </LinearLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/relBloquear"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#AA000000"
+            android:visibility="gone"
+            android:clickable="true" >
+
+            <ProgressBar
+                style="@android:style/Widget.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>

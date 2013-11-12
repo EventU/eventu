@@ -15,9 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import com.desipal.eventu.Entidades.miniEventoEN;
 import com.desipal.eventu.Presentacion.EventoAdaptador;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -61,7 +63,9 @@ public class Fragment3 extends Fragment {
 			listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 				@Override
 				public void onScrollStateChanged(AbsListView view,
-						int scrollState) {}
+						int scrollState) {
+				}
+
 				@Override
 				public void onScroll(AbsListView view, int firstVisibleItem,
 						int visibleItemCount, int totalItemCount) {
@@ -74,7 +78,89 @@ public class Fragment3 extends Fragment {
 					}
 				}
 			});
-			
+			// Pulsacion larga en un evento
+			listview.setLongClickable(true);
+			listview.setOnItemLongClickListener(new OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						final int posicion, long arg3) {
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+							getActivity());
+					alertDialogBuilder.setMessage("¿Que desea hacer?");
+					alertDialogBuilder.setPositiveButton("Modificar",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent i = new Intent(getActivity(),
+											crearEventoActivity.class);
+									i.putExtra("idEvento", lista.get(posicion)
+											.getIdEvento());
+									startActivity(i);
+								}
+							});
+					alertDialogBuilder.setNegativeButton("Borrar",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+									AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+											getActivity());
+									alertDialogBuilder
+											.setMessage("¿Esta seguro de borrar el evento?");
+
+									alertDialogBuilder
+											.setPositiveButton(
+													"Si",
+													new DialogInterface.OnClickListener() {
+														@Override
+														public void onClick(
+																DialogInterface dialog,
+																int which) {
+															dialog.dismiss();
+															// Realizar peticion
+															String URL = "http://desipal.hol.es/app/eventos/misEventosBorrar.php";
+															PeticionBorrar pet = new PeticionBorrar(
+																	Actividad,
+																	lista.get(
+																			posicion)
+																			.getIdEvento());
+															Toast.makeText(
+																	Actividad,
+																	"¡Evento borrado correctamente!",
+																	Toast.LENGTH_LONG)
+																	.show();
+															pet.execute(new String[] { URL });
+															lista.remove(posicion);
+															adaptador
+																	.notifyDataSetChanged();
+														}
+													});
+									alertDialogBuilder
+											.setNegativeButton(
+													"No",
+													new DialogInterface.OnClickListener() {
+
+														@Override
+														public void onClick(
+																DialogInterface dialog,
+																int which) {
+															dialog.dismiss();
+														}
+													});
+									alertDialogBuilder.create();
+									alertDialogBuilder.show();
+
+								}
+							});
+					alertDialogBuilder.create();
+					alertDialogBuilder.show();
+					return true;
+				}
+			});
+
 			// Comienzo de llenado de listas
 			adaptador = new EventoAdaptador(getActivity(), lista);
 			listview.setAdapter(adaptador);
@@ -88,32 +174,40 @@ public class Fragment3 extends Fragment {
 					startActivity(i);
 				}
 			});
-		} catch (InflateException e) {}
+		} catch (InflateException e) {
+		}
 		return view;
 	}
 
 	private void realizarPeticion() {
-		bloquearPeticion = true;
-		ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
-		parametros.add(new BasicNameValuePair("latitud", Double
-				.toString(MainActivity.posicionActual.latitude)));
-		parametros.add(new BasicNameValuePair("longitud", Double
-				.toString(MainActivity.posicionActual.longitude)));
-		parametros.add(new BasicNameValuePair("idDispositivo",
-				MainActivity.IDDISPOSITIVO));
+		if (MainActivity.estadoConexion) {
+			bloquearPeticion = true;
+			ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+			parametros.add(new BasicNameValuePair("latitud", Double
+					.toString(MainActivity.posicionActual.latitude)));
+			parametros.add(new BasicNameValuePair("longitud", Double
+					.toString(MainActivity.posicionActual.longitude)));
+			parametros.add(new BasicNameValuePair("idDispositivo",
+					MainActivity.IDDISPOSITIVO));
 
-		parametros.add(new BasicNameValuePair("itemsPerPage",
-				MainActivity.ELEMENTOSLISTA + ""));
-		String URL = "http://desipal.hol.es/app/eventos/misEventos.php";
+			parametros.add(new BasicNameValuePair("itemsPerPage",
+					MainActivity.ELEMENTOSLISTA + ""));
+			String URL = "http://desipal.hol.es/app/eventos/misEventos.php";
 
-		parametros.add(new BasicNameValuePair("filtro", ""));
-		parametros.add(new BasicNameValuePair("fecha", ""));
-		pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
+			parametros.add(new BasicNameValuePair("filtro", ""));
+			parametros.add(new BasicNameValuePair("fecha", ""));
+			pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
-		parametros.add(new BasicNameValuePair("page", pagina + ""));
-		parametros.add(new BasicNameValuePair("idCat", "1"));
-		peticion pet = new peticion(parametros, Actividad);
-		pet.execute(new String[] { URL });
+			parametros.add(new BasicNameValuePair("page", pagina + ""));
+			parametros.add(new BasicNameValuePair("idCat", "1"));
+			peticion pet = new peticion(parametros, Actividad);
+			pet.execute(new String[] { URL });
+		} else {
+			listview.removeFooterView(footer);
+			Toast.makeText(getActivity(), R.string.errNoConexion,
+					Toast.LENGTH_LONG).show();
+		}
+
 	}
 
 	// Peticion de Servidor
@@ -162,9 +256,7 @@ public class Fragment3 extends Fragment {
 						finlista = true;
 
 				} catch (Exception e) {
-					Toast.makeText(
-							Actividad,
-							"No se han podido recuperar eventos,pruebe pasados unos minutos",
+					Toast.makeText(Actividad, R.string.errNoServidor,
 							Toast.LENGTH_LONG).show();
 				}
 			}
@@ -176,5 +268,35 @@ public class Fragment3 extends Fragment {
 			bloquearPeticion = false;
 			listview.removeFooterView(footer);
 		}
+	}
+
+	public class PeticionBorrar extends AsyncTask<String, Void, Void> {
+		int idEvento = 0;
+
+		public PeticionBorrar(Context context, int idEvento) {
+			this.idEvento = idEvento;
+		}
+
+		@Override
+		protected Void doInBackground(String... urls) {
+			for (String url : urls) {
+				try {
+					DefaultHttpClient client = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(url);
+					ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+					parametros.add(new BasicNameValuePair("idDispositivo",
+							MainActivity.IDDISPOSITIVO));
+					parametros.add(new BasicNameValuePair("idEvento", idEvento
+							+ ""));
+					httppost.setEntity(new UrlEncodedFormEntity(parametros));
+					client.execute(httppost);
+				} catch (Exception e) {
+					Toast.makeText(Actividad, R.string.errNoServidor,
+							Toast.LENGTH_LONG).show();
+				}
+			}
+			return null;
+		}
+
 	}
 }

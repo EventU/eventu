@@ -92,6 +92,7 @@ public class filtroAvanzado extends Fragment {
 
 			listview.setFadingEdgeLength(0);
 			edNombreFiltro.setText(MainActivity.queryFiltro);
+
 			edFechaFiltro.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -104,12 +105,13 @@ public class filtroAvanzado extends Fragment {
 			btnFiltrar.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					lista.clear();
 					final InputMethodManager imm = (InputMethodManager) getActivity()
 							.getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-					listview.addFooterView(footer);
-					realizarPeticion();
+					if (!bloquearPeticion) {
+						lista.clear();
+						realizarPeticion();
+					}
 				}
 			});
 			btnLimpiar.setOnClickListener(new OnClickListener() {
@@ -120,6 +122,7 @@ public class filtroAvanzado extends Fragment {
 					spCategoriaFiltro.setSelection(0);
 				}
 			});
+
 			// Spinner catgorias
 			listaCategorias = Herramientas.Obtenercategorias(Actividad);
 			String a[] = new String[listaCategorias.size()];
@@ -148,7 +151,6 @@ public class filtroAvanzado extends Fragment {
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
 							&& !finlista) {
 						realizarPeticion();
-						listview.addFooterView(footer);
 					}
 				}
 			});
@@ -207,43 +209,51 @@ public class filtroAvanzado extends Fragment {
 
 	private void realizarPeticion() {
 		try {
-			bloquearPeticion = true;
-			ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
-			parametros.add(new BasicNameValuePair("latitud", Double
-					.toString(MainActivity.posicionActual.latitude)));
-			parametros.add(new BasicNameValuePair("longitud", Double
-					.toString(MainActivity.posicionActual.longitude)));
+			if (MainActivity.estadoConexion) {
+				listview.addFooterView(footer);
+				bloquearPeticion = true;
+				ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+				parametros.add(new BasicNameValuePair("latitud", Double
+						.toString(MainActivity.posicionActual.latitude)));
+				parametros.add(new BasicNameValuePair("longitud", Double
+						.toString(MainActivity.posicionActual.longitude)));
 
-			parametros.add(new BasicNameValuePair("itemsPerPage",
-					MainActivity.ELEMENTOSLISTA + ""));
-			String URL = "http://desipal.hol.es/app/eventos/filtro.php";
+				parametros.add(new BasicNameValuePair("itemsPerPage",
+						MainActivity.ELEMENTOSLISTA + ""));
+				String URL = "http://desipal.hol.es/app/eventos/filtro.php";
 
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new Date());
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
 
-			String stFecha = edFechaFiltro.getText().toString();			
+				String stFecha = edFechaFiltro.getText().toString();
 
-			parametros.add(new BasicNameValuePair("fecha",stFecha));
+				parametros.add(new BasicNameValuePair("fecha", stFecha));
 
-			parametros.add(new BasicNameValuePair("filtro", edNombreFiltro
-					.getText().toString()));
+				parametros.add(new BasicNameValuePair("filtro", edNombreFiltro
+						.getText().toString()));
 
-			int idCategoria =1;
-			boolean encontrado=false;
-			String categoria= spCategoriaFiltro.getSelectedItem().toString();
-			for (int i = 0; i < listaCategorias.size() && !encontrado; i++) {
-				if (listaCategorias.get(i).getTexto().equals(categoria)) {
-					idCategoria = listaCategorias.get(i)
-							.getIdCategoria();
-					encontrado = true;
+				int idCategoria = 1;
+				boolean encontrado = false;
+				String categoria = spCategoriaFiltro.getSelectedItem()
+						.toString();
+				for (int i = 0; i < listaCategorias.size() && !encontrado; i++) {
+					if (listaCategorias.get(i).getTexto().equals(categoria)) {
+						idCategoria = listaCategorias.get(i).getIdCategoria();
+						encontrado = true;
+					}
 				}
-			}
-			parametros.add(new BasicNameValuePair("idCat", idCategoria+""));
-			pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
+				parametros
+						.add(new BasicNameValuePair("idCat", idCategoria + ""));
+				pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
-			parametros.add(new BasicNameValuePair("page", pagina + ""));
-			peticion pet = new peticion(parametros, Actividad);
-			pet.execute(new String[] { URL });
+				parametros.add(new BasicNameValuePair("page", pagina + ""));
+				peticion pet = new peticion(parametros, Actividad);
+				pet.execute(new String[] { URL });
+			} else {
+				listview.removeFooterView(footer);
+				Toast.makeText(getActivity(), R.string.errNoConexion,
+						Toast.LENGTH_LONG).show();
+			}
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -252,6 +262,7 @@ public class filtroAvanzado extends Fragment {
 	// Peticion de Servidor
 	public class peticion extends AsyncTask<String, Void, Void> {
 		private ArrayList<NameValuePair> parametros;
+		private boolean error = false;
 
 		public peticion(ArrayList<NameValuePair> parametros, Context context) {
 			this.parametros = parametros;
@@ -299,14 +310,15 @@ public class filtroAvanzado extends Fragment {
 					} else if (lista.size() > 0)
 						finlista = true;
 					else {
+						Toast.makeText(Actividad, R.string.errNoDatosConsulta,
+								Toast.LENGTH_LONG).show();
 						finlista = true;
 					}
 
 				} catch (Exception e) {
-					Toast.makeText(
-							Actividad,
-							"No se han podido recuperar eventos,pruebe pasados unos minutos",
-							Toast.LENGTH_LONG).show();
+					finlista = true;
+					error = true;
+
 				}
 			}
 			return null;
@@ -316,6 +328,9 @@ public class filtroAvanzado extends Fragment {
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
 			listview.removeFooterView(footer);
+			if (error)
+				Toast.makeText(Actividad, R.string.errNoServidor,
+						Toast.LENGTH_LONG).show();
 		}
 	}
 }

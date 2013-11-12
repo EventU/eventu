@@ -52,7 +52,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class Fragment2 extends Fragment {
 
-	public static List<miniEventoEN> eventos = new ArrayList<miniEventoEN>();
+	private List<miniEventoEN> eventos = new ArrayList<miniEventoEN>();
 
 	boolean bloquearPeticion = false;// bandera que bloquea para no poder jhacer
 										// la peticion
@@ -132,7 +132,7 @@ public class Fragment2 extends Fragment {
 					for (Marker item : listapuntos) {
 						if (item.equals(marker)) {
 							int i = listapuntos.indexOf(item);
-							miniEventoEN sel = Fragment2.eventos.get(i);
+							miniEventoEN sel = eventos.get(i);
 							Intent ac = new Intent(getActivity(),
 									detalleEventoActivity.class);
 							ac.putExtra("idEvento", (long) sel.getIdEvento());
@@ -254,22 +254,96 @@ public class Fragment2 extends Fragment {
 	protected void hacerPeticion() {
 
 		if (!MainActivity.errorServicios) {
-			bloquearPeticion = true;
-			ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
-			parametros.add(new BasicNameValuePair("latitud", Double
-					.toString(MainActivity.posicionActual.latitude)));
-			parametros.add(new BasicNameValuePair("longitud", Double
-					.toString(MainActivity.posicionActual.longitude)));
+			if (MainActivity.estadoConexion) {
+				bloquearPeticion = true;
+				ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+				parametros.add(new BasicNameValuePair("latitud", Double
+						.toString(MainActivity.posicionActual.latitude)));
+				parametros.add(new BasicNameValuePair("longitud", Double
+						.toString(MainActivity.posicionActual.longitude)));
 
-			String URL = "http://desipal.hol.es/app/eventos/eventosCerca.php";
+				String URL = "http://desipal.hol.es/app/eventos/eventosCerca.php";
 
-			parametros.add(new BasicNameValuePair("ratio", seekRadio
-					.getProgress() + ""));
-			pagina = ((int) eventos.size() / MainActivity.ELEMENTOSLISTA) + 1;
+				parametros.add(new BasicNameValuePair("ratio", seekRadio
+						.getProgress() + ""));
+				pagina = ((int) eventos.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
-			parametros.add(new BasicNameValuePair("page", pagina + ""));
-			peticion pet = new peticion(parametros, getActivity());
-			pet.execute(new String[] { URL });
+				parametros.add(new BasicNameValuePair("page", pagina + ""));
+				peticion pet = new peticion(parametros, getActivity());
+				pet.execute(new String[] { URL });
+			} else {
+				gridCerca.removeFooterView(footer);
+				Toast.makeText(getActivity(), R.string.errNoConexion,
+						Toast.LENGTH_LONG).show();
+			}
+		} else {
+			txtErrorCerca.setText("No hay servicios de ubicacion");
+			txtErrorCerca.setVisibility(View.VISIBLE);
+		}
+	}
+
+	public class peticion extends AsyncTask<String, Void, Void> {
+
+		private ArrayList<NameValuePair> parametros;
+		private boolean error = false;
+
+		public peticion(ArrayList<NameValuePair> parametros, Context context) {
+			this.parametros = parametros;
+		}
+
+		@Override
+		protected Void doInBackground(String... urls) {
+			for (String url : urls) {
+				try {
+					DefaultHttpClient client = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(url);
+					httppost.setEntity(new UrlEncodedFormEntity(parametros));
+
+					HttpResponse execute = client.execute(httppost);
+					InputStream content = execute.getEntity().getContent();
+					BufferedReader r = new BufferedReader(
+							new InputStreamReader(content));
+					StringBuilder total = new StringBuilder();
+					String line;
+					while ((line = r.readLine()) != null) {
+						total.append(line);
+					}
+					if (!total.toString().equals("null")) {
+						JSONArray o = new JSONArray(total.toString());
+						for (int i = 0; o.length() > i; i++) {
+							miniEventoEN e = new miniEventoEN();
+							JSONObject jobj = o.getJSONObject(i);
+							e.setIdEvento(jobj.getInt("idEvento"));
+							e.setNombre(jobj.getString("nombre"));
+							e.setDescripcion(jobj.getString("descripcion"));
+							e.setDistancia(jobj.getDouble("distancia"));
+							e.setUrl(jobj.getString("url"));
+							e.setLatitud(jobj.getDouble("latitud"));
+							e.setLongitud(jobj.getDouble("longitud"));
+							e.setUrlImagen(jobj.getString("imagen"));
+							e.setFecha(MainActivity.formatoFecha.parse(jobj
+									.getString("fecha")));
+							eventos.add(e);
+						}
+					} else if (eventos.size() > 0)
+						finlista = true;
+
+				} catch (Exception e) {
+					finlista = true;
+					error = true;
+				}
+			}
+			return null;
+		}
+
+		protected void onPostExecute(Void result) {
+			adaptador.notifyDataSetChanged();
+			gridCerca.removeFooterView(footer);
+			bloquearPeticion = false;
+			btnBuscarCerca.setEnabled(true);
+			if (error)
+				Toast.makeText(Actividad, R.string.errNoConexion,
+						Toast.LENGTH_LONG).show();
 
 			if (togOpcionMapa.isChecked()) { // MAPA
 				map.clear();
@@ -310,84 +384,6 @@ public class Fragment2 extends Fragment {
 				togOpcionMapa.setEnabled(true);
 				btnBuscarCerca.setEnabled(true);
 			}
-		} else {
-			txtErrorCerca.setText("No hay servicios de ubicacion");
-			txtErrorCerca.setVisibility(View.VISIBLE);
-		}
-	}
-
-	public class peticion extends AsyncTask<String, Void, Void> {
-
-		private ArrayList<NameValuePair> parametros;
-
-		public peticion(ArrayList<NameValuePair> parametros, Context context) {
-			this.parametros = parametros;
-		}
-
-		@Override
-		protected Void doInBackground(String... urls) {
-			for (String url : urls) {
-				try {
-					DefaultHttpClient client = new DefaultHttpClient();
-					HttpPost httppost = new HttpPost(url);
-					httppost.setEntity(new UrlEncodedFormEntity(parametros));
-
-					HttpResponse execute = client.execute(httppost);
-					InputStream content = execute.getEntity().getContent();
-					BufferedReader r = new BufferedReader(
-							new InputStreamReader(content));
-					StringBuilder total = new StringBuilder();
-					String line;
-					while ((line = r.readLine()) != null) {
-						total.append(line);
-					}
-					if (!total.toString().equals("null")) {
-						JSONArray o = new JSONArray(total.toString());
-						for (int i = 0; o.length() > i; i++) {
-							miniEventoEN e = new miniEventoEN();
-							JSONObject jobj = o.getJSONObject(i);
-							e.setIdEvento(jobj.getInt("idEvento"));
-							e.setNombre(jobj.getString("nombre"));
-							e.setDescripcion(jobj.getString("descripcion"));
-							e.setDistancia(jobj.getDouble("distancia"));
-							e.setUrl(jobj.getString("url"));
-							e.setLatitud(jobj.getDouble("latitud"));
-							e.setLongitud(jobj.getDouble("longitud"));
-							e.setUrlImagen(jobj.getString("imagen"));
-
-							/*
-							 * if (!jobj.getString("imagen").equals("noimagen"))
-							 * { String ere = jobj.getString("imagen"); Bitmap
-							 * bitmap = BitmapFactory
-							 * .decodeStream((InputStream) new URL(ere)
-							 * .getContent()); Drawable d = new BitmapDrawable(
-							 * mContext.getResources(), bitmap); e.setImagen(d);
-							 * } else e.setImagen(mContext.getResources()
-							 * .getDrawable(R.drawable.default_img));
-							 */
-
-							e.setFecha(MainActivity.formatoFecha.parse(jobj
-									.getString("fecha")));
-							eventos.add(e);
-						}
-					} else if (eventos.size() > 0)
-						finlista = true;
-
-				} catch (Exception e) {
-					Toast.makeText(
-							Actividad,
-							"No se han podido recuperar eventos,pruebe pasados unos minutos",
-							Toast.LENGTH_LONG).show();
-				}
-			}
-			return null;
-		}
-
-		protected void onPostExecute(Void result) {
-			adaptador.notifyDataSetChanged();
-			gridCerca.removeFooterView(footer);		
-			bloquearPeticion = false;
-			btnBuscarCerca.setEnabled(true);
 
 		}
 	}

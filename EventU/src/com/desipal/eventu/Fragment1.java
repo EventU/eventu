@@ -22,8 +22,8 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import com.desipal.eventu.Entidades.miniEventoEN;
 import com.desipal.eventu.MainActivity;
@@ -65,6 +65,7 @@ public class Fragment1 extends Fragment {
 			listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 				@Override
 				public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+					finlista = false;
 					lista.clear();
 					adaptador.notifyDataSetChanged();
 				}
@@ -72,7 +73,8 @@ public class Fragment1 extends Fragment {
 			listView.setOnScrollListener(new OnScrollListener() {
 				@Override
 				public void onScrollStateChanged(AbsListView view,
-						int scrollState) {}
+						int scrollState) {
+				}
 
 				@Override
 				public void onScroll(AbsListView view, int firstVisibleItem,
@@ -105,44 +107,54 @@ public class Fragment1 extends Fragment {
 			});
 		} catch (InflateException e) {
 			// Si la vista ya existe retorna la anterior.
-		}		
+		}
 		return view;
 	}
 
 	private void realizarPeticion() {
-		bloquearPeticion = true;
-		ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
-		parametros.add(new BasicNameValuePair("latitud", Double
-				.toString(MainActivity.posicionActual.latitude)));
-		parametros.add(new BasicNameValuePair("longitud", Double
-				.toString(MainActivity.posicionActual.longitude)));
+		try {
+			if (MainActivity.estadoConexion) {
+				bloquearPeticion = true;
+				ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
+				parametros.add(new BasicNameValuePair("latitud", Double
+						.toString(MainActivity.posicionActual.latitude)));
+				parametros.add(new BasicNameValuePair("longitud", Double
+						.toString(MainActivity.posicionActual.longitude)));
 
-		parametros.add(new BasicNameValuePair("itemsPerPage",
-				MainActivity.ELEMENTOSLISTA + ""));
-		String URL = "http://desipal.hol.es/app/eventos/filtro.php";
+				parametros.add(new BasicNameValuePair("itemsPerPage",
+						MainActivity.ELEMENTOSLISTA + ""));
+				String URL = "http://desipal.hol.es/app/eventos/filtro.php";
 
-		parametros.add(new BasicNameValuePair("filtro", ""));
+				parametros.add(new BasicNameValuePair("filtro", ""));
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		calendar.add(Calendar.MONTH, 1);
-		String fechaMes = calendar.get(Calendar.DAY_OF_MONTH) + "/"
-				+ (calendar.get(Calendar.MONTH) + 1) + "/"
-				+ calendar.get(Calendar.YEAR);
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.add(Calendar.MONTH, 1);
+				String fechaMes = calendar.get(Calendar.DAY_OF_MONTH) + "/"
+						+ (calendar.get(Calendar.MONTH) + 1) + "/"
+						+ calendar.get(Calendar.YEAR);
 
-		parametros.add(new BasicNameValuePair("fechaMes", fechaMes));
-		pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
+				parametros.add(new BasicNameValuePair("fechaMes", fechaMes));
+				pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
-		parametros.add(new BasicNameValuePair("page", pagina + ""));
-		parametros.add(new BasicNameValuePair("idCat", "1"));
-		peticion pet = new peticion(parametros, Actividad);
-		pet.execute(new String[] { URL });
+				parametros.add(new BasicNameValuePair("page", pagina + ""));
+				parametros.add(new BasicNameValuePair("idCat", "1"));
+				peticion pet = new peticion(parametros, Actividad);
+				pet.execute(new String[] { URL });
+			} else {
+				listView.onRefreshComplete();
+				Toast.makeText(getActivity(), R.string.errNoConexion,
+						Toast.LENGTH_LONG).show();
+			}
+		} catch (Exception e) {
+			e.toString();
+		}
 	}
 
 	// Peticion de Servidor
 	public class peticion extends AsyncTask<String, Void, Void> {
-
 		private ArrayList<NameValuePair> parametros;
+		private boolean error = false;
 
 		public peticion(ArrayList<NameValuePair> parametros, Context context) {
 			this.parametros = parametros;
@@ -179,16 +191,6 @@ public class Fragment1 extends Fragment {
 							e.setLongitud(jobj.getDouble("longitud"));
 							// nuevo
 							e.setUrlImagen(jobj.getString("imagen"));
-							/*
-							 * if (!jobj.getString("imagen").equals("noimagen"))
-							 * { String ere = jobj.getString("imagen"); Bitmap
-							 * bitmap = BitmapFactory
-							 * .decodeStream((InputStream) new URL(ere)
-							 * .getContent()); Drawable d = new BitmapDrawable(
-							 * mContext.getResources(), bitmap); e.setImagen(d);
-							 * } else e.setImagen(mContext.getResources()
-							 * .getDrawable(R.drawable.default_img));
-							 */
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
 
@@ -204,10 +206,8 @@ public class Fragment1 extends Fragment {
 					}
 
 				} catch (Exception e) {
-					Toast.makeText(
-							Actividad,
-							"No se han podido recuperar eventos,pruebe pasados unos minutos",
-							Toast.LENGTH_LONG).show();
+					finlista = true;
+					error = true;
 				}
 			}
 			return null;
@@ -217,6 +217,10 @@ public class Fragment1 extends Fragment {
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
 			listView.onRefreshComplete();
+			if (error)
+				Toast.makeText(Actividad, R.string.errNoServidor,
+						Toast.LENGTH_LONG).show();
+
 			// listView.removeFooterView(footer);
 		}
 	}

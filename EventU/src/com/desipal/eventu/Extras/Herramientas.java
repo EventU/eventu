@@ -161,7 +161,7 @@ public class Herramientas {
 		float dp = px / (metrics.densityDpi / 160f);
 		return dp;
 	}
-	
+
 	public static List<categoriaEN> Obtenercategorias(Activity act) {
 		BufferedReader fin;
 		List<categoriaEN> lista = new ArrayList<categoriaEN>();
@@ -187,21 +187,16 @@ public class Herramientas {
 			} else
 				lista = null;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			lista = null;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			lista = null;
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			lista = null;
 		}
-
 		return lista;
-
 	}
 
 }

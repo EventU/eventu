@@ -32,6 +32,7 @@
     <string name="txtComentarios">Ver Comentarios</string>
     <string name="opina">Opina</string>
     <string name="comentarios">Comentarios</string>
+    <string name="comoLlegar">Como llegar</string>
     <string name="verMasComentarios">Ver mas comentarios</string>
 
     <!-- Crear evento -->
@@ -77,5 +78,15 @@
     <string name="dialogComentadoOK">Comentario enviado</string>
     <string name="dialogComentadoNULL">Error al enviar el comentario. Intentelo mas tarde</string>
     <string name="dialogNoComentado">El campo comentario no puede estar vacio</string>
+
+    <!-- Errores -->
+    <string name="errNoConexion">No dispone de conexión, intentelo en unos minutos.</string>
+    <string name="errNoUbicacion">Su ubicación no se encuentra disponible.</string>
+    <string name="errNoDatosConsulta">La consulta no devolvió ningún evento.</string>
+    <string name="errNoServidor">No se han podido recuperar eventos,pruebe pasados unos minutos.</string>
+    <string name="mensajeGPS">Para mejorar tu experiencia en Eventu debe activar la ubicación de redes móviles y GPS ¿Desea activarlo?</string>
+    <string name="mensajeNoRecordar">No recordar</string>
+    <string name="mensajeCancelar">Cancelar</string>
+    <string name="mensajeSi">Sí</string>
 
 </resources>

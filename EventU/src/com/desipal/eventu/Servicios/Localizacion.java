@@ -34,12 +34,12 @@ public class Localizacion extends Service {
 				LocationManager.NETWORK_PROVIDER, 500, 0, listener);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				500, 0, listener);
-		//Al iniciar la aplicacion cojemos la posicion de la wifi
+		// Al iniciar la aplicacion cojemos la posicion de la wifi
 		Location locteml = locationManager
 				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		MainActivity.posicionActual = new LatLng(locteml.getLatitude(),
 				locteml.getLongitude());
-		previousBestLocation=locteml;
+		previousBestLocation = locteml;
 	}
 
 	@Override
@@ -135,13 +135,13 @@ public class Localizacion extends Service {
 		}
 
 		public void onProviderDisabled(String provider) {
-			Toast.makeText(getApplicationContext(), "Gps Deshabilitado",
-					Toast.LENGTH_SHORT).show();
+			// Toast.makeText(getApplicationContext(),
+			// "Gps Deshabilitado",Toast.LENGTH_SHORT).show();
 		}
 
 		public void onProviderEnabled(String provider) {
-			Toast.makeText(getApplicationContext(), "Gps Habilitado",
-					Toast.LENGTH_SHORT).show();
+			// Toast.makeText(getApplicationContext(),
+			// "Gps Habilitado",Toast.LENGTH_SHORT).show();
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras) {
