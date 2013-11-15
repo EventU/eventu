@@ -8,7 +8,8 @@
     <TextView
         android:id="@+id/txtFecha"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff" />
 
     <RelativeLayout
         android:id="@+id/relComenVal"
@@ -21,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:text="@string/VerOpinionValoracion" />
+            android:text="@string/VerOpinionValoracion"
+            android:textColor="#ffffff" />
 
         <RatingBar
             android:id="@+id/ratingBar1"
@@ -38,13 +40,14 @@
         android:id="@+id/txtComentario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="3dp" />
+        android:paddingBottom="3dp"
+        android:textColor="#ffffff" />
 
     <View
         android:id="@+id/hr"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="#BDBDBD"
+        android:background="#FFFFFF"
         android:paddingBottom="5dp" />
 
 </LinearLayout>

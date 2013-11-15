@@ -86,7 +86,7 @@
     <ListView
         android:id="@+id/gridResultadosCerca"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:background="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"
         android:divider="@android:color/transparent"
@@ -95,6 +95,15 @@
         android:paddingBottom="3dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp" />
+
+    <ProgressBar
+        android:id="@+id/progresCerca"
+        style="@android:style/Widget.ProgressBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/relativeMapa"

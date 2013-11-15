@@ -18,6 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.desipal.eventu.Entidades.categoriaEN;
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.Extras.Herramientas;
@@ -47,7 +49,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -67,12 +68,14 @@ public class detalleEventoActivity extends FragmentActivity {
 	private TextView txtDetalleFechaInicio;
 	private TextView txtDetalleFechaFin;
 	private TextView txtDetalleFechaFinal;
+	private TextView txtDetaCate;
+
 	private Button btnOpinar;
 	private ToggleButton togAsistencia;
 
 	private ProgressBar progressBar;
 	private ImageView galeria;
-	private RelativeLayout relInformacion;
+	private LinearLayout relInformacion;
 	private RelativeLayout layComent;
 	private LinearLayout LayoutComentarios;
 	private Button btnVerMasComentarios;
@@ -102,6 +105,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			edNombre = (TextView) findViewById(R.id.txtDetalleNombre);
 			edDesc = (TextView) findViewById(R.id.txtDetalleDesc);
 			txtAsistentes = (TextView) findViewById(R.id.txtDetalleAsistentes);
+			txtDetaCate = (TextView) findViewById(R.id.txtDetaCate);
 			galeria = (ImageView) findViewById(R.id.imgDetalleImagen);
 			txtDireccion = (TextView) findViewById(R.id.txtDetalleDireccion);
 			txtDetalleDist = (TextView) findViewById(R.id.txtDetalleDist);
@@ -111,7 +115,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			txtDetalleFechaFinal = (TextView) findViewById(R.id.txtDetalleFechaFinal);
 			togAsistencia = (ToggleButton) findViewById(R.id.togAsistencia);
 			progressBar = (ProgressBar) findViewById(R.id.progressBar);
-			relInformacion = (RelativeLayout) findViewById(R.id.relInformacion);
+			relInformacion = (LinearLayout) findViewById(R.id.relInformacion);
 			layComent = (RelativeLayout) findViewById(R.id.layComent);
 			LayoutComentarios = (LinearLayout) findViewById(R.id.LayoutComentarios);
 			btnOpinar = (Button) findViewById(R.id.btnOpinar);
@@ -120,26 +124,6 @@ public class detalleEventoActivity extends FragmentActivity {
 			btnVerMasComentarios = (Button) findViewById(R.id.btnVerMasComentarios);
 			textNoHayComentarios = (TextView) findViewById(R.id.textNoHayComentarios);
 			btnComoLlegar = (Button) findViewById(R.id.btnComoLlegar);
-
-			TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
-			tabHost.setup();
-
-			TabHost.TabSpec spec = tabHost.newTabSpec("Desc");
-			spec.setContent(R.id.tab1);
-			spec.setIndicator("Descripción", null);
-			tabHost.addTab(spec);
-
-			spec = tabHost.newTabSpec("Donde");
-			spec.setContent(R.id.tab2);
-			spec.setIndicator("Donde", null);
-			tabHost.addTab(spec);
-
-			spec = tabHost.newTabSpec("Cuando");
-			spec.setContent(R.id.tab3);
-			spec.setIndicator("Cuando", null);
-			tabHost.addTab(spec);
-
-			tabHost.setCurrentTab(0);
 
 			// Boton opinar
 			btnOpinar.setOnClickListener(new OnClickListener() {
@@ -279,13 +263,17 @@ public class detalleEventoActivity extends FragmentActivity {
 
 			// txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
 			if (evento.isTodoElDia()) {
-				txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
-				txtDetalleFechaFin.setVisibility(View.GONE);
+				txtDetalleFechaInicio.setText(fechaI);
+				txtDetalleFechaFin.setText(" Durante todo el día");
 				txtDetalleFechaFinal.setVisibility(View.GONE);
 			} else {
 				txtDetalleFechaInicio.setText(fechaI);
+				txtDetalleFechaFin.setText(R.string.crearEventoFechaFin);
 				txtDetalleFechaFinal.setText(fechaF);
 			}
+			List<categoriaEN> categorias = Herramientas.Obtenercategorias(this);
+			txtDetaCate.setText(categorias.get(evento.getIdCategoria())
+					.getTexto());
 
 			togAsistencia.setVisibility(View.VISIBLE);
 

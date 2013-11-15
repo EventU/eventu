@@ -42,7 +42,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public class Fragment1 extends Fragment {
+public class EventosProximos extends Fragment {
 
 	// Carga de la lista
 	private List<miniEventoEN> lista = new ArrayList<miniEventoEN>();
@@ -60,7 +60,7 @@ public class Fragment1 extends Fragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		try {
 			Actividad = getActivity();
-			view = inflater.inflate(R.layout.fragment_1, container, false);
+			view = inflater.inflate(R.layout.eventos_proximos, container, false);
 			listView = (PullToRefreshListView) view.findViewById(R.id.list);
 			listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 				@Override

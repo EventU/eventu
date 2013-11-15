@@ -38,5 +38,4 @@
         android:hint="@string/OpinionHintOpinion"
         android:inputType="textMultiLine" />
 
-
 </LinearLayout>

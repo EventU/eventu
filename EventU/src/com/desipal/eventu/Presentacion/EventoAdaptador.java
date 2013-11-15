@@ -20,8 +20,7 @@ import com.desipal.eventu.Entidades.miniEventoEN;
 public class EventoAdaptador extends BaseAdapter {
 	private Context mContext;
 	protected List<miniEventoEN> items;
-	
-	private boolean[] array = new boolean[300];
+
 	private static LayoutInflater inflater = null;
 
 	public EventoAdaptador(Context c, List<miniEventoEN> eventos) {
@@ -43,11 +42,6 @@ public class EventoAdaptador extends BaseAdapter {
 		return items.get(position).getIdEvento();
 	}
 
-	// create a new ImageView for each item referenced by the Adapter
-	public void inicializarAnimacion() {
-		array = new boolean[300];
-	}
-
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View vista = convertView;
 		try {
@@ -64,11 +58,15 @@ public class EventoAdaptador extends BaseAdapter {
 
 			TextView txtFecha = (TextView) vista
 					.findViewById(R.id.txtFechaEvento);
-			String fecha = MainActivity.formatoFechaMostrar.format(item.getFecha());
+			String fecha = MainActivity.formatoFechaMostrar.format(item
+					.getFecha());
 
 			// Si el evento tiene fecha de fin se agrega
 			if (item.getFechaFin() != null)
-				fecha = fecha + " - " + MainActivity.formatoFechaMostrar.format(item.getFechaFin());
+				fecha = fecha
+						+ " - "
+						+ MainActivity.formatoFechaMostrar.format(item
+								.getFechaFin());
 
 			txtFecha.setText(fecha);
 			TextView txtDescrip = (TextView) vista
@@ -86,16 +84,14 @@ public class EventoAdaptador extends BaseAdapter {
 
 			TextView txtNombre = (TextView) vista
 					.findViewById(R.id.txtTituloEvento);
-			txtNombre.setText(item.getNombre());
+			txtNombre.setText(item.getNombre());			
 
-			Animation animation = AnimationUtils.loadAnimation(mContext,
-					R.anim.push_up_in);
-
-			if (array[position] == false) {
+			if (!item.isMostrado()) {
+				Animation animation = AnimationUtils.loadAnimation(mContext,
+						R.anim.push_up_in);
 				vista.startAnimation(animation);
-				array[position] = true;
-			} 
-
+				item.setMostrado(true);
+			}
 		} catch (Exception e) {
 			AlertDialog.Builder alertaSimple = new AlertDialog.Builder(mContext);
 			alertaSimple.setTitle("Error");

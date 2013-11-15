@@ -35,10 +35,11 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/relInformacion"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="5dp"
             android:paddingBottom="10dp"
             android:visibility="gone" >
@@ -47,7 +48,7 @@
                 android:id="@+id/imgDetalleImagen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:contentDescription="@string/descImagen" />
@@ -56,10 +57,7 @@
                 android:id="@+id/layAsistencia"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/imgDetalleImagen"
-                android:layout_marginTop="10dp"
-                android:background="#343838"
-                android:paddingLeft="5dp" >
+                android:layout_marginTop="10dp" >
 
                 <TextView
                     android:id="@+id/txtDetalleAsistentes"
@@ -80,203 +78,178 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
-            <TabHost
-                android:id="@android:id/tabhost"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/layAsistencia"
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="5dp" >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                <TextView
+                    android:id="@+id/txtDetaDescrip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/crearEventoDescrip"
+                    android:textColor="#FFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-                    <TabWidget
-                        android:id="@android:id/tabs"
-                        style="@style/CustomTabWidgetText"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
-                    </TabWidget>
+                <TextView
+                    android:id="@+id/txtDetaCate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="5dp"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <FrameLayout
-                        android:id="@android:id/tabcontent"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#008C9E" >
+                <TextView
+                    android:id="@+id/txtDetalleDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtDetaDescrip"
+                    android:padding="5dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
+            </RelativeLayout>
 
-                        <RelativeLayout
-                            android:id="@+id/tab1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:padding="5dp" >
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
 
-                            <TextView
-                                android:id="@+id/txtDetaDescrip"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingLeft="5dp"
-                                android:text="@string/crearEventoDescrip"
-                                android:textColor="#FFF"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/txtDetalleTitDire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/crearEventoLocalEvento"
+                    android:textColor="#FFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/txtDetalleDesc"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetaDescrip"
-                                android:paddingLeft="5dp"
-                                android:paddingRight="5dp"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
-                        </RelativeLayout>
+                <TextView
+                    android:id="@+id/txtDetalleDireccion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtDetalleTitDire"
+                    android:layout_marginLeft="5dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
 
-                        <RelativeLayout
-                            android:id="@+id/tab2"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:padding="5dp" >
+                <fragment
+                    android:id="@+id/mapa"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="400dp"
+                    android:layout_below="@+id/txtDetalleDireccion" />
 
-                            <TextView
-                                android:id="@+id/txtDetalleTitDire"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/crearEventoLocalEvento"
-                                android:textColor="#FFF"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/txtDetalleDist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mapa"
+                    android:layout_marginLeft="5dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
 
-                            <TextView
-                                android:id="@+id/txtDetalleDireccion"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetalleTitDire"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
+                <TextView
+                    android:id="@+id/txtDetalleDistancia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mapa"
+                    android:layout_toRightOf="@+id/txtDetalleDist"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
 
-                            <fragment
-                                android:id="@+id/mapa"
-                                android:name="com.google.android.gms.maps.SupportMapFragment"
-                                android:layout_width="fill_parent"
-                                android:layout_height="400dp"
-                                android:layout_below="@+id/txtDetalleDireccion" />
+                <Button
+                    android:id="@+id/btnComoLlegar"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/mapa"
+                    android:layout_marginTop="5dp"
+                    android:background="@anim/anim_boton"
+                    android:padding="7dp"
+                    android:text="@string/comoLlegar"
+                    android:textColor="#fff" />
+            </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/txtDetalleDist"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/mapa"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp" >
 
-                            <TextView
-                                android:id="@+id/txtDetalleDistancia"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetalleDist"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
+                <TextView
+                    android:id="@+id/txtDetalleTitFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/crearEventoFechaDelEvento"
+                    android:textColor="#fff"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-                            <RelativeLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_below="@+id/mapa"
-                                android:background="#343838"
-                                android:padding="5dp" >
+                <TextView
+                    android:id="@+id/txtDetalleFechaIni"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtDetalleTitFecha"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/crearEventoFechaInicio"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
 
-                                <Button
-                                    android:id="@+id/btnComoLlegar"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="#fff"
-                                    android:background="@anim/anim_boton"
-                                    android:text="@string/comoLlegar" />
-                            </RelativeLayout>
-                        </RelativeLayout>
+                <TextView
+                    android:id="@+id/txtDetalleFechaInicio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtDetalleTitFecha"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/txtDetalleFechaIni"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
 
-                        <RelativeLayout
-                            android:id="@+id/tab3"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:padding="5dp" >
+                <TextView
+                    android:id="@+id/txtDetalleFechaFin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtDetalleFechaIni"
+                    android:text="@string/crearEventoFechaFin"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
 
-                            <TextView
-                                android:id="@+id/txtDetalleTitFecha"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/crearEventoFechaDelEvento"
-                                android:textColor="#fff"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/txtDetalleFechaIni"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetalleTitFecha"
-                                android:text="@string/crearEventoFechaInicio"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
-
-                            <TextView
-                                android:id="@+id/txtDetalleFechaInicio"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetalleTitFecha"
-                                android:layout_toRightOf="@+id/txtDetalleFechaIni"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
-
-                            <TextView
-                                android:id="@+id/txtDetalleFechaFin"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetalleFechaInicio"
-                                android:text="@string/crearEventoFechaFin"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
-
-                            <TextView
-                                android:id="@+id/txtDetalleFechaFinal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/txtDetalleFechaInicio"
-                                android:layout_toRightOf="@+id/txtDetalleFechaFin"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#FFF" />
-                        </RelativeLayout>
-                    </FrameLayout>
-                </LinearLayout>
-            </TabHost>
+                <TextView
+                    android:id="@+id/txtDetalleFechaFinal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtDetalleFechaIni"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/txtDetalleFechaFin"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFF" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/layComent"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@android:id/tabhost"
                 android:layout_marginTop="10dp" >
 
                 <TextView
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:text="@string/comentarios"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/btnOpinar"
-                    android:layout_width="80dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:background="@anim/anim_boton"
-                    android:padding="5dp"
+                    android:padding="7dp"
                     android:text="@string/opina"
                     android:textColor="#ffffff" />
             </RelativeLayout>
@@ -285,7 +258,6 @@
                 android:id="@+id/LayoutComentarios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layComent"
                 android:layout_marginTop="10dp"
                 android:background="#008C9E"
                 android:orientation="vertical"
@@ -318,7 +290,7 @@
                 android:id="@+id/btnVerMasComentarios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/LayoutComentarios"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:background="@anim/anim_boton"
                 android:gravity="center"
@@ -332,11 +304,10 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="center_horizontal"
                 android:paddingBottom="20dp"
                 android:paddingTop="70dp" />
-        </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

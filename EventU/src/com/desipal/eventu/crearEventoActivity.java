@@ -173,6 +173,7 @@ public class crearEventoActivity extends FragmentActivity {
 		edFechaFin = (EditText) findViewById(R.id.editFechaFin);
 		edHoraIni = (EditText) findViewById(R.id.editHoraInicio);
 		edHoraFin = (EditText) findViewById(R.id.editHoraFin);
+		
 
 		chTodoElDia = (CheckBox) findViewById(R.id.chTodoElDia);
 
@@ -766,7 +767,7 @@ public class crearEventoActivity extends FragmentActivity {
 				Toast.makeText(crearEventoActivity.this, "Evento creado",
 						Toast.LENGTH_SHORT).show();
 				// Al crear evento fuerzas el refresco de lista de Mis Eventos
-				Fragment3.view = null;
+				MisEventos.view = null;
 			} else {
 				if (crearEventoActivity.Creacionsatisfactoria == 1)
 					Toast.makeText(crearEventoActivity.this,
@@ -915,7 +916,7 @@ public class crearEventoActivity extends FragmentActivity {
 						.getFechaFin());
 				edHoraFin.setText(horafin);
 			}
-			spiCategoria.setSelection(EventoModificar.getIdCategoria());
+			spiCategoria.setSelection(EventoModificar.getIdCategoria()-1);
 			if (EventoModificar.isComentarios())
 				tgComentarios.setSelected(true);
 			// Pendiente realizar imagenes

@@ -132,13 +132,13 @@ public class MainActivity extends ActionBarActivity implements
 					switch (position) {
 					case 1:
 						getSupportActionBar().setTitle("Eventos próximos");
-						fragment = new Fragment1();
+						fragment = new EventosProximos();
 						if (filAvanzadoItem != null)
 							filAvanzadoItem.setVisible(false);
 						break;
 					case 2:
 						getSupportActionBar().setTitle("Cerca de ti");
-						fragment = new Fragment2();
+						fragment = new EventosCerca();
 						filAvanzadoItem.setVisible(false);
 						break;
 					case 3:
@@ -148,7 +148,7 @@ public class MainActivity extends ActionBarActivity implements
 						break;
 					case 5:
 						getSupportActionBar().setTitle("Mis eventos");
-						fragment = new Fragment3();
+						fragment = new MisEventos();
 						filAvanzadoItem.setVisible(false);
 						break;
 					case 6:
@@ -300,9 +300,9 @@ public class MainActivity extends ActionBarActivity implements
 	protected void onDestroy() {
 		super.onDestroy();
 		stopService(servicio);
-		Fragment1.view = null;
-		Fragment2.view = null;
-		Fragment3.view = null;
+		EventosProximos.view = null;
+		EventosCerca.view = null;
+		MisEventos.view = null;
 	}
 
 	@Override

@@ -43,6 +43,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class Fragment2 extends Fragment {
+public class EventosCerca extends Fragment {
 
 	private List<miniEventoEN> eventos = new ArrayList<miniEventoEN>();
 
@@ -63,12 +64,12 @@ public class Fragment2 extends Fragment {
 	private Button btnBuscarCerca;
 	private TextView txtKm;
 	private TextView txtErrorCerca;
+	private ProgressBar progresCerca;
 	private SeekBar seekRadio;
 	private ToggleButton togOpcionMapa;
 	private GoogleMap map;
 	private RelativeLayout LayoutMapa;
 	private List<Marker> listapuntos = new ArrayList<Marker>();
-	private View footer;
 	private boolean finlista = false;
 	private EventoAdaptador adaptador;
 	public static View view;
@@ -83,18 +84,17 @@ public class Fragment2 extends Fragment {
 			Actividad = getActivity();
 
 			if (view == null)
-				view = inflater.inflate(R.layout.fragment_2, container, false);
+				view = inflater.inflate(R.layout.eventos_cerca, container,
+						false);
 			else {
 				ViewGroup parent = (ViewGroup) view.getParent();
 				if (parent != null)
 					parent.removeView(view);
 			}
 
-			footer = inflater.inflate(R.layout.footerlistview, null);
-
 			gridCerca = (ListView) view.findViewById(R.id.gridResultadosCerca);
 			gridCerca.setFadingEdgeLength(0);
-
+			progresCerca = (ProgressBar) view.findViewById(R.id.progresCerca);
 			txtKm = (TextView) view.findViewById(R.id.txtKm);
 			seekRadio = (SeekBar) view.findViewById(R.id.seekRadio);
 			txtErrorCerca = (TextView) view.findViewById(R.id.txtErrorCerca);
@@ -116,7 +116,7 @@ public class Fragment2 extends Fragment {
 							&& !bloquearPeticion
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
 							&& !finlista) {
-						gridCerca.addFooterView(footer);
+						progresCerca.setVisibility(View.VISIBLE);
 						hacerPeticion();
 					}
 				}
@@ -179,7 +179,6 @@ public class Fragment2 extends Fragment {
 			btnBuscarCerca.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					adaptador.inicializarAnimacion();
 					btnBuscarCerca.setEnabled(false);
 					LayoutMapa.setVisibility(View.GONE);
 					gridCerca.setVisibility(View.GONE);
@@ -272,7 +271,7 @@ public class Fragment2 extends Fragment {
 				peticion pet = new peticion(parametros, getActivity());
 				pet.execute(new String[] { URL });
 			} else {
-				gridCerca.removeFooterView(footer);
+				progresCerca.setVisibility(View.GONE);
 				Toast.makeText(getActivity(), R.string.errNoConexion,
 						Toast.LENGTH_LONG).show();
 			}
@@ -337,54 +336,59 @@ public class Fragment2 extends Fragment {
 		}
 
 		protected void onPostExecute(Void result) {
-			adaptador.notifyDataSetChanged();
-			gridCerca.removeFooterView(footer);
-			bloquearPeticion = false;
-			btnBuscarCerca.setEnabled(true);
-			if (error)
-				Toast.makeText(Actividad, R.string.errNoConexion,
-						Toast.LENGTH_LONG).show();
+			try {
+				progresCerca.setVisibility(View.GONE);
+				adaptador.notifyDataSetChanged();
+				bloquearPeticion = false;
+				btnBuscarCerca.setEnabled(true);
+				if (error)
+					Toast.makeText(Actividad, R.string.errNoConexion,
+							Toast.LENGTH_LONG).show();
 
-			if (togOpcionMapa.isChecked()) { // MAPA
-				map.clear();
-				LayoutMapa.setVisibility(View.VISIBLE);
-				// Pointer de mi posicion
-				LatLng MiPosicion = new LatLng(
-						MainActivity.posicionActual.latitude,
-						MainActivity.posicionActual.longitude);
-				map.addMarker(new MarkerOptions().position(MiPosicion).title(
-						"Estas aquí"));
-				listapuntos.clear();
-				for (miniEventoEN item : eventos) {
-					LatLng Posicion = new LatLng(item.getLatitud(),
-							item.getLongitud());
-					listapuntos
-							.add(map.addMarker(new MarkerOptions()
-									.position(Posicion)
-									.title(item.getNombre())
-									.icon(BitmapDescriptorFactory
-											.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
+				if (togOpcionMapa.isChecked()) { // MAPA
+					map.clear();
+					LayoutMapa.setVisibility(View.VISIBLE);
+					// Pointer de mi posicion
+					LatLng MiPosicion = new LatLng(
+							MainActivity.posicionActual.latitude,
+							MainActivity.posicionActual.longitude);
+					map.addMarker(new MarkerOptions().position(MiPosicion)
+							.title("Estas aquí"));
+					listapuntos.clear();
+					for (miniEventoEN item : eventos) {
+						LatLng Posicion = new LatLng(item.getLatitud(),
+								item.getLongitud());
+						listapuntos
+								.add(map.addMarker(new MarkerOptions()
+										.position(Posicion)
+										.title(item.getNombre())
+										.icon(BitmapDescriptorFactory
+												.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
+					}
+
+					CircleOptions circleOptions = new CircleOptions()
+							.center(MiPosicion).radius(ratio * 1000)
+							// set radius in meters
+							.fillColor(Color.argb(20, 0, 0, 255))
+							.strokeColor(Color.BLUE).strokeWidth((float) 1.5);
+					map.addCircle(circleOptions);
+					int zoom = Herramientas.calcularZoom(ratio);
+					map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+							MiPosicion, zoom));
+					map.animateCamera(CameraUpdateFactory.zoomTo(zoom), 2000,
+							null);
+
+					togOpcionMapa.setEnabled(true);
+					btnBuscarCerca.setEnabled(true);
+				} else { // Lista
+					gridCerca.setVisibility(View.VISIBLE);
+					togOpcionMapa.setEnabled(true);
+					btnBuscarCerca.setEnabled(true);
 				}
 
-				CircleOptions circleOptions = new CircleOptions()
-						.center(MiPosicion).radius(ratio * 1000)
-						// set radius in meters
-						.fillColor(Color.argb(20, 0, 0, 255))
-						.strokeColor(Color.BLUE).strokeWidth((float) 1.5);
-				map.addCircle(circleOptions);
-				int zoom = Herramientas.calcularZoom(ratio);
-				map.moveCamera(CameraUpdateFactory.newLatLngZoom(MiPosicion,
-						zoom));
-				map.animateCamera(CameraUpdateFactory.zoomTo(zoom), 2000, null);
-
-				togOpcionMapa.setEnabled(true);
-				btnBuscarCerca.setEnabled(true);
-			} else { // Lista
-				gridCerca.setVisibility(View.VISIBLE);
-				togOpcionMapa.setEnabled(true);
-				btnBuscarCerca.setEnabled(true);
+			} catch (Exception ex) {
+				ex.toString();
 			}
-
 		}
 	}
 }

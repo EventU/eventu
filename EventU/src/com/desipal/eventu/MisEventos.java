@@ -31,17 +31,18 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class Fragment3 extends Fragment {
+public class MisEventos extends Fragment {
 	private ListView listview;
 	// Carga de la lista
 	private List<miniEventoEN> lista = new ArrayList<miniEventoEN>();
 	private EventoAdaptador adaptador;
 	private int pagina = 0;
 	private boolean bloquearPeticion = false;
-	private View footer;
+	private ProgressBar progresMisEventos;
 	private boolean finlista = false;
 	public static View view;
 	private Activity Actividad;
@@ -53,13 +54,14 @@ public class Fragment3 extends Fragment {
 
 		try {
 			Actividad = getActivity();
-			view = inflater.inflate(R.layout.fragment_3, container, false);
+			view = inflater.inflate(R.layout.mis_eventos, container, false);
 
 			listview = (ListView) view.findViewById(R.id.listMisEvent);
 			listview.setFadingEdgeLength(0);
 
 			// evento de la lista a leer mas
-			footer = inflater.inflate(R.layout.footerlistview, null);
+			progresMisEventos = (ProgressBar) view
+					.findViewById(R.id.progresMisEventos);
 			listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 				@Override
 				public void onScrollStateChanged(AbsListView view,
@@ -74,7 +76,7 @@ public class Fragment3 extends Fragment {
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
 							&& !finlista) {
 						realizarPeticion();
-						listview.addFooterView(footer);
+						progresMisEventos.setVisibility(View.VISIBLE);
 					}
 				}
 			});
@@ -203,7 +205,7 @@ public class Fragment3 extends Fragment {
 			peticion pet = new peticion(parametros, Actividad);
 			pet.execute(new String[] { URL });
 		} else {
-			listview.removeFooterView(footer);
+			progresMisEventos.setVisibility(View.GONE);
 			Toast.makeText(getActivity(), R.string.errNoConexion,
 					Toast.LENGTH_LONG).show();
 		}
@@ -266,7 +268,7 @@ public class Fragment3 extends Fragment {
 		protected void onPostExecute(Void result) {
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
-			listview.removeFooterView(footer);
+			progresMisEventos.setVisibility(View.GONE);
 		}
 	}
 

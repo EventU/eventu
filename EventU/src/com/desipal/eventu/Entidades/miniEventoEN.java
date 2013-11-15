@@ -18,6 +18,7 @@ public class miniEventoEN {
     private double latitud;
     private double longitud;
     private String urlImagen;//rutaCompleta de la imagen
+    private boolean mostrado = false;
 
     public int getIdEvento() {
         return idEvento;
@@ -105,5 +106,13 @@ public class miniEventoEN {
 
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
+	}
+
+	public boolean isMostrado() {
+		return mostrado;
+	}
+
+	public void setMostrado(boolean mostrado) {
+		this.mostrado = mostrado;
 	}
 }
