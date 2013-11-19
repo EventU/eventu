@@ -18,6 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.desipal.eventu.Entidades.ImagenEN;
 import com.desipal.eventu.Entidades.categoriaEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.R;
@@ -68,7 +70,12 @@ import android.widget.ToggleButton;
 
 public class crearEventoActivity extends FragmentActivity {
 
-	private int ESCALAMAXIMA = 300;// Tamaño máximo de las imagenes subidas
+	private int ESCALAMAXIMA = 450;// Tamaño máximo de las imagenes subidas
+	public static int NOTOCARIMAGEN = 0;
+	public static int CREARIMAGEN = 1;
+	public static int BORRARIMAGEN = 2;
+	public static int NOMOSTRARIMAGEN = 3;
+
 	private SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"dd/MM/yyyy hh:mm", MainActivity.currentLocale);
 	private static Activity actividad;
@@ -78,7 +85,8 @@ public class crearEventoActivity extends FragmentActivity {
 	private boolean direccionvalida = false;
 	public static seleccionUbicacionEN[] opcionesDireccion;
 
-	public static List<Bitmap> arrayImagen;
+	//public static List<ImagenEN> arrayImagenMod;
+	public static List<ImagenEN> arrayImagen;
 	double Latitud;
 	double Longitud;
 
@@ -131,6 +139,7 @@ public class crearEventoActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+		contaFotos=0;
 		getWindow().setBackgroundDrawableResource(android.R.color.black);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.crearevento);
@@ -157,7 +166,8 @@ public class crearEventoActivity extends FragmentActivity {
 			petVerEvento.execute(new String[] { URL });
 		}
 		actividad = this;
-		arrayImagen = new ArrayList<Bitmap>();
+		arrayImagen = new ArrayList<ImagenEN>();
+	//	arrayImagenMod = new ArrayList<ImagenEN>();
 
 		btnInicio = (Button) findViewById(R.id.btnInicio);
 		btnSubirImagen = (Button) findViewById(R.id.btnSubirImagen);
@@ -173,7 +183,6 @@ public class crearEventoActivity extends FragmentActivity {
 		edFechaFin = (EditText) findViewById(R.id.editFechaFin);
 		edHoraIni = (EditText) findViewById(R.id.editHoraInicio);
 		edHoraFin = (EditText) findViewById(R.id.editHoraFin);
-		
 
 		chTodoElDia = (CheckBox) findViewById(R.id.chTodoElDia);
 
@@ -404,7 +413,9 @@ public class crearEventoActivity extends FragmentActivity {
 				Bitmap bmp = Herramientas.reescalarBitmapPorUri(selectedImage,
 						crearEventoActivity.this, ESCALAMAXIMA);
 				contaFotos++;
-				arrayImagen.add(bmp);
+				arrayImagen.add(new ImagenEN("", bmp, CREARIMAGEN));
+				
+		//		arrayImagenMod.add(new ImagenEN("", bmp, CREARIMAGEN));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -567,17 +578,6 @@ public class crearEventoActivity extends FragmentActivity {
 				try {
 					ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-					int i = 1;
-					for (Bitmap imagen : arrayImagen) {
-						ByteArrayOutputStream bao = new ByteArrayOutputStream();
-						imagen.compress(Bitmap.CompressFormat.JPEG, 80, bao);
-						byte[] ba = bao.toByteArray();
-						String ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
-						nameValuePairs.add(new BasicNameValuePair("imagen" + i,
-								ba1));
-						i++;
-					}
-
 					String android_id = Secure.getString(
 							actividad.getContentResolver(), Secure.ANDROID_ID);
 					nameValuePairs.add(new BasicNameValuePair("idCreador",
@@ -623,8 +623,43 @@ public class crearEventoActivity extends FragmentActivity {
 						URL = "http://desipal.hol.es/app/eventos/modificar.php";
 						nameValuePairs.add(new BasicNameValuePair("idEvento",
 								EventoModificar.getIdEvento() + ""));
-					} else
+						int i = 1;
+						for (ImagenEN imagen : arrayImagen) {
+							if (imagen.getEstado() == CREARIMAGEN) {
+								ByteArrayOutputStream bao = new ByteArrayOutputStream();
+								imagen.getImagen().compress(
+										Bitmap.CompressFormat.JPEG, 100, bao);
+								byte[] ba = bao.toByteArray();
+								String ba1 = Base64.encodeToString(ba,
+										Base64.DEFAULT);
+								nameValuePairs.add(new BasicNameValuePair(
+										"imagen" + i, CREARIMAGEN + ";" + ba1));
+								i++;
+							}
+							if (imagen.getEstado() == BORRARIMAGEN) {
+								nameValuePairs.add(new BasicNameValuePair(
+										"imagen" + i, BORRARIMAGEN + ";"
+												+ imagen.getUrl()));
+								i++;
+							}
+						}
+					} else {
+						int i = 1;
+						for (ImagenEN imagen : arrayImagen) {
+							if (imagen.getEstado() == CREARIMAGEN) {
+								ByteArrayOutputStream bao = new ByteArrayOutputStream();
+								imagen.getImagen().compress(
+										Bitmap.CompressFormat.JPEG, 80, bao);
+								byte[] ba = bao.toByteArray();
+								String ba1 = Base64.encodeToString(ba,
+										Base64.DEFAULT);
+								nameValuePairs.add(new BasicNameValuePair(
+										"imagen" + i, ba1));
+								i++;
+							}
+						}
 						URL = "http://desipal.hol.es/app/eventos/alta.php";
+					}
 					creacionEvento peticion = new creacionEvento(nameValuePairs);
 					peticion.execute(new String[] { URL });
 
@@ -657,7 +692,7 @@ public class crearEventoActivity extends FragmentActivity {
 					.findViewById(R.id.listImagenes);
 			gridview.setAdapter(new listaImagenesAdapter(actividad, arrayImagen));
 			float altura = Herramientas.convertDpToPixel(
-					55 * arrayImagen.size(), actividad);// Tamaño de la imagen
+					55 * contaFotos, actividad);// Tamaño de la imagen
 			if (altura > 0)
 				gridview.setVisibility(View.VISIBLE);
 			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -764,8 +799,12 @@ public class crearEventoActivity extends FragmentActivity {
 			if (crearEventoActivity.Creacionsatisfactoria == 0) {
 				arrayImagen.clear();
 				finish();
-				Toast.makeText(crearEventoActivity.this, "Evento creado",
-						Toast.LENGTH_SHORT).show();
+				if (esModificar)
+					Toast.makeText(crearEventoActivity.this,
+							"Evento modificado", Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(crearEventoActivity.this, "Evento creado",
+							Toast.LENGTH_SHORT).show();
 				// Al crear evento fuerzas el refresco de lista de Mis Eventos
 				MisEventos.view = null;
 			} else {
@@ -865,7 +904,9 @@ public class crearEventoActivity extends FragmentActivity {
 											.cachearImagenesDescargadas(
 													urlimagen, ip);
 								}
-								arrayImagen.add(img);
+								arrayImagen.add(new ImagenEN(urlimagen, img,
+										NOTOCARIMAGEN));
+								//arrayImagenMod.add(new ImagenEN(urlimagen, img,NOTOCARIMAGEN));
 							}
 						}
 						contaFotos = arrayImagen.size();
@@ -916,7 +957,7 @@ public class crearEventoActivity extends FragmentActivity {
 						.getFechaFin());
 				edHoraFin.setText(horafin);
 			}
-			spiCategoria.setSelection(EventoModificar.getIdCategoria()-1);
+			spiCategoria.setSelection(EventoModificar.getIdCategoria() - 1);
 			if (EventoModificar.isComentarios())
 				tgComentarios.setSelected(true);
 			// Pendiente realizar imagenes

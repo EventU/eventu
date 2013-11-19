@@ -6,12 +6,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Toast;
 import android.widget.ListView;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.ActivityCompat;
@@ -217,11 +217,6 @@ public class MainActivity extends ActionBarActivity implements
 			retorno = true;
 		} else {
 			switch (item.getItemId()) {
-			case R.id.action_settings:
-				Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-				retorno = true;
-				break;
-
 			case R.id.btn_filtro_avanzado:
 				filtroAvanzado.recoger();
 				retorno = true;
@@ -249,6 +244,21 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && PosicionActual != 1) {
+			getSupportActionBar().setTitle("Eventos próximos");
+			Fragment fragment = new EventosProximos();
+			if (filAvanzadoItem != null)
+				filAvanzadoItem.setVisible(false);
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, fragment).commit();
+			PosicionActual = 1;
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -271,21 +281,11 @@ public class MainActivity extends ActionBarActivity implements
 			mDragger.setAccessible(true);
 			ViewDragHelper draggerObj = (ViewDragHelper) mDragger
 					.get(drawerLayout);
-
 			Display display = getWindowManager().getDefaultDisplay();
-
 			int ancho = display.getWidth();
-
-			/*
-			 * Point size = new Point(); display.getSize(size); int width =
-			 * size.x;
-			 */
 			Field mEdgeSize = draggerObj.getClass().getDeclaredField(
 					"mEdgeSize");
-
 			mEdgeSize.setAccessible(true);
-			// int edge = mEdgeSize.getInt(draggerObj);
-
 			mEdgeSize.setInt(draggerObj, ancho / 3);
 		} catch (NoSuchFieldException en) {
 			en.printStackTrace();

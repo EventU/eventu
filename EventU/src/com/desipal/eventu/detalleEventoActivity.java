@@ -272,7 +272,7 @@ public class detalleEventoActivity extends FragmentActivity {
 				txtDetalleFechaFinal.setText(fechaF);
 			}
 			List<categoriaEN> categorias = Herramientas.Obtenercategorias(this);
-			txtDetaCate.setText(categorias.get(evento.getIdCategoria())
+			txtDetaCate.setText(categorias.get(evento.getIdCategoria()-1)
 					.getTexto());
 
 			togAsistencia.setVisibility(View.VISIBLE);
@@ -455,7 +455,7 @@ public class detalleEventoActivity extends FragmentActivity {
 
 							for (int i = 0; i < jurls.length(); i++) {
 								String urlimagen = jurls
-										.getString((i + 1) + "");
+										.getString(i+1 + "");
 								Bitmap img = MainActivity.imageLoader
 										.obtenerImagenesDescargadas(urlimagen);
 								if (img == null) {
