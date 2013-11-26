@@ -37,22 +37,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.desipal.eventu.detalleEventoActivity"
+            android:name=".detalleEventoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.desipal.eventu.crearEventoActivity"
+            android:name=".crearEventoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.desipal.eventu.VerTodosComentariosActivity"
+            android:name=".VerTodosComentariosActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan" />       
         <activity
-            android:name="com.desipal.eventu.Imagenes.galeriaActivity"
+            android:name=".tutorialActivity"
+            android:label="@string/tutorial"
+            android:theme="@style/Theme.Transparent" >
+        </activity>
+        <activity
+            android:name="com.desipal.eventu.Imagenes.GaleriaActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name=".LocalizacionActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" />
@@ -62,13 +73,12 @@
             android:value="AIzaSyB20uM50WEMBjpRog2fg-Zcf7ynfrSKOAQ" />
 
         <service android:name="com.desipal.eventu.Servicios.Localizacion" />
-        
+
         <receiver android:name="com.desipal.eventu.Servicios.EstadoConexion" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        
     </application>
 
 </manifest>

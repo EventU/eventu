@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relTutorial"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#88000000" >
+
+    <ImageView
+        android:id="@+id/imgTutorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp"
+        android:background="#00000000"
+        android:contentDescription="@string/tutorial"
+        android:maxHeight="295dp"
+        android:maxWidth="180dp"
+        android:src="@drawable/tutorial2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgTutorial"
+        android:text="@string/txtTutDeslizar"
+        android:textColor="#fff"
+        android:textSize="18sp" />
+
+</RelativeLayout>

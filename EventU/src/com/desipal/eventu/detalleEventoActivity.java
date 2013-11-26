@@ -23,11 +23,12 @@ import com.desipal.eventu.Entidades.categoriaEN;
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.Extras.Herramientas;
-import com.desipal.eventu.Imagenes.galeriaActivity;
+import com.desipal.eventu.Imagenes.GaleriaActivity;
 import com.desipal.eventu.PopUp.ratingpicker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -37,13 +38,19 @@ import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -74,7 +81,7 @@ public class detalleEventoActivity extends FragmentActivity {
 	private ToggleButton togAsistencia;
 
 	private ProgressBar progressBar;
-	private ImageView galeria;
+	// private ImageView galeria;
 	private LinearLayout relInformacion;
 	private RelativeLayout layComent;
 	private LinearLayout LayoutComentarios;
@@ -88,6 +95,7 @@ public class detalleEventoActivity extends FragmentActivity {
 
 	private List<comentarioEN> listaComentarios = new ArrayList<comentarioEN>();
 	// /GALERIA
+	public static Drawable[] mImageIds = null;
 	public static List<Drawable> fotosGaleria;
 
 	@Override
@@ -96,6 +104,7 @@ public class detalleEventoActivity extends FragmentActivity {
 		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
 		getWindow().setBackgroundDrawableResource(android.R.color.black);
 		try {
+			mImageIds = new Drawable[5];
 			act = this;
 			fotosGaleria = null;
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -106,7 +115,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			edDesc = (TextView) findViewById(R.id.txtDetalleDesc);
 			txtAsistentes = (TextView) findViewById(R.id.txtDetalleAsistentes);
 			txtDetaCate = (TextView) findViewById(R.id.txtDetaCate);
-			galeria = (ImageView) findViewById(R.id.imgDetalleImagen);
+			// galeria = (ImageView) findViewById(R.id.imgDetalleImagen);
 			txtDireccion = (TextView) findViewById(R.id.txtDetalleDireccion);
 			txtDetalleDist = (TextView) findViewById(R.id.txtDetalleDist);
 			txtDetalleDistancia = (TextView) findViewById(R.id.txtDetalleDistancia);
@@ -124,6 +133,19 @@ public class detalleEventoActivity extends FragmentActivity {
 			btnVerMasComentarios = (Button) findViewById(R.id.btnVerMasComentarios);
 			textNoHayComentarios = (TextView) findViewById(R.id.textNoHayComentarios);
 			btnComoLlegar = (Button) findViewById(R.id.btnComoLlegar);
+
+			Gallery g = (Gallery) findViewById(R.id.gallery);
+			g.setAdapter(new ImageAdapter(this));
+			g.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int position, long id) {
+					Intent i = new Intent(getApplication(),
+							GaleriaActivity.class);
+					i.putExtra("position", position);
+					startActivity(i);
+				}
+			});
 
 			// Boton opinar
 			btnOpinar.setOnClickListener(new OnClickListener() {
@@ -165,13 +187,6 @@ public class detalleEventoActivity extends FragmentActivity {
 			String android_id = Secure.getString(this.getContentResolver(),
 					Secure.ANDROID_ID);
 			parametros.add(new BasicNameValuePair("idDispositivo", android_id));
-			galeria.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					Intent i = new Intent(detalleEventoActivity.this,
-							galeriaActivity.class);
-					startActivity(i);
-				}
-			});
 
 			togAsistencia
 					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -234,22 +249,8 @@ public class detalleEventoActivity extends FragmentActivity {
 					+ detalleEventoActivity.this
 							.getString(R.string.detalleEventoAsistencia));
 			fotosGaleria = evento.getImagenes();
-			galeria.setImageDrawable(evento.getImagenes().get(0));
 
-			String direccion = "";
-			String[] spidesc = evento.getDireccion().split(",");
-			if (spidesc.length == 6)
-				// Direccion=Calle,Numero Localidad(Provincia)
-				direccion = spidesc[4] + ", " + spidesc[5] + " " + spidesc[3]
-						+ " (" + spidesc[2] + ")";
-			else if (spidesc.length == 5)
-				// Direccion=Calle Localidad(Provincia)
-				direccion = spidesc[4] + " " + spidesc[3] + " (" + spidesc[2]
-						+ ")";
-			else
-				// Direccion= Provincia
-				direccion = spidesc[2];
-			txtDireccion.setText(direccion);
+			txtDireccion.setText(evento.getDireccion());
 			//
 			txtDetalleDist.setText("Distancia: ");
 			String distancia = new DecimalFormat("#.##").format(evento
@@ -272,7 +273,7 @@ public class detalleEventoActivity extends FragmentActivity {
 				txtDetalleFechaFinal.setText(fechaF);
 			}
 			List<categoriaEN> categorias = Herramientas.Obtenercategorias(this);
-			txtDetaCate.setText(categorias.get(evento.getIdCategoria()-1)
+			txtDetaCate.setText(categorias.get(evento.getIdCategoria())
 					.getTexto());
 
 			togAsistencia.setVisibility(View.VISIBLE);
@@ -373,7 +374,6 @@ public class detalleEventoActivity extends FragmentActivity {
 	}
 
 	private void cambiarAsistencia(String asis) {
-
 		if (togAsistencia.isChecked()) {
 			asiste = true;
 		} else {
@@ -383,12 +383,10 @@ public class detalleEventoActivity extends FragmentActivity {
 				+ " "
 				+ detalleEventoActivity.this
 						.getString(R.string.detalleEventoAsistencia));
-
 	}
 
 	// Peticion para ver detalle evento
 	public class peticionVerEvento extends AsyncTask<String, Void, Void> {
-
 		private ArrayList<NameValuePair> parametros;
 
 		public peticionVerEvento(ArrayList<NameValuePair> parametros,
@@ -454,8 +452,7 @@ public class detalleEventoActivity extends FragmentActivity {
 									jsEvento.getString("urlImagenes"));
 
 							for (int i = 0; i < jurls.length(); i++) {
-								String urlimagen = jurls
-										.getString(i+1 + "");
+								String urlimagen = jurls.getString(i + 1 + "");
 								Bitmap img = MainActivity.imageLoader
 										.obtenerImagenesDescargadas(urlimagen);
 								if (img == null) {
@@ -470,10 +467,15 @@ public class detalleEventoActivity extends FragmentActivity {
 												.getResources(),
 										img);
 								imagenes.add(d);
+								mImageIds[i] = d;
+
 							}
-						} else
+						} else {
 							imagenes.add(getResources().getDrawable(
 									R.drawable.default_img));
+							mImageIds[0] = getResources().getDrawable(
+									R.drawable.default_img);
+						}
 						e.setImagenes(imagenes);
 						evento = e;
 					}
@@ -581,7 +583,6 @@ public class detalleEventoActivity extends FragmentActivity {
 					if (total.toString().split(",")[0].equals("ok")) {
 						todoOK = true;
 						asistencia = total.toString().split(",")[1].toString();
-
 					}
 
 				} catch (Exception e) {
@@ -605,6 +606,65 @@ public class detalleEventoActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-
 	}
+
+	public class ImageAdapter extends BaseAdapter {
+		int mGalleryItemBackground;
+		private Context mContext;
+
+		public ImageAdapter(Context c) {
+			mContext = c;
+			TypedArray a = obtainStyledAttributes(R.styleable.HelloGallery);
+			mGalleryItemBackground = a.getResourceId(
+					R.styleable.HelloGallery_android_galleryItemBackground, 0);
+			a.recycle();
+		}
+
+		public int getCount() {
+			return mImageIds.length;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ImageView i = new ImageView(mContext);
+			if (mImageIds[position] != null) {
+				i.setImageDrawable(mImageIds[position]);
+				Display display = getWindowManager().getDefaultDisplay();
+
+				// Alto y ancho por defecto
+				int ancho = display.getWidth();
+				int alto = display.getHeight();
+				Double an = ancho - ancho * 0.10;
+				Double al = alto - alto * 0.30;
+				ancho = an.intValue();
+				alto = al.intValue();
+
+				// Ancho de la imagen
+				BitmapDrawable bd = (BitmapDrawable) mImageIds[position];
+				an = bd.getBitmap().getWidth() * 1.40;
+				al = bd.getBitmap().getHeight() * 1.40;
+				int anchoImagen = an.intValue();
+				int altoImagen = al.intValue();
+
+				if (ancho > anchoImagen)
+					ancho = anchoImagen;
+				if (alto > altoImagen)
+					alto = altoImagen;
+
+				i.setLayoutParams(new Gallery.LayoutParams(ancho, alto));
+				i.setScaleType(ImageView.ScaleType.FIT_CENTER);
+				i.setBackgroundResource(mGalleryItemBackground);
+			}
+			return i;
+		}
+	}
+
 }

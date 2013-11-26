@@ -38,7 +38,8 @@ public class categorias extends AsyncTask<String, Void, Void> {
 				while ((line = r.readLine()) != null) {
 					total.append(line);
 				}
-				if (!total.toString().equals("null")) {
+				if (!total.toString().equals("null")
+						&& total.toString().contains("idCategoria")) {
 					OutputStreamWriter fout = new OutputStreamWriter(
 							act.openFileOutput(MainActivity.fCategorias,
 									Context.MODE_PRIVATE));

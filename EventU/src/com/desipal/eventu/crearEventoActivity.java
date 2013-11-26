@@ -16,7 +16,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.desipal.eventu.Entidades.ImagenEN;
@@ -34,9 +33,7 @@ import com.desipal.eventu.PopUp.datepicker;
 import com.desipal.eventu.PopUp.timepicker;
 import com.desipal.eventu.Presentacion.listaImagenesAdapter;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -59,65 +56,58 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class crearEventoActivity extends FragmentActivity {
-
 	private int ESCALAMAXIMA = 450;// Tamaño máximo de las imagenes subidas
 	public static int NOTOCARIMAGEN = 0;
 	public static int CREARIMAGEN = 1;
 	public static int BORRARIMAGEN = 2;
 	public static int NOMOSTRARIMAGEN = 3;
+	public static int SELUBICACION = 10;
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"dd/MM/yyyy hh:mm", MainActivity.currentLocale);
 	private static Activity actividad;
 	public static int Creacionsatisfactoria = 0;
 	private boolean error = false;
-	private boolean[] errores = new boolean[6];
-	private boolean direccionvalida = false;
+	private boolean[] errores = new boolean[4];
 	public static seleccionUbicacionEN[] opcionesDireccion;
 
-	//public static List<ImagenEN> arrayImagenMod;
+	// public static List<ImagenEN> arrayImagenMod;
 	public static List<ImagenEN> arrayImagen;
 	double Latitud;
 	double Longitud;
+	String Direccion = "";
 
 	// CONTROLES
 	private Button btnInicio;
 	private Button btnSubirImagen;
 	private Button btnCrearEvento;
-	private TextView txtUbicacion;
 	private EditText edNombre;
 	private EditText edDesc;
-	private EditText edDireccion;
-	private EditText edCiudad;
-	private EditText edNumero;
 	private EditText edFechaIni;
 	private EditText edFechaFin;
 	private EditText edHoraIni;
 	private EditText edHoraFin;
 	private CheckBox chTodoElDia;
 	private Spinner spiCategoria;
-	private ToggleButton tgUbicacion;
+	private Button btnUbicacion;
 	private ToggleButton tgComentarios;
-	private TableLayout tableLocalizacion;
-	private RelativeLayout relFechas;
 	private TableRow filaFin;
 	private TableRow filaTexFin;
-	private RelativeLayout relImagenes;
+	private LinearLayout relImagenes;
 	private GoogleMap mapaLocalizacion;
 	private RelativeLayout relativeMapa;
 	private RelativeLayout relBloquear;
 	private EditText[] editError = new EditText[] { edNombre, edDesc,
-			edDireccion, edCiudad, edFechaIni, edFechaFin };
+			edFechaIni, edFechaFin };
 
 	// IdCategoria
 	int IdCategoriaSel = 0;
@@ -139,7 +129,7 @@ public class crearEventoActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-		contaFotos=0;
+		contaFotos = 0;
 		getWindow().setBackgroundDrawableResource(android.R.color.black);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.crearevento);
@@ -167,39 +157,33 @@ public class crearEventoActivity extends FragmentActivity {
 		}
 		actividad = this;
 		arrayImagen = new ArrayList<ImagenEN>();
-	//	arrayImagenMod = new ArrayList<ImagenEN>();
+		// arrayImagenMod = new ArrayList<ImagenEN>();
 
 		btnInicio = (Button) findViewById(R.id.btnInicio);
 		btnSubirImagen = (Button) findViewById(R.id.btnSubirImagen);
 		btnCrearEvento = (Button) findViewById(R.id.btnCrearEvento);
 
-		txtUbicacion = (TextView) findViewById(R.id.txtUbicacion);
 		edNombre = (EditText) findViewById(R.id.editNombre);
 		edDesc = (EditText) findViewById(R.id.editDescrip);
-		edDireccion = (EditText) findViewById(R.id.editDireccion);
-		edCiudad = (EditText) findViewById(R.id.editCiudad);
-		edNumero = (EditText) findViewById(R.id.editNumero);
 		edFechaIni = (EditText) findViewById(R.id.editFechaInicio);
 		edFechaFin = (EditText) findViewById(R.id.editFechaFin);
 		edHoraIni = (EditText) findViewById(R.id.editHoraInicio);
 		edHoraFin = (EditText) findViewById(R.id.editHoraFin);
 
 		chTodoElDia = (CheckBox) findViewById(R.id.chTodoElDia);
-
 		spiCategoria = (Spinner) findViewById(R.id.spiCategorias);
 
-		tgUbicacion = (ToggleButton) findViewById(R.id.togUbicacion);
+		btnUbicacion = (Button) findViewById(R.id.btnUbicacion);
 		tgComentarios = (ToggleButton) findViewById(R.id.togComentarios);
 
-		tableLocalizacion = (TableLayout) findViewById(R.id.tableLocalizacion);
-		relFechas = (RelativeLayout) findViewById(R.id.relFechas);
 		filaFin = (TableRow) findViewById(R.id.table2Row4);
 		filaTexFin = (TableRow) findViewById(R.id.table2Row3);
-		relImagenes = (RelativeLayout) findViewById(R.id.relImagenes);
+		relImagenes = (LinearLayout) findViewById(R.id.relImagenes);
 		relativeMapa = (RelativeLayout) findViewById(R.id.relativeMapa);
 		mapaLocalizacion = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.mapaLocalizacion)).getMap();
-
+		mapaLocalizacion.getUiSettings().setScrollGesturesEnabled(false);
+		
 		// Spinner catgorias
 		listaCategorias = Herramientas
 				.Obtenercategorias(crearEventoActivity.this);
@@ -268,7 +252,6 @@ public class crearEventoActivity extends FragmentActivity {
 		edFechaIni.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
 				DialogFragment newFragment = new datepicker();
 				((datepicker) newFragment).establecerCampo(edFechaIni);
 				newFragment.show(getSupportFragmentManager(), "DatePicker");
@@ -290,8 +273,6 @@ public class crearEventoActivity extends FragmentActivity {
 				DialogFragment newFragment = new timepicker();
 				((timepicker) newFragment).establecerCampo(edHoraIni);
 				newFragment.show(getSupportFragmentManager(), "TimePicker");
-				// txtHora = (EditText) v.findViewById(R.id.);
-				// showDialog(1);
 			}
 		});
 
@@ -301,76 +282,14 @@ public class crearEventoActivity extends FragmentActivity {
 				DialogFragment newFragment = new timepicker();
 				((timepicker) newFragment).establecerCampo(edHoraFin);
 				newFragment.show(getSupportFragmentManager(), "TimePicker");
-				// showDialog(1);
 			}
 		});
-
-		tgUbicacion.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		btnUbicacion.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				Handler handler = new Handler();
-				Boolean recoger = true;
-				if (isChecked) {
-					AlphaAnimation anim_alpha = new AlphaAnimation(1, 0);
-					anim_alpha.setDuration(200);
-					tableLocalizacion.startAnimation(anim_alpha);
-					handler.postDelayed(new Runnable() {
-						public void run() {
-							tableLocalizacion.setVisibility(View.GONE);
-							TranslateAnimation anim_trans = new TranslateAnimation(
-									0, 0, tableLocalizacion.getHeight(), 0);
-							anim_trans.setDuration(200);
-							relFechas.startAnimation(anim_trans);
-						}
-					}, 200);
-					try {
-						LatLng loc = MainActivity.posicionActual;
-						if (loc == null) {
-							Toast.makeText(actividad,
-									"La ubicación no se encuentra disponible",
-									Toast.LENGTH_LONG).show();
-							buttonView.setChecked(false);
-							recoger = true;
-						} else {
-							relativeMapa.setVisibility(View.VISIBLE);
-							if (esModificar) {
-								Latitud = EventoModificar.getLatitud();
-								Longitud = EventoModificar.getLongitud();
-							} else {
-								Latitud = loc.latitude;
-								Longitud = loc.longitude;
-							}
-							mapaLocalizacion.clear();
-							LatLng Posicion = new LatLng(Latitud, Longitud);
-							mapaLocalizacion.addMarker(new MarkerOptions()
-									.position(Posicion).title("estas aquí"));
-							mapaLocalizacion.getUiSettings()
-									.setScrollGesturesEnabled(false);
-							mapaLocalizacion.moveCamera(CameraUpdateFactory
-									.newLatLngZoom(Posicion, 15));
-							recoger = false;
-						}
-					} catch (Exception e) {
-						Toast.makeText(actividad, "Error:" + e.getMessage(),
-								Toast.LENGTH_LONG).show();
-					}
-				}
-				if (recoger) {
-					TranslateAnimation anim_trans = new TranslateAnimation(0,
-							0, 0, tableLocalizacion.getHeight());
-					anim_trans.setDuration(200);
-					relFechas.startAnimation(anim_trans);
-					handler.postDelayed(new Runnable() {
-						public void run() {
-							relativeMapa.setVisibility(View.GONE);
-							tableLocalizacion.setVisibility(View.VISIBLE);
-							AlphaAnimation anim_alpha = new AlphaAnimation(0, 1);
-							anim_alpha.setDuration(200);
-							tableLocalizacion.startAnimation(anim_alpha);
-						}
-					}, 220);
-				}
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplication(),
+						LocalizacionActivity.class);
+				startActivityForResult(intent, SELUBICACION);
 			}
 		});
 
@@ -405,24 +324,41 @@ public class crearEventoActivity extends FragmentActivity {
 
 	// //////// SELECCIONAR IMAGEN
 	protected void onActivityResult(int requestCode, int resultCode,
-			Intent imageReturnedIntent) {
-		super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-		if (resultCode == RESULT_OK) {
-			try {
-				Uri selectedImage = imageReturnedIntent.getData();
-				Bitmap bmp = Herramientas.reescalarBitmapPorUri(selectedImage,
-						crearEventoActivity.this, ESCALAMAXIMA);
-				contaFotos++;
-				arrayImagen.add(new ImagenEN("", bmp, CREARIMAGEN));
-				
-		//		arrayImagenMod.add(new ImagenEN("", bmp, CREARIMAGEN));
-			} catch (Exception e) {
-				e.printStackTrace();
+			Intent returnedIntent) {
+		super.onActivityResult(requestCode, resultCode, returnedIntent);
+
+		switch (requestCode) {
+		case 1:// IMAGENES
+			if (resultCode == RESULT_OK) {
+				try {
+					Uri selectedImage = returnedIntent.getData();
+					Bitmap bmp = Herramientas.reescalarBitmapPorUri(
+							selectedImage, crearEventoActivity.this,
+							ESCALAMAXIMA);
+					contaFotos++;
+					arrayImagen.add(new ImagenEN("", bmp, CREARIMAGEN));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (arrayImagen.size() == 0)
+				Toast.makeText(this, "No ha elegido ninguna imágen",
+						Toast.LENGTH_SHORT).show();
+			refrescarLista();
+			break;
+
+		case 10:// UBICACION
+			if (resultCode == RESULT_OK) {
+				Bundle extras = returnedIntent.getExtras();
+				Latitud = extras.getDouble("latitud");
+				Longitud = extras.getDouble("longitud");
+				LatLng local = new LatLng(Latitud, Longitud);
+				Direccion = extras.getString("direccion");
+				mapaLocalizacion.moveCamera(CameraUpdateFactory.newLatLngZoom(
+						local, 14));
+				mapaLocalizacion.addMarker(new MarkerOptions().position(local));
 			}
-		} else if (arrayImagen.size() == 0)
-			Toast.makeText(this, "No ha elegido ninguna imágen",
-					Toast.LENGTH_SHORT).show();
-		refrescarLista();
+			break;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -433,10 +369,8 @@ public class crearEventoActivity extends FragmentActivity {
 
 			editError[0] = edNombre;
 			editError[1] = edDesc;
-			editError[2] = edDireccion;
-			editError[3] = edCiudad;
-			editError[4] = edFechaIni;
-			editError[5] = edFechaFin;
+			editError[2] = edFechaIni;
+			editError[3] = edFechaFin;
 
 			if (edNombre.getText().length() > 0) {
 				errores[0] = false;
@@ -466,45 +400,19 @@ public class crearEventoActivity extends FragmentActivity {
 				error = true;
 			} else
 				errorspiner = false;
-			// /
 
-			if (tgUbicacion.isChecked()) {
-				evento.setLongitud(Longitud);
-				evento.setLatitud(Latitud);
-				evento.setDireccion("");
-				errores[2] = false;// Quitamos el error de direccion
-				errores[3] = false;// Quitamos el error de ciudad
+			// COMPROBAR UBICACION
+			if (Latitud == 0 || Longitud == 0) {
+				btnUbicacion.setBackgroundDrawable(getResources().getDrawable(
+						R.anim.anim_boton_rojo));
+				error = true;
 			} else {
-				if (direccionvalida) {
-					evento.setLongitud(Longitud);
-					evento.setLatitud(Latitud);
-					evento.setDireccion("");
-				} else {
-					String direccion = "";
-					if (edDireccion.getText().length() > 0) {
-						direccion = edDireccion.getText().toString();
-						errores[2] = false;// Quitamos el error de direccion
-						if (edNumero.getText().length() > 0)
-							direccion = direccion + ","
-									+ edNumero.getText().toString();
-						if (edCiudad.getText().length() > 0) {
-							direccion = direccion + ","
-									+ edCiudad.getText().toString();
-							evento.setDireccion(direccion);
-							errores[3] = false;// Quitamos el error de ciudad
-						} else
-							errores[3] = true;
-					} else {
-						if (edCiudad.getText().length() > 0) {
-							evento.setDireccion(edCiudad.getText().toString());
-							errores[2] = false;// Quitamos el error de direccion
-							errores[3] = false;// Quitamos el error de ciudad
-						} else {
-							errores[2] = true;
-							errores[3] = true;
-						}
-					}
-				}
+				spiCategoria.setBackgroundDrawable(getResources().getDrawable(
+						R.anim.anim_boton));
+				evento.setDireccion(Direccion);
+				evento.setLatitud(Latitud);
+				evento.setLongitud(Longitud);
+				error = false;
 			}
 
 			if (tgComentarios.isChecked())
@@ -514,7 +422,7 @@ public class crearEventoActivity extends FragmentActivity {
 
 			if (chTodoElDia.isChecked()) {
 				if (edFechaIni.getText().length() > 0) {
-					errores[4] = false;// Quitamos el error de FechaInicio
+					errores[2] = false;// Quitamos el error de FechaInicio
 					if (edHoraIni.getText().length() > 0)
 						evento.setFechaInicio(dateFormat.parse(edFechaIni
 								.getText().toString()
@@ -524,35 +432,44 @@ public class crearEventoActivity extends FragmentActivity {
 						evento.setFechaInicio(dateFormat.parse(edFechaIni
 								.getText().toString() + " 00:00"));
 				} else
-					errores[4] = true;
+					errores[2] = true;
 				evento.setTodoElDia(true);
-				errores[5] = false;// Quitamos el error de FechaFin
+				errores[3] = false;// Quitamos el error de FechaFin
 			} else {
+				Date dtFechaIni = new Date();
+				Date dtFechaFin = new Date();
+
 				if (edFechaIni.getText().length() > 0) {
-					if (edHoraIni.getText().length() > 0)
+					if (edHoraIni.getText().length() > 0) {
 						evento.setFechaInicio(dateFormat.parse(edFechaIni
 								.getText().toString()
 								+ " "
 								+ edHoraIni.getText().toString()));
-					else
+						dtFechaIni = evento.getFechaInicio();
+					} else
 						evento.setFechaInicio(dateFormat.parse(edFechaIni
 								.getText().toString() + " 00:00"));
-					errores[4] = false;// Quitamos el error de FechaInicio
+					errores[2] = false;// Quitamos el error de FechaInicio
 				} else
-					errores[4] = true;
+					errores[2] = true;
 				if (edFechaFin.getText().length() > 0) {
-					if (edHoraFin.getText().length() > 0)
+					if (edHoraFin.getText().length() > 0) {
 						evento.setFechaFin(dateFormat.parse(edFechaFin
 								.getText().toString()
 								+ " "
 								+ edHoraFin.getText().toString()));
-					else
+						dtFechaFin = evento.getFechaFin();
+					} else
 						evento.setFechaFin(dateFormat.parse(edFechaFin
 								.getText().toString() + " 00:00"));
-					errores[5] = false;
+					errores[3] = false;// Quitamos el error de FechaFin
 				} else
-					errores[5] = true;// Quitamos el error de FechaFin
+					errores[3] = true;
 
+				if (dtFechaFin.before(dtFechaIni)) {
+					errores[2] = true;
+					errores[3] = true;
+				}
 				evento.setTodoElDia(false);
 			}
 			for (int i = 0; i < errores.length; i++) {
@@ -691,8 +608,8 @@ public class crearEventoActivity extends FragmentActivity {
 			GridView gridview = (GridView) actividad
 					.findViewById(R.id.listImagenes);
 			gridview.setAdapter(new listaImagenesAdapter(actividad, arrayImagen));
-			float altura = Herramientas.convertDpToPixel(
-					55 * contaFotos, actividad);// Tamaño de la imagen
+			float altura = Herramientas.convertDpToPixel(55 * contaFotos,
+					actividad);// Tamaño de la imagen
 			if (altura > 0)
 				gridview.setVisibility(View.VISIBLE);
 			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -701,30 +618,6 @@ public class crearEventoActivity extends FragmentActivity {
 		} catch (Exception e) {
 			e.toString();
 		}
-	}
-
-	protected void ventanaModal() {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				actividad);
-
-		String[] resultados = new String[opcionesDireccion.length];
-		for (int i = 0; i < opcionesDireccion.length; i++) {
-			resultados[i] = opcionesDireccion[i].getDireccion();
-		}
-		alertDialogBuilder.setTitle("Existen varias opciones");
-		alertDialogBuilder.setItems(resultados,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int position) {
-						Latitud = opcionesDireccion[position].getLatitud();
-						Longitud = opcionesDireccion[position].getLongitud();
-						tgUbicacion.setEnabled(false);
-						txtUbicacion.setText("Ubicación seleccionada");
-						direccionvalida = true;
-						crearEvento();
-					}
-				});
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.show();
 	}
 
 	public class creacionEvento extends AsyncTask<String, Void, Void> {
@@ -754,36 +647,7 @@ public class crearEventoActivity extends FragmentActivity {
 					}
 					if (total.toString().equals("ok")) {
 						crearEventoActivity.Creacionsatisfactoria = 0;
-					} else {
-						if (total.toString().equals("ERROR_NO_RESULTS_FOUND"))
-							crearEventoActivity.Creacionsatisfactoria = 2;
-						else if (total.toString().contains(
-								"ERROR_TOO_MANY_RESULTS")) {
-							JSONObject jobj = new JSONObject(total.toString());
-							JSONArray jlist = new JSONArray(
-									jobj.getString("list"));
-							crearEventoActivity.opcionesDireccion = new seleccionUbicacionEN[jlist
-									.length()];
-							for (int i = 0; i < jlist.length(); i++) {
-								JSONObject item = new JSONObject(jlist.get(i)
-										.toString());
-								seleccionUbicacionEN ubi = new seleccionUbicacionEN();
-								ubi.setDireccion(item.getString("direccion"));
-								ubi.setLongitud(Double.valueOf(item
-										.getString("longitud")));
-								ubi.setLatitud(Double.valueOf(item
-										.getString("latitud")));
-								crearEventoActivity.opcionesDireccion[i] = ubi;
-							}
-							crearEventoActivity.Creacionsatisfactoria = 3;
-
-						} else if (total.toString().equals(
-								"ERROR_NO_RESULT_VERIFIED"))
-							crearEventoActivity.Creacionsatisfactoria = 4;
-						else
-							crearEventoActivity.Creacionsatisfactoria = 1;
 					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 					crearEventoActivity.Creacionsatisfactoria = -1;
@@ -811,16 +675,7 @@ public class crearEventoActivity extends FragmentActivity {
 				if (crearEventoActivity.Creacionsatisfactoria == 1)
 					Toast.makeText(crearEventoActivity.this,
 							"Error al crear evento", Toast.LENGTH_SHORT).show();
-				else if (crearEventoActivity.Creacionsatisfactoria == 2)
-					Toast.makeText(crearEventoActivity.this,
-							"No se ha encontrado la dirección especificada.",
-							Toast.LENGTH_SHORT).show();
-				else if (crearEventoActivity.Creacionsatisfactoria == 3) {
-					Toast.makeText(crearEventoActivity.this,
-							"La dirección devuelve varios resultados.",
-							Toast.LENGTH_SHORT).show();
-					ventanaModal();
-				} else if (crearEventoActivity.Creacionsatisfactoria == -1)
+				else if (crearEventoActivity.Creacionsatisfactoria == -1)
 					Toast.makeText(
 							crearEventoActivity.this,
 							"Imposible conectar con el servidor, intentalo pasados unos minutos",
@@ -906,7 +761,8 @@ public class crearEventoActivity extends FragmentActivity {
 								}
 								arrayImagen.add(new ImagenEN(urlimagen, img,
 										NOTOCARIMAGEN));
-								//arrayImagenMod.add(new ImagenEN(urlimagen, img,NOTOCARIMAGEN));
+								// arrayImagenMod.add(new ImagenEN(urlimagen,
+								// img,NOTOCARIMAGEN));
 							}
 						}
 						contaFotos = arrayImagen.size();
@@ -930,8 +786,15 @@ public class crearEventoActivity extends FragmentActivity {
 		try {
 			edNombre.setText(EventoModificar.getNombre());
 			edDesc.setText(EventoModificar.getDescripcion());
-			relativeMapa.setVisibility(View.VISIBLE);
-			tgUbicacion.setChecked(true);
+			// Ubicacion
+			Latitud = EventoModificar.getLatitud();
+			Longitud = EventoModificar.getLongitud();
+			Direccion = EventoModificar.getDireccion();
+			LatLng local = new LatLng(Latitud, Longitud);
+
+			mapaLocalizacion.moveCamera(CameraUpdateFactory.newLatLngZoom(
+					local, 14));
+			mapaLocalizacion.addMarker(new MarkerOptions().position(local));
 			// Fechas
 			Date fecha = EventoModificar.getFechaInicio();
 			Calendar cal = Calendar.getInstance();
@@ -949,6 +812,13 @@ public class crearEventoActivity extends FragmentActivity {
 			} else {
 				Date fechaFin = EventoModificar.getFechaFin();
 				Calendar calfin = Calendar.getInstance();
+				String fechaini = MainActivity.formatoFechaMostrar
+						.format(EventoModificar.getFechaInicio());
+				edFechaIni.setText(fechaini);
+				String horaini = formatoHora.format(EventoModificar
+						.getFechaInicio());
+				edHoraIni.setText(horaini);
+
 				calfin.setTime(fechaFin);
 				String fechafin = MainActivity.formatoFechaMostrar
 						.format(EventoModificar.getFechaFin());
@@ -957,7 +827,7 @@ public class crearEventoActivity extends FragmentActivity {
 						.getFechaFin());
 				edHoraFin.setText(horafin);
 			}
-			spiCategoria.setSelection(EventoModificar.getIdCategoria() - 1);
+			spiCategoria.setSelection(EventoModificar.getIdCategoria());
 			if (EventoModificar.isComentarios())
 				tgComentarios.setSelected(true);
 			// Pendiente realizar imagenes

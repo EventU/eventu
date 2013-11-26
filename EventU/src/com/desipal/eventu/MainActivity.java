@@ -135,21 +135,26 @@ public class MainActivity extends ActionBarActivity implements
 						fragment = new EventosProximos();
 						if (filAvanzadoItem != null)
 							filAvanzadoItem.setVisible(false);
+
+						establecerAnchoMenu(false);
 						break;
 					case 2:
 						getSupportActionBar().setTitle("Cerca de ti");
 						fragment = new EventosCerca();
 						filAvanzadoItem.setVisible(false);
+						establecerAnchoMenu(true);
 						break;
 					case 3:
 						getSupportActionBar().setTitle("Buscar eventos");
 						fragment = new filtroAvanzado();
 						filAvanzadoItem.setVisible(true);
+						establecerAnchoMenu(false);
 						break;
 					case 5:
 						getSupportActionBar().setTitle("Mis eventos");
 						fragment = new MisEventos();
 						filAvanzadoItem.setVisible(false);
+						establecerAnchoMenu(false);
 						break;
 					case 6:
 						intent = new Intent(getApplication(),
@@ -199,7 +204,7 @@ public class MainActivity extends ActionBarActivity implements
 		Pinicion.run();
 
 		// Funcion para establecer el ancho del gesto para desplegar el menu
-		this.establecerAnchoMenu();
+		this.establecerAnchoMenu(false);
 	}
 
 	@Override
@@ -245,6 +250,8 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && PosicionActual == 2)
+			establecerAnchoMenu(false);
 		if (keyCode == KeyEvent.KEYCODE_BACK && PosicionActual != 1) {
 			getSupportActionBar().setTitle("Eventos próximos");
 			Fragment fragment = new EventosProximos();
@@ -269,10 +276,10 @@ public class MainActivity extends ActionBarActivity implements
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		drawerToggle.onConfigurationChanged(newConfig);
-		establecerAnchoMenu();
+		establecerAnchoMenu(false);
 	}
 
-	protected void establecerAnchoMenu() {
+	protected void establecerAnchoMenu(boolean escercadeti) {
 		// Extender el evento para mostrar el menú
 		try {
 
@@ -286,7 +293,10 @@ public class MainActivity extends ActionBarActivity implements
 			Field mEdgeSize = draggerObj.getClass().getDeclaredField(
 					"mEdgeSize");
 			mEdgeSize.setAccessible(true);
-			mEdgeSize.setInt(draggerObj, ancho / 3);
+			if (!escercadeti)
+				mEdgeSize.setInt(draggerObj, ancho / 3);
+			else
+				mEdgeSize.setInt(draggerObj, 20);
 		} catch (NoSuchFieldException en) {
 			en.printStackTrace();
 		} catch (IllegalArgumentException en) {

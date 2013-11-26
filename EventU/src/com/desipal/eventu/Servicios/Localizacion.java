@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by Edu on 7/10/13.
@@ -37,8 +36,11 @@ public class Localizacion extends Service {
 		// Al iniciar la aplicacion cojemos la posicion de la wifi
 		Location locteml = locationManager
 				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		MainActivity.posicionActual = new LatLng(locteml.getLatitude(),
-				locteml.getLongitude());
+		if (locteml != null)
+			MainActivity.posicionActual = new LatLng(locteml.getLatitude(),
+					locteml.getLongitude());
+		else
+			MainActivity.posicionActual=new LatLng(40.416944,-3.703611);
 		previousBestLocation = locteml;
 	}
 

@@ -138,7 +138,7 @@ public class EventosProximos extends Fragment {
 				pagina = ((int) lista.size() / MainActivity.ELEMENTOSLISTA) + 1;
 
 				parametros.add(new BasicNameValuePair("page", pagina + ""));
-				parametros.add(new BasicNameValuePair("idCat", "1"));
+				parametros.add(new BasicNameValuePair("idCat", "0"));
 				peticion pet = new peticion(parametros, Actividad);
 				pet.execute(new String[] { URL });
 			} else {

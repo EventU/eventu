@@ -154,7 +154,7 @@ public class filtroAvanzado extends Fragment {
 					}
 				}
 			});
-
+			recoger();
 			// Comienzo de llenado de listas
 			adaptador = new EventoAdaptador(getActivity(), lista);
 			listview.setAdapter(adaptador);
@@ -297,7 +297,6 @@ public class filtroAvanzado extends Fragment {
 							e.setUrl(jobj.getString("url"));
 							e.setLatitud(jobj.getDouble("latitud"));
 							e.setLongitud(jobj.getDouble("longitud"));
-							// nuevo
 							e.setUrlImagen(jobj.getString("imagen"));
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
@@ -310,15 +309,11 @@ public class filtroAvanzado extends Fragment {
 					} else if (lista.size() > 0)
 						finlista = true;
 					else {
-						Toast.makeText(Actividad, R.string.errNoDatosConsulta,
-								Toast.LENGTH_LONG).show();
 						finlista = true;
 					}
-
 				} catch (Exception e) {
 					finlista = true;
 					error = true;
-
 				}
 			}
 			return null;
@@ -328,6 +323,9 @@ public class filtroAvanzado extends Fragment {
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
 			listview.removeFooterView(footer);
+			if (finlista && !error)
+				Toast.makeText(Actividad, R.string.errNoDatosConsulta,
+						Toast.LENGTH_LONG).show();
 			if (error)
 				Toast.makeText(Actividad, R.string.errNoServidor,
 						Toast.LENGTH_LONG).show();
