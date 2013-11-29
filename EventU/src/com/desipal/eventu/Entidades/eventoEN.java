@@ -27,6 +27,7 @@ public class eventoEN {
     private Date fechaFin;
     private boolean todoElDia;
     private List<Drawable> imagenes;
+    private boolean favorito;
 
     public int getIdEvento() {
         return idEvento;
@@ -171,4 +172,12 @@ public class eventoEN {
     public void setDistancia(double distancia) {
         this.distancia = distancia;
     }
+
+	public boolean isFavorito() {
+		return favorito;
+	}
+
+	public void setFavorito(boolean favorito) {
+		this.favorito = favorito;
+	}
 }

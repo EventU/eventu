@@ -16,6 +16,7 @@ import com.desipal.eventu.Extras.Herramientas;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -88,12 +89,24 @@ public class LocalizacionActivity extends FragmentActivity {
 					CameraUpdate camUpd3 = CameraUpdateFactory
 							.newCameraPosition(camPos);
 					mapa.animateCamera(camUpd3);
-
 					mapa.addMarker(new MarkerOptions().position(
 							MainActivity.posicionActual).title("Estas aquí"));
-
 				}
 			});
+
+			mapa.setOnMarkerClickListener(new OnMarkerClickListener() {
+				@Override
+				public boolean onMarkerClick(Marker mar) {
+					CameraPosition camPos = new CameraPosition.Builder()
+							.target(mar.getPosition()).zoom(15).build();
+					CameraUpdate camUpd3 = CameraUpdateFactory
+							.newCameraPosition(camPos);
+					mapa.animateCamera(camUpd3);
+					mar.showInfoWindow();
+					return true;
+				}
+			});
+
 			mapa.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 				@Override
 				public void onInfoWindowClick(Marker marker) {
@@ -138,7 +151,8 @@ public class LocalizacionActivity extends FragmentActivity {
 					}
 				}
 			});
-
+			Toast.makeText(getApplicationContext(),
+					R.string.elegirLocalizacion, Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -217,21 +231,19 @@ public class LocalizacionActivity extends FragmentActivity {
 		}
 
 		protected void onPostExecute(Void result) {
+			mapa.clear();
 			if (list.size() != 0) {
-				mapa.clear();
 				for (int i = 0; i < list.size(); i++) {
 					HashMap<String, String> hMap = (HashMap<String, String>) list
 							.get(i);
 					LatLng ll = new LatLng(Double.parseDouble(hMap.get("lat")),
 							Double.parseDouble(hMap.get("lng")));
-
 					mapa.addMarker(new MarkerOptions()
 							.position(ll)
 							.title(hMap.get("nombre"))
 							.snippet(hMap.get("direccion"))
 							.icon(BitmapDescriptorFactory
 									.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
 				}
 				int zoom = Herramientas.calcularZoom(50);
 
@@ -241,6 +253,7 @@ public class LocalizacionActivity extends FragmentActivity {
 			} else
 				Toast.makeText(getApplicationContext(),
 						"No se obtuvo resultados", Toast.LENGTH_SHORT).show();
+
 			relBloquear.setVisibility(View.GONE);
 
 		}

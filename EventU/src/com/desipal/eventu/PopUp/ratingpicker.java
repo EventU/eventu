@@ -162,7 +162,7 @@ public class ratingpicker extends DialogFragment {
 			if (enviado) {
 				Toast.makeText(detalleEventoActivity.act,
 						recurso.getString(R.string.dialogComentadoOK),
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_LONG).show();				
 				dialogo.dismiss();
 			} else
 				Toast.makeText(detalleEventoActivity.act,

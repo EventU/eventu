@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.desipal.eventu.Entidades.comentarioEN;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.PopUp.ratingpicker;
 import com.desipal.eventu.Presentacion.verTodosComentariosAdapter;
 import com.desipal.eventu.R;
@@ -116,7 +117,7 @@ public class VerTodosComentariosActivity extends FragmentActivity {
 				MainActivity.ELEMENTOSLISTA + ""));
 		page = ((int) listaComentarios.size() / MainActivity.ELEMENTOSLISTA) + 1;
 		parametros.add(new BasicNameValuePair("page", page + ""));
-		String URL = "http://desipal.hol.es/app/eventos/listaComentarios.php";
+		String URL = UrlsServidor.LISTACOMENTARIOS;
 		peticionComentarios peticion = new peticionComentarios(parametros,
 				VerTodosComentariosActivity.this);
 		peticion.execute(new String[] { URL });

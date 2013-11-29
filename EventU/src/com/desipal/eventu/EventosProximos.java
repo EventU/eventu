@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 import com.desipal.eventu.Entidades.miniEventoEN;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.MainActivity;
 import com.desipal.eventu.Presentacion.EventoAdaptador;
 import com.desipal.eventu.R;
@@ -60,7 +61,8 @@ public class EventosProximos extends Fragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		try {
 			Actividad = getActivity();
-			view = inflater.inflate(R.layout.eventos_proximos, container, false);
+			view = inflater
+					.inflate(R.layout.eventos_proximos, container, false);
 			listView = (PullToRefreshListView) view.findViewById(R.id.list);
 			listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 				@Override
@@ -123,7 +125,7 @@ public class EventosProximos extends Fragment {
 
 				parametros.add(new BasicNameValuePair("itemsPerPage",
 						MainActivity.ELEMENTOSLISTA + ""));
-				String URL = "http://desipal.hol.es/app/eventos/filtro.php";
+				String URL = UrlsServidor.FILTRO;
 
 				parametros.add(new BasicNameValuePair("filtro", ""));
 

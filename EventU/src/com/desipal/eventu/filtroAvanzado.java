@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import com.desipal.eventu.Entidades.categoriaEN;
 import com.desipal.eventu.Entidades.miniEventoEN;
 import com.desipal.eventu.Extras.Herramientas;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.PopUp.datepicker;
 import com.desipal.eventu.Presentacion.EventoAdaptador;
 
@@ -220,7 +221,7 @@ public class filtroAvanzado extends Fragment {
 
 				parametros.add(new BasicNameValuePair("itemsPerPage",
 						MainActivity.ELEMENTOSLISTA + ""));
-				String URL = "http://desipal.hol.es/app/eventos/filtro.php";
+				String URL = UrlsServidor.FILTRO;
 
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date());

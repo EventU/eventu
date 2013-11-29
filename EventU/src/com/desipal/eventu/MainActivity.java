@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.desipal.eventu.Extras.InicioMuestraDrawer;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.Extras.categorias;
 import com.desipal.eventu.Imagenes.ImageLoader;
 import com.desipal.eventu.Presentacion.EntryItem;
@@ -55,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements
 	public static boolean estadoConexion = false;
 	public static String fCategorias = "categorias.json";
 	public static SimpleDateFormat formatoFecha = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss", currentLocale);
+			"yyyy-MM-dd HH:mm", currentLocale);
 	public static SimpleDateFormat formatoFechaMostrar = new SimpleDateFormat(
 			"dd/MM/yyyy", MainActivity.currentLocale);
 	public static LatLng posicionActual = new LatLng(0, 0);
@@ -75,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements
 		startService(servicio);
 
 		// Peticion de categorias
-		String URL = "http://desipal.hol.es/app/eventos/categorias.php";
+		String URL = UrlsServidor.CATEGORIAS;
 		categorias peticion = new categorias(MainActivity.this);
 		peticion.execute(new String[] { URL });
 		// //////////////
@@ -95,30 +96,30 @@ public class MainActivity extends ActionBarActivity implements
 				GravityCompat.START);
 
 		// ///
-		items.add(new SectionItem("Incio"));
+		items.add(new SectionItem("Inicio"));
 		// Eventos próximos=Inicio
 		items.add(new EntryItem(R.drawable.ic_menu_eventprox,
-				"Eventos próximos", "Eventos con fecha  mas cercana"));
+				"Eventos próximos", "Eventos con fecha  más cercana"));
 		items.add(new EntryItem(R.drawable.ic_menu_eventcerca, "Cerca de ti",
 				"Descubre lo que pasa a tu alrededor"));
 		items.add(new EntryItem(R.drawable.ic_menu_search, "Buscar eventos",
 				"Busqueda avanzada de eventos"));
 
 		items.add(new SectionItem("Mi perfil"));
+		items.add(new EntryItem(R.drawable.ic_menu_misfavoritos,
+				"Mis favoritos", "Visualiza tus eventos favoritos"));
 		items.add(new EntryItem(R.drawable.ic_menu_miseventos, "Mis eventos",
 				"Visualiza y modifica tus eventos"));
 		items.add(new EntryItem(R.drawable.ic_menu_nuevoevento, "Crear evento",
 				"Comparte un nuevo evento"));
-
+		items.add(new SectionItem("EventU"));
+		items.add(new EntryItem(R.drawable.ic_menu_info,
+				"Acerca de...", "Información de la aplicación"));
+		items.add(new EntryItem(R.drawable.ic_menu_help, "Sugerencias",
+				"Envianos dudas o sugerencias"));
 		adaptadorListaDrawer adapter = new adaptadorListaDrawer(this, items);
 		drawerList.setAdapter(adapter);
 
-		// //////////////////////////////////////
-		/*
-		 * drawerList.setAdapter(new ArrayAdapter<String>(getSupportActionBar()
-		 * .getThemedContext(), android.R.layout.simple_list_item_1,
-		 * opcionesMenu));
-		 */
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -151,15 +152,33 @@ public class MainActivity extends ActionBarActivity implements
 						establecerAnchoMenu(false);
 						break;
 					case 5:
+						getSupportActionBar().setTitle("Mis favoritos");
+						fragment = new MisFavoritos();
+						filAvanzadoItem.setVisible(false);
+						establecerAnchoMenu(false);
+						break;
+					case 6:
 						getSupportActionBar().setTitle("Mis eventos");
 						fragment = new MisEventos();
 						filAvanzadoItem.setVisible(false);
 						establecerAnchoMenu(false);
 						break;
-					case 6:
+					case 7:
 						intent = new Intent(getApplication(),
 								crearEventoActivity.class);
 						esActividad = true;
+						break;
+					case 9:
+						getSupportActionBar().setTitle("Acerca de...");
+						fragment = new AcercaDe();
+						filAvanzadoItem.setVisible(false);
+						establecerAnchoMenu(false);
+						break;
+					case 10:
+						getSupportActionBar().setTitle("Sugerencias");
+						fragment = new Sugerencias();
+						filAvanzadoItem.setVisible(false);
+						establecerAnchoMenu(false);
 						break;
 					}
 					if (!esActividad) {
@@ -289,6 +308,7 @@ public class MainActivity extends ActionBarActivity implements
 			ViewDragHelper draggerObj = (ViewDragHelper) mDragger
 					.get(drawerLayout);
 			Display display = getWindowManager().getDefaultDisplay();
+			@SuppressWarnings("deprecation")
 			int ancho = display.getWidth();
 			Field mEdgeSize = draggerObj.getClass().getDeclaredField(
 					"mEdgeSize");

@@ -104,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/btnLimpiar"
                 android:background="@anim/anim_boton"
                 android:drawableLeft="@drawable/ic_menu_search"
@@ -116,7 +116,7 @@
                 android:id="@+id/btnLimpiar"
                 android:layout_width="46dp"
                 android:layout_height="30dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="5dp"
                 android:background="@anim/anim_boton"
                 android:contentDescription="@string/descImagen"
                 android:src="@drawable/ic_menu_delete" />

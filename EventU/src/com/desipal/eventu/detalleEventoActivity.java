@@ -8,8 +8,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -23,11 +26,13 @@ import com.desipal.eventu.Entidades.categoriaEN;
 import com.desipal.eventu.Entidades.comentarioEN;
 import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.Extras.Herramientas;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.Imagenes.GaleriaActivity;
 import com.desipal.eventu.PopUp.ratingpicker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -50,7 +55,9 @@ import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Button;
+
 import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -76,6 +83,9 @@ public class detalleEventoActivity extends FragmentActivity {
 	private TextView txtDetalleFechaFin;
 	private TextView txtDetalleFechaFinal;
 	private TextView txtDetaCate;
+	private TextView txtCuentaAtras;
+
+	private Gallery galeria;
 
 	private Button btnOpinar;
 	private ToggleButton togAsistencia;
@@ -90,6 +100,9 @@ public class detalleEventoActivity extends FragmentActivity {
 	private TextView textNoHayComentarios;
 	private ProgressBar progressBarGeneral;
 	private Button btnComoLlegar;
+	private ImageButton btnFavorito;
+
+	public static boolean favorito;
 	public static boolean asiste;
 	public static long idEvento;
 
@@ -111,6 +124,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			setContentView(R.layout.detalleevento);
 			Bundle e = getIntent().getExtras();
 			idEvento = e.getLong("idEvento");
+			btnFavorito = (ImageButton) findViewById(R.id.btnFavorito);
 			edNombre = (TextView) findViewById(R.id.txtDetalleNombre);
 			edDesc = (TextView) findViewById(R.id.txtDetalleDesc);
 			txtAsistentes = (TextView) findViewById(R.id.txtDetalleAsistentes);
@@ -122,6 +136,7 @@ public class detalleEventoActivity extends FragmentActivity {
 			txtDetalleFechaInicio = (TextView) findViewById(R.id.txtDetalleFechaInicio);
 			txtDetalleFechaFin = (TextView) findViewById(R.id.txtDetalleFechaFin);
 			txtDetalleFechaFinal = (TextView) findViewById(R.id.txtDetalleFechaFinal);
+			txtCuentaAtras = (TextView) findViewById(R.id.txtCuentaAtras);
 			togAsistencia = (ToggleButton) findViewById(R.id.togAsistencia);
 			progressBar = (ProgressBar) findViewById(R.id.progressBar);
 			relInformacion = (LinearLayout) findViewById(R.id.relInformacion);
@@ -134,9 +149,9 @@ public class detalleEventoActivity extends FragmentActivity {
 			textNoHayComentarios = (TextView) findViewById(R.id.textNoHayComentarios);
 			btnComoLlegar = (Button) findViewById(R.id.btnComoLlegar);
 
-			Gallery g = (Gallery) findViewById(R.id.gallery);
-			g.setAdapter(new ImageAdapter(this));
-			g.setOnItemClickListener(new OnItemClickListener() {
+			galeria = (Gallery) findViewById(R.id.gallery);
+			galeria.setAdapter(new ImageAdapter(this));
+			galeria.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int position, long id) {
@@ -146,7 +161,25 @@ public class detalleEventoActivity extends FragmentActivity {
 					startActivity(i);
 				}
 			});
+			btnFavorito.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+					if (favorito)
+						param.add(new BasicNameValuePair("accion", "baja"));
+					else
+						param.add(new BasicNameValuePair("accion", "alta"));
 
+					param.add(new BasicNameValuePair("idEvento", idEvento + ""));
+					param.add(new BasicNameValuePair("idDispositivo",
+							MainActivity.IDDISPOSITIVO + ""));
+
+					String URL = UrlsServidor.FAVORITO;
+					peticionFavorito petFavorito = new peticionFavorito(param,
+							detalleEventoActivity.this);
+					petFavorito.execute(new String[] { URL });
+				}
+			});
 			// Boton opinar
 			btnOpinar.setOnClickListener(new OnClickListener() {
 				@Override
@@ -213,7 +246,7 @@ public class detalleEventoActivity extends FragmentActivity {
 										asistire = "false";
 									parametros.add(new BasicNameValuePair(
 											"asiste", asistire));
-									String URL = "http://desipal.hol.es/app/eventos/asistenciaEvento.php";
+									String URL = UrlsServidor.ASISTENCIAEVENTO;
 									peticionAsistencia peticion = new peticionAsistencia(
 											parametros,
 											detalleEventoActivity.this);
@@ -228,7 +261,7 @@ public class detalleEventoActivity extends FragmentActivity {
 							}
 						}
 					});
-			String URL = "http://desipal.hol.es/app/eventos/verEvento.php";
+			String URL = UrlsServidor.VEREVENTO;
 			peticionVerEvento petVerEvento = new peticionVerEvento(parametros,
 					detalleEventoActivity.this);
 			petVerEvento.execute(new String[] { URL });
@@ -239,9 +272,15 @@ public class detalleEventoActivity extends FragmentActivity {
 		}
 	}
 
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		galeria.setAdapter(new ImageAdapter(this));
+	}
+
 	public void verEvento() {
 		try {
 			progressBarGeneral.setVisibility(View.GONE);
+			btnFavorito.setVisibility(View.VISIBLE);
 			edNombre.setText(evento.getNombre());
 			edDesc.setText(evento.getDescripcion());
 			txtAsistentes.setText(evento.getAsistencia()
@@ -262,16 +301,25 @@ public class detalleEventoActivity extends FragmentActivity {
 			String fechaF = MainActivity.formatoFecha.format(evento
 					.getFechaFin());
 
-			// txtDetalleFechaInicio.setText(fechaI + " Durante todo el día");
+			String cuenta = Herramientas.cuentaAtras(fechaI);
+			txtCuentaAtras.setText(cuenta);
 			if (evento.isTodoElDia()) {
 				txtDetalleFechaInicio.setText(fechaI);
-				txtDetalleFechaFin.setText(" Durante todo el día");
+				txtDetalleFechaFin.setText("Durante todo el día");
 				txtDetalleFechaFinal.setVisibility(View.GONE);
 			} else {
 				txtDetalleFechaInicio.setText(fechaI);
 				txtDetalleFechaFin.setText(R.string.crearEventoFechaFin);
 				txtDetalleFechaFinal.setText(fechaF);
 			}
+
+			favorito = evento.isFavorito();
+			if (favorito)
+				btnFavorito
+						.setImageResource(R.drawable.rate_star_big_on_holo_light);
+			else
+				btnFavorito
+						.setImageResource(R.drawable.rate_star_big_off_holo_light);
 			List<categoriaEN> categorias = Herramientas.Obtenercategorias(this);
 			txtDetaCate.setText(categorias.get(evento.getIdCategoria())
 					.getTexto());
@@ -289,6 +337,12 @@ public class detalleEventoActivity extends FragmentActivity {
 			Posicion = new LatLng(evento.getLatitud(), evento.getLongitud());
 			map.addMarker(new MarkerOptions().position(Posicion).title(
 					evento.getNombre()));
+			map.setOnMarkerClickListener(new OnMarkerClickListener() {
+				@Override
+				public boolean onMarkerClick(Marker mar) {
+					return true;
+				}
+			});
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(Posicion, 15));
 			relInformacion.setVisibility(View.VISIBLE);
 			LayoutComentarios.setVisibility(View.VISIBLE);
@@ -315,7 +369,7 @@ public class detalleEventoActivity extends FragmentActivity {
 						.add(new BasicNameValuePair("idEvento", idEvento + ""));
 				parametros.add(new BasicNameValuePair("elementsPerPage",
 						Herramientas.ComentariosEnDetalleEvento() + ""));
-				String URL = "http://desipal.hol.es/app/eventos/listaComentarios.php";
+				String URL = UrlsServidor.LISTACOMENTARIOS;
 
 				peticionComentarios peticion = new peticionComentarios(
 						parametros, detalleEventoActivity.this);
@@ -426,6 +480,7 @@ public class detalleEventoActivity extends FragmentActivity {
 						e.setLatitud(jsEvento.getDouble("latitud"));
 						e.setLongitud(jsEvento.getDouble("longitud"));
 						e.setAsistencia(jsEvento.getInt("asistencia"));
+						e.setFavorito(jobj.getBoolean("favorito"));
 						int temp = jsEvento.getInt("validado");
 						boolean val = temp == 1 ? true : false;
 						e.setValidado(val);
@@ -603,6 +658,59 @@ public class detalleEventoActivity extends FragmentActivity {
 		}
 	}
 
+	public class peticionFavorito extends AsyncTask<String, Void, Void> {
+		private ArrayList<NameValuePair> parametros;
+		private boolean error = true;
+
+		public peticionFavorito(ArrayList<NameValuePair> parametros,
+				Context context) {
+			this.parametros = parametros;
+		}
+
+		@Override
+		protected Void doInBackground(String... urls) {
+			for (String url : urls) {
+				try {
+					DefaultHttpClient client = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(url);
+					httppost.setEntity(new UrlEncodedFormEntity(parametros));
+
+					HttpResponse execute = client.execute(httppost);
+					InputStream content = execute.getEntity().getContent();
+					BufferedReader r = new BufferedReader(
+							new InputStreamReader(content));
+					StringBuilder total = new StringBuilder();
+					String line;
+					while ((line = r.readLine()) != null) {
+						total.append(line);
+					}
+					if (total.toString().equals("ok")) {
+						error = false;
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}
+
+		protected void onPostExecute(Void result) {
+			if (!error) {
+				if (favorito) {
+					favorito = false;
+					btnFavorito
+							.setImageResource(R.drawable.rate_star_big_off_holo_light);
+				} else {
+					favorito = true;
+					btnFavorito
+							.setImageResource(R.drawable.rate_star_big_on_holo_light);
+				}
+
+			}
+		}
+	}
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
@@ -636,29 +744,17 @@ public class detalleEventoActivity extends FragmentActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ImageView i = new ImageView(mContext);
 			if (mImageIds[position] != null) {
-				i.setImageDrawable(mImageIds[position]);
-				Display display = getWindowManager().getDefaultDisplay();
 
+				Display display = getWindowManager().getDefaultDisplay();
 				// Alto y ancho por defecto
 				int ancho = display.getWidth();
 				int alto = display.getHeight();
-				Double an = ancho - ancho * 0.10;
-				Double al = alto - alto * 0.30;
+				Double an = ancho - ancho * 0.15;
+				Double al = alto - alto * 0.50;
 				ancho = an.intValue();
 				alto = al.intValue();
 
-				// Ancho de la imagen
-				BitmapDrawable bd = (BitmapDrawable) mImageIds[position];
-				an = bd.getBitmap().getWidth() * 1.40;
-				al = bd.getBitmap().getHeight() * 1.40;
-				int anchoImagen = an.intValue();
-				int altoImagen = al.intValue();
-
-				if (ancho > anchoImagen)
-					ancho = anchoImagen;
-				if (alto > altoImagen)
-					alto = altoImagen;
-
+				i.setImageDrawable(mImageIds[position]);
 				i.setLayoutParams(new Gallery.LayoutParams(ancho, alto));
 				i.setScaleType(ImageView.ScaleType.FIT_CENTER);
 				i.setBackgroundResource(mGalleryItemBackground);

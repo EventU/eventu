@@ -37,7 +37,7 @@
     <string name="verMasComentarios">Ver mas comentarios</string>
 
     <!-- Crear evento -->
-    <string name="btn_inicio">Inicio</string>
+    <string name="btn_inicio">Volver</string>
     <string name="crearEventoTitulo">Nuevo evento</string>
     <string name="crearEventoHintDescrip">Detalles del evento</string>
     <string name="crearEventoDatosEvento">Datos del evento</string>
@@ -59,6 +59,7 @@
     <string name="crearEventoImagenes">Imágenes del evento</string>
     <string name="crearEventoCargarImagen">Cargar imagen</string>
     <string name="hint_hora">hh:mm</string>
+    <string name="elegirLocalizacion">Pulse el sitio para seleccionarlo </string>
 
     <!-- Opiniones -->
     <string name="dialogTitle">Comenta y puntua el evento</string>
@@ -89,5 +90,16 @@
     <!-- Tutorial -->
     <string name="tutorial">Tutorial</string>
     <string name="txtTutDeslizar">Desliza el dedo para desplegar el menú</string>
+
+    <!-- Acerca de -->
+    <string name="acercaDeVersion">Versión %s</string>
+    <string name="copyright">©2013 Desipal</string>
+    <string name="acercaDeDerechos">Todos los derechos reservados</string>
+
+    <!-- Sugerencias -->
+    <string name="enviar">Enviar</string>
+    <string name="hintSMS">Escriba aquí su mensaje</string>
+    <string name="hintEmail">Correo electrónico (opcional)</string>
+    <string name="txtSugerenia">Para cualquier duda, sugerencia, consulta o comentario puede enviarnos un email rellenado el siguiente formulaio</string>
 
 </resources>

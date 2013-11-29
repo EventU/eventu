@@ -5,7 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -199,4 +203,98 @@ public class Herramientas {
 		return lista;
 	}
 
+	public static double ConvertirMinutos_en_Hora(long minutos) {
+		return (minutos / 60);
+	}
+
+	public static long ConvertirHoras_en_Minutos(double horas) {
+		return (long) (horas * 60);
+	}
+
+	public static double ConvertirHoras_en_Dias(long horas) {
+		return (horas / 24);
+	}
+
+	public static long ConvertirDias_en_Horas(double dias) {
+		return (long) (dias * 24);
+	}
+
+	public static String cuentaAtras(String fechaEvento) {
+		Date dinicio = null, dfinal = null;
+		long milis1, milis2, diff;
+
+		SimpleDateFormat sdf = MainActivity.formatoFecha;
+
+		try {
+			dinicio = new Date();
+			dfinal = sdf.parse(fechaEvento);
+
+		} catch (ParseException e) {
+
+			System.out.println("Se ha producido un error en el parseo");
+		}
+		// INSTANCIA DEL CALENDARIO GREGORIANO
+		Calendar cinicio = Calendar.getInstance();
+		Calendar cfinal = Calendar.getInstance();
+
+		cinicio.setTime(dinicio);
+		cfinal.setTime(dfinal);
+		milis1 = cinicio.getTimeInMillis();
+		milis2 = cfinal.getTimeInMillis();
+
+		String devolver = "";
+		if (milis2 > milis1)
+			diff = milis2 - milis1;
+		else
+			diff = milis1 - milis2;
+		// calcular la diferencia en dias
+		long valorDia = 24 * 60 * 60 * 1000;
+		long diffdias = 0;
+		for (long tiempo = diff; tiempo > valorDia; tiempo -= valorDia) {
+			diffdias++;
+		}
+
+		// calcular la diferencia en horas
+		diff = diff - (diffdias * valorDia);
+		long valorHora = 60 * 60 * 1000;
+		long diffHoras = 0;
+		for (long tiempo = diff; tiempo > valorHora; tiempo -= valorHora) {
+			diffHoras++;
+		}
+		// calcular la diferencia en minutos
+		diff -= diffHoras * valorHora;
+		long valorMinutos = 60 * 1000;
+		long diffMinutos = 0;
+		for (long tiempo = diff; tiempo > valorMinutos; tiempo -= valorMinutos) {
+			diffMinutos++;
+		}
+
+		if (milis2 > milis1)
+			devolver = "Empieza en ";
+		else
+			devolver = "Comenzó hace  ";
+
+		if (diffdias == 1)
+			devolver = devolver + "1 día ";
+		else if (diffdias == 0)
+			devolver = devolver + "";
+		else
+			devolver += diffdias + " días ";
+
+		if (diffHoras == 1)
+			devolver = devolver + "1 hora ";
+		else if (diffHoras == 0)
+			devolver = devolver + "";
+		else
+			devolver += diffHoras + " horas ";
+
+		if (diffMinutos == 1)
+			devolver = devolver + "1 minuto ";
+		else if (diffMinutos == 0)
+			devolver = devolver + "";
+		else
+			devolver += diffMinutos + " minutos ";
+
+		return devolver;
+	}
 }

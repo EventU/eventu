@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -15,12 +16,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import com.desipal.eventu.Entidades.miniEventoEN;
 import com.desipal.eventu.Extras.Herramientas;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.Presentacion.EventoAdaptador;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,7 +48,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -64,7 +68,7 @@ public class EventosCerca extends Fragment {
 	private Button btnBuscarCerca;
 	private TextView txtKm;
 	private TextView txtErrorCerca;
-	private ProgressBar progresCerca;
+	private View footer;
 	private SeekBar seekRadio;
 	private ToggleButton togOpcionMapa;
 	private GoogleMap map;
@@ -94,7 +98,7 @@ public class EventosCerca extends Fragment {
 
 			gridCerca = (ListView) view.findViewById(R.id.gridResultadosCerca);
 			gridCerca.setFadingEdgeLength(0);
-			progresCerca = (ProgressBar) view.findViewById(R.id.progresCerca);
+			footer = inflater.inflate(R.layout.footerlistview, null);
 			txtKm = (TextView) view.findViewById(R.id.txtKm);
 			seekRadio = (SeekBar) view.findViewById(R.id.seekRadio);
 			txtErrorCerca = (TextView) view.findViewById(R.id.txtErrorCerca);
@@ -116,7 +120,6 @@ public class EventosCerca extends Fragment {
 							&& !bloquearPeticion
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
 							&& !finlista) {
-						progresCerca.setVisibility(View.VISIBLE);
 						hacerPeticion();
 					}
 				}
@@ -140,6 +143,20 @@ public class EventosCerca extends Fragment {
 							break;
 						}
 					}
+				}
+			});
+
+			map.setOnMarkerClickListener(new OnMarkerClickListener() {
+				@Override
+				public boolean onMarkerClick(Marker mar) {
+					CameraPosition camPos = new CameraPosition.Builder()
+							.target(mar.getPosition()).zoom(15).build();
+					CameraUpdate camUpd3 = CameraUpdateFactory
+							.newCameraPosition(camPos);
+					map.animateCamera(camUpd3);
+
+					mar.showInfoWindow();
+					return true;
 				}
 			});
 
@@ -181,7 +198,6 @@ public class EventosCerca extends Fragment {
 				public void onClick(View v) {
 					btnBuscarCerca.setEnabled(false);
 					LayoutMapa.setVisibility(View.GONE);
-					gridCerca.setVisibility(View.GONE);
 					txtErrorCerca.setVisibility(View.GONE);
 					togOpcionMapa.setEnabled(false);
 					eventos.clear();
@@ -207,12 +223,18 @@ public class EventosCerca extends Fragment {
 								map.addMarker(new MarkerOptions().position(
 										MiPosicion).title("Estas aquí"));
 								listapuntos.clear();
+
 								for (miniEventoEN item : eventos) {
 									LatLng Posicion = new LatLng(item
 											.getLatitud(), item.getLongitud());
+									String aux = MainActivity.formatoFecha
+											.format(item.getFecha());
+									String fecha = Herramientas
+											.cuentaAtras(aux);
 									listapuntos.add(map.addMarker(new MarkerOptions()
 											.position(Posicion)
 											.title(item.getNombre())
+											.snippet(fecha)
 											.icon(BitmapDescriptorFactory
 													.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
 								}
@@ -254,6 +276,7 @@ public class EventosCerca extends Fragment {
 
 		if (!MainActivity.errorServicios) {
 			if (MainActivity.estadoConexion) {
+				gridCerca.addFooterView(footer);
 				bloquearPeticion = true;
 				ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
 				parametros.add(new BasicNameValuePair("latitud", Double
@@ -261,7 +284,7 @@ public class EventosCerca extends Fragment {
 				parametros.add(new BasicNameValuePair("longitud", Double
 						.toString(MainActivity.posicionActual.longitude)));
 
-				String URL = "http://desipal.hol.es/app/eventos/eventosCerca.php";
+				String URL = UrlsServidor.EVENTOSCERCA;
 
 				parametros.add(new BasicNameValuePair("ratio", seekRadio
 						.getProgress() + ""));
@@ -271,7 +294,7 @@ public class EventosCerca extends Fragment {
 				peticion pet = new peticion(parametros, getActivity());
 				pet.execute(new String[] { URL });
 			} else {
-				progresCerca.setVisibility(View.GONE);
+				gridCerca.removeFooterView(footer);
 				Toast.makeText(getActivity(), R.string.errNoConexion,
 						Toast.LENGTH_LONG).show();
 			}
@@ -322,9 +345,14 @@ public class EventosCerca extends Fragment {
 							e.setUrlImagen(jobj.getString("imagen"));
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
+							if (!jobj.getBoolean("todoElDia"))
+								e.setFechaFin(MainActivity.formatoFecha
+										.parse(jobj.getString("fechaFin")));
 							eventos.add(e);
 						}
 					} else if (eventos.size() > 0)
+						finlista = true;
+					else
 						finlista = true;
 
 				} catch (Exception e) {
@@ -337,7 +365,7 @@ public class EventosCerca extends Fragment {
 
 		protected void onPostExecute(Void result) {
 			try {
-				progresCerca.setVisibility(View.GONE);
+				gridCerca.removeFooterView(footer);
 				adaptador.notifyDataSetChanged();
 				bloquearPeticion = false;
 				btnBuscarCerca.setEnabled(true);
@@ -358,10 +386,15 @@ public class EventosCerca extends Fragment {
 					for (miniEventoEN item : eventos) {
 						LatLng Posicion = new LatLng(item.getLatitud(),
 								item.getLongitud());
+
+						String aux = MainActivity.formatoFecha.format(item
+								.getFecha());
+						String fecha = Herramientas.cuentaAtras(aux);
 						listapuntos
 								.add(map.addMarker(new MarkerOptions()
 										.position(Posicion)
 										.title(item.getNombre())
+										.snippet(fecha)
 										.icon(BitmapDescriptorFactory
 												.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
 					}

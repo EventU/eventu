@@ -21,6 +21,17 @@
             android:text="@string/cargandoInfo"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#FFF" />
+
+        <ImageButton
+            android:id="@+id/btnFavorito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:background="#00000000"
+            android:visibility="gone"
+            android:contentDescription="@string/descImagen"
+            android:src="@drawable/rate_star_big_off_holo_light" />
     </RelativeLayout>
 
     <ProgressBar
@@ -193,10 +204,19 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/txtCuentaAtras"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_below="@+id/txtDetalleTitFecha"
+                    android:background="#008C9E"
+                    android:textColor="#fff" />
+
+                <TextView
                     android:id="@+id/txtDetalleFechaIni"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtDetalleTitFecha"
+                    android:layout_below="@+id/txtCuentaAtras"
                     android:layout_marginLeft="5dp"
                     android:text="@string/crearEventoFechaInicio"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -206,7 +226,7 @@
                     android:id="@+id/txtDetalleFechaInicio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtDetalleTitFecha"
+                    android:layout_below="@+id/txtCuentaAtras"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/txtDetalleFechaIni"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -218,6 +238,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txtDetalleFechaIni"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:text="@string/crearEventoFechaFin"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#FFF" />
@@ -227,7 +248,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txtDetalleFechaIni"
-                    android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/txtDetalleFechaFin"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#FFF" />

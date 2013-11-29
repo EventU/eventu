@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.desipal.eventu.Entidades.miniEventoEN;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.Presentacion.EventoAdaptador;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,18 +32,17 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MisEventos extends Fragment {
 	private ListView listview;
+	private View footer;
 	// Carga de la lista
 	private List<miniEventoEN> lista = new ArrayList<miniEventoEN>();
 	private EventoAdaptador adaptador;
 	private int pagina = 0;
 	private boolean bloquearPeticion = false;
-	private ProgressBar progresMisEventos;
 	private boolean finlista = false;
 	public static View view;
 	private Activity Actividad;
@@ -55,13 +55,11 @@ public class MisEventos extends Fragment {
 		try {
 			Actividad = getActivity();
 			view = inflater.inflate(R.layout.mis_eventos, container, false);
-
+			footer = inflater.inflate(R.layout.footerlistview, null);
 			listview = (ListView) view.findViewById(R.id.listMisEvent);
 			listview.setFadingEdgeLength(0);
 
 			// evento de la lista a leer mas
-			progresMisEventos = (ProgressBar) view
-					.findViewById(R.id.progresMisEventos);
 			listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 				@Override
 				public void onScrollStateChanged(AbsListView view,
@@ -76,7 +74,6 @@ public class MisEventos extends Fragment {
 							&& (firstVisibleItem + visibleItemCount) == totalItemCount
 							&& !finlista) {
 						realizarPeticion();
-						progresMisEventos.setVisibility(View.VISIBLE);
 					}
 				}
 			});
@@ -123,7 +120,7 @@ public class MisEventos extends Fragment {
 																int which) {
 															dialog.dismiss();
 															// Realizar peticion
-															String URL = "http://desipal.hol.es/app/eventos/misEventosBorrar.php";
+															String URL = UrlsServidor.MISEVENTOSBORRAR;
 															PeticionBorrar pet = new PeticionBorrar(
 																	Actividad,
 																	lista.get(
@@ -183,6 +180,7 @@ public class MisEventos extends Fragment {
 
 	private void realizarPeticion() {
 		if (MainActivity.estadoConexion) {
+			listview.addFooterView(footer);
 			bloquearPeticion = true;
 			ArrayList<NameValuePair> parametros = new ArrayList<NameValuePair>();
 			parametros.add(new BasicNameValuePair("latitud", Double
@@ -194,7 +192,7 @@ public class MisEventos extends Fragment {
 
 			parametros.add(new BasicNameValuePair("itemsPerPage",
 					MainActivity.ELEMENTOSLISTA + ""));
-			String URL = "http://desipal.hol.es/app/eventos/misEventos.php";
+			String URL = UrlsServidor.MISEVENTOS;
 
 			parametros.add(new BasicNameValuePair("filtro", ""));
 			parametros.add(new BasicNameValuePair("fecha", ""));
@@ -205,7 +203,7 @@ public class MisEventos extends Fragment {
 			peticion pet = new peticion(parametros, Actividad);
 			pet.execute(new String[] { URL });
 		} else {
-			progresMisEventos.setVisibility(View.GONE);
+			listview.removeFooterView(footer);
 			Toast.makeText(getActivity(), R.string.errNoConexion,
 					Toast.LENGTH_LONG).show();
 		}
@@ -252,6 +250,9 @@ public class MisEventos extends Fragment {
 							e.setUrlImagen(jobj.getString("imagen"));
 							e.setFecha(MainActivity.formatoFecha.parse(jobj
 									.getString("fecha")));
+							if (!jobj.getBoolean("todoElDia"))
+								e.setFechaFin(MainActivity.formatoFecha
+										.parse(jobj.getString("fechaFin")));
 							lista.add(e);
 						}
 					} else if (lista.size() > 0)
@@ -268,7 +269,7 @@ public class MisEventos extends Fragment {
 		protected void onPostExecute(Void result) {
 			adaptador.notifyDataSetChanged();
 			bloquearPeticion = false;
-			progresMisEventos.setVisibility(View.GONE);
+			listview.removeFooterView(footer);
 		}
 	}
 

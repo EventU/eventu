@@ -24,6 +24,7 @@ import com.desipal.eventu.Entidades.eventoEN;
 import com.desipal.eventu.R;
 import com.desipal.eventu.Entidades.seleccionUbicacionEN;
 import com.desipal.eventu.Extras.Herramientas;
+import com.desipal.eventu.Extras.UrlsServidor;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -104,7 +105,6 @@ public class crearEventoActivity extends FragmentActivity {
 	private TableRow filaTexFin;
 	private LinearLayout relImagenes;
 	private GoogleMap mapaLocalizacion;
-	private RelativeLayout relativeMapa;
 	private RelativeLayout relBloquear;
 	private EditText[] editError = new EditText[] { edNombre, edDesc,
 			edFechaIni, edFechaFin };
@@ -179,11 +179,10 @@ public class crearEventoActivity extends FragmentActivity {
 		filaFin = (TableRow) findViewById(R.id.table2Row4);
 		filaTexFin = (TableRow) findViewById(R.id.table2Row3);
 		relImagenes = (LinearLayout) findViewById(R.id.relImagenes);
-		relativeMapa = (RelativeLayout) findViewById(R.id.relativeMapa);
 		mapaLocalizacion = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.mapaLocalizacion)).getMap();
 		mapaLocalizacion.getUiSettings().setScrollGesturesEnabled(false);
-		
+
 		// Spinner catgorias
 		listaCategorias = Herramientas
 				.Obtenercategorias(crearEventoActivity.this);
@@ -395,7 +394,7 @@ public class crearEventoActivity extends FragmentActivity {
 						error = false;
 					}
 				}
-			if (IdCategoriaSel == 1) {
+			if (IdCategoriaSel == 0) {
 				errorspiner = true;
 				error = true;
 			} else
@@ -421,20 +420,27 @@ public class crearEventoActivity extends FragmentActivity {
 				evento.setComentarios(false);
 
 			if (chTodoElDia.isChecked()) {
+				Date dtFechaIni = new Date();
 				if (edFechaIni.getText().length() > 0) {
 					errores[2] = false;// Quitamos el error de FechaInicio
-					if (edHoraIni.getText().length() > 0)
+					if (edHoraIni.getText().length() > 0) {
 						evento.setFechaInicio(dateFormat.parse(edFechaIni
 								.getText().toString()
 								+ " "
 								+ edHoraIni.getText().toString()));
-					else
+						dtFechaIni = evento.getFechaInicio();
+					} else
 						evento.setFechaInicio(dateFormat.parse(edFechaIni
 								.getText().toString() + " 00:00"));
 				} else
 					errores[2] = true;
 				evento.setTodoElDia(true);
 				errores[3] = false;// Quitamos el error de FechaFin
+
+				Date fechaHoy = new Date();
+				if (dtFechaIni.before(fechaHoy)) {
+					errores[2] = true;
+				}
 			} else {
 				Date dtFechaIni = new Date();
 				Date dtFechaFin = new Date();
@@ -465,8 +471,8 @@ public class crearEventoActivity extends FragmentActivity {
 					errores[3] = false;// Quitamos el error de FechaFin
 				} else
 					errores[3] = true;
-
-				if (dtFechaFin.before(dtFechaIni)) {
+				Date fechaHoy = new Date();
+				if (dtFechaFin.before(dtFechaIni) || dtFechaFin.before(fechaHoy)) {
 					errores[2] = true;
 					errores[3] = true;
 				}
@@ -537,7 +543,7 @@ public class crearEventoActivity extends FragmentActivity {
 					crearEventoActivity.Creacionsatisfactoria = 1;
 					String URL = "";
 					if (esModificar) {
-						URL = "http://desipal.hol.es/app/eventos/modificar.php";
+						URL = UrlsServidor.MODIFICAR;
 						nameValuePairs.add(new BasicNameValuePair("idEvento",
 								EventoModificar.getIdEvento() + ""));
 						int i = 1;
@@ -575,7 +581,7 @@ public class crearEventoActivity extends FragmentActivity {
 								i++;
 							}
 						}
-						URL = "http://desipal.hol.es/app/eventos/alta.php";
+						URL = UrlsServidor.ALTA;
 					}
 					creacionEvento peticion = new creacionEvento(nameValuePairs);
 					peticion.execute(new String[] { URL });
