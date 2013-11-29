@@ -102,6 +102,7 @@
                     android:text="@string/crearEventoDescrip"
                     android:textColor="#FFF"
                     android:textSize="22sp"
+                    android:maxLength="5000"
                     android:textStyle="bold" />
 
                 <TextView

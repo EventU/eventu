@@ -110,6 +110,7 @@ public class filtroAvanzado extends Fragment {
 							.getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 					if (!bloquearPeticion) {
+						finlista = false;
 						lista.clear();
 						realizarPeticion();
 					}

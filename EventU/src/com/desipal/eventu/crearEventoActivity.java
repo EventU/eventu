@@ -150,7 +150,7 @@ public class crearEventoActivity extends FragmentActivity {
 					MainActivity.posicionActual.latitude + ""));
 			parametros.add(new BasicNameValuePair("longitud",
 					MainActivity.posicionActual.longitude + ""));
-			String URL = "http://desipal.hol.es/app/eventos/verEvento.php";
+			String URL = UrlsServidor.VEREVENTO;
 			peticionVerEvento petVerEvento = new peticionVerEvento(parametros,
 					crearEventoActivity.this);
 			petVerEvento.execute(new String[] { URL });
@@ -472,7 +472,8 @@ public class crearEventoActivity extends FragmentActivity {
 				} else
 					errores[3] = true;
 				Date fechaHoy = new Date();
-				if (dtFechaFin.before(dtFechaIni) || dtFechaFin.before(fechaHoy)) {
+				if (dtFechaFin.before(dtFechaIni)
+						|| dtFechaFin.before(fechaHoy)) {
 					errores[2] = true;
 					errores[3] = true;
 				}

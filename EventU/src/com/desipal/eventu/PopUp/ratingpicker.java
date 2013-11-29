@@ -15,6 +15,7 @@ import org.apache.http.message.BasicNameValuePair;
 import com.desipal.eventu.MainActivity;
 import com.desipal.eventu.R;
 import com.desipal.eventu.detalleEventoActivity;
+import com.desipal.eventu.Extras.UrlsServidor;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -86,7 +87,7 @@ public class ratingpicker extends DialogFragment {
 									opinion.getText().toString()));
 							parametros.add(new BasicNameValuePair("valoracion",
 									mRatingBar.getRating() + ""));
-							String URL = "http://desipal.hol.es/app/eventos/nuevoComentario.php";
+							String URL = UrlsServidor.NUEVOCOMENTARIO;
 
 							peticion peticion = new peticion(parametros,
 									getActivity());

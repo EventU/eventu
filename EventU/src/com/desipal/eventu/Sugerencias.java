@@ -81,22 +81,27 @@ public class Sugerencias extends Fragment {
 	}
 
 	public boolean isEmailValid(String email) {
-		String regExpn = "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-				+ "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-				+ "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-				+ "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-				+ "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-				+ "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+		boolean esValido = true;
+		if (!email.equals("")) {
+			String regExpn = "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+					+ "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+					+ "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+					+ "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+					+ "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+					+ "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
 
-		CharSequence inputStr = email;
+			CharSequence inputStr = email;
 
-		Pattern pattern = Pattern.compile(regExpn, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(inputStr);
+			Pattern pattern = Pattern
+					.compile(regExpn, Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(inputStr);
 
-		if (matcher.matches())
-			return true;
-		else
-			return false;
+			if (matcher.matches())
+				esValido = true;
+			else
+				esValido = false;
+		}
+		return esValido;
 	}
 
 	private void enviar(String email, String mensaje) {
