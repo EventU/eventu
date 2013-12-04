@@ -14,7 +14,8 @@
     <string name="hint_fecha">dd/mm/aaaa</string>
     <string name="FiltroNombre">Nombre:</string>
     <string name="hint_filtro">Nombre</string>
-    <string name="hintUbicacion">Lugar del evento</string>
+    <string name="hintUbicacion">Nombre del lugar del evento</string>
+    <string name="hintCuidad">Ciudad</string>
     <string name="FiltroCategoria">Categoria:</string>
     <string name="FiltroFecha">Fecha:</string>
     <string name="hint_fecha">dd/mm/aaaa</string>
@@ -78,7 +79,7 @@
     <string name="dialogNoComentado">El campo comentario no puede estar vacio</string>
 
     <!-- Errores -->
-    <string name="errNoConexion">No dispone de conexión, intentelo en unos minutos.</string>
+    <string name="errNoConexion">No dispone de conexión, comprueba la configuracion de la red</string>
     <string name="errNoUbicacion">Su ubicación no se encuentra disponible.</string>
     <string name="errNoDatosConsulta">La consulta no devolvió ningún evento.</string>
     <string name="errNoServidor">No se han podido recuperar eventos,pruebe pasados unos minutos.</string>
@@ -86,6 +87,7 @@
     <string name="mensajeNoRecordar">No recordar</string>
     <string name="mensajeCancelar">Cancelar</string>
     <string name="mensajeSi">Sí</string>
+    <string name="NoEncuetroLocalizacion">No encuentras el lugar del evento ¡pincha aqui!</string>
 
     <!-- Tutorial -->
     <string name="tutorial">Tutorial</string>
@@ -101,5 +103,4 @@
     <string name="hintSMS">Escriba aquí su mensaje</string>
     <string name="hintEmail">Correo electrónico (opcional)</string>
     <string name="txtSugerenia">Para cualquier duda, sugerencia, consulta o comentario puede enviarnos un email rellenado el siguiente formulaio</string>
-
 </resources>

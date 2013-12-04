@@ -22,12 +22,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import com.desipal.eventu.Extras.InicioMuestraDrawer;
 import com.desipal.eventu.Extras.UrlsServidor;
 import com.desipal.eventu.Extras.categorias;
@@ -55,6 +53,7 @@ public class MainActivity extends ActionBarActivity implements
 	public static boolean errorServicios = false;
 	public static boolean estadoConexion = false;
 	public static String fCategorias = "categorias.json";
+	public static String fProvincias = "provincias.json";
 	public static SimpleDateFormat formatoFecha = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm", currentLocale);
 	public static SimpleDateFormat formatoFechaMostrar = new SimpleDateFormat(
@@ -69,6 +68,7 @@ public class MainActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		EstadoConexion e = new EstadoConexion();
 		e.onReceive(this, null);
 		// Localizacion

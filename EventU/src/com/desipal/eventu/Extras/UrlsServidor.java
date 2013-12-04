@@ -32,5 +32,10 @@ public class UrlsServidor {
 			+ "verEvento.php";
 	public static final String SUGERENCIA = SERVIDOR + RUTACARPETA
 			+ "email.php";
+	public static final String PROVINCIAS = SERVIDOR + RUTACARPETA
+			+ "Pprovincia.php";
+	public static final String PERRORCOORDENADAS = SERVIDOR + RUTACARPETA
+			+ "PerrorCoordenadas.php";
+	
 
 }

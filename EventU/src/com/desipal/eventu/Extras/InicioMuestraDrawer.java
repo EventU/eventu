@@ -31,6 +31,11 @@ public class InicioMuestraDrawer extends Thread {
 		SharedPreferences sp = con.getSharedPreferences("PrimerInicio", 0);
 		boolean isFirstStart = sp.getBoolean("PrimerInicio", true);
 		if (isFirstStart) {
+			// Peticion de provincias
+			String URL = UrlsServidor.PROVINCIAS;
+			provincias peticion = new provincias(con);
+			peticion.execute(new String[] { URL });
+			//mostrar tutorial
 			Intent i = new Intent(con, tutorialActivity.class);
 			con.startActivity(i);		
 		}

@@ -17,9 +17,8 @@
             android:id="@+id/cmpConsulta"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
             android:layout_margin="5dp"
-            android:layout_toLeftOf="@+id/btnUbiAct"         
+            android:layout_toLeftOf="@+id/btnUbiAct"
             android:background="@drawable/edittext_shadow"
             android:hint="@string/hintUbicacion"
             android:imeOptions="actionSearch"
@@ -30,29 +29,69 @@
         <ImageButton
             android:id="@+id/btnUbiAct"
             android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_height="36dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_margin="5dp"
             android:background="#88000000"
             android:contentDescription="@string/descImagen"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_menu_eventcerca" />
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relBloquear"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#AA000000"
-        android:clickable="true"
-        android:visibility="gone" >
-
-        <ProgressBar
-            style="@android:style/Widget.ProgressBar.Large"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/relErrorUbicacion"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_below="@+id/btnUbiAct"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="3dp"
+            android:background="@drawable/edittext_shadow"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/txtMensajeerror"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/NoEncuetroLocalizacion" />
+
+            <Spinner
+                android:id="@+id/SpiProvincia"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_below="@+id/txtMensajeerror"
+                android:background="@drawable/edittext_shadow"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/cmpErrorCiudad"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignTop="@+id/SpiProvincia"
+                android:layout_toRightOf="@+id/SpiProvincia"
+                android:background="@drawable/edittext_shadow"
+                android:ems="10"
+                android:hint="@string/hintCuidad"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:padding="5dp"
+                android:paddingTop="5dp"
+                android:singleLine="true"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relBloquear"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#AA000000"
+            android:clickable="true"
+            android:visibility="gone" >
+
+            <ProgressBar
+                style="@android:style/Widget.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </FrameLayout>

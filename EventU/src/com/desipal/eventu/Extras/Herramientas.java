@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import com.desipal.eventu.MainActivity;
 import com.desipal.eventu.Entidades.categoriaEN;
+import com.desipal.eventu.Entidades.provinciaEN;
 
 import android.app.Activity;
 import android.content.Context;
@@ -187,6 +188,42 @@ public class Herramientas {
 					ca.setTexto(jobj.getString("texto"));
 					ca.setDescripcion(jobj.getString("descripcion"));
 					lista.add(ca);
+				}
+			} else
+				lista = null;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			lista = null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			lista = null;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			lista = null;
+		}
+		return lista;
+	}
+	public static List<provinciaEN> ObtenerProvincias(Activity act) {
+		BufferedReader fin;
+		List<provinciaEN> lista = new ArrayList<provinciaEN>();
+		try {
+			fin = new BufferedReader(new InputStreamReader(
+					act.openFileInput(MainActivity.fProvincias)));
+			StringBuilder total = new StringBuilder();
+			String line;
+			while ((line = fin.readLine()) != null) {
+				total.append(line);
+			}
+			fin.close();
+			if (!fin.toString().equals("")) {
+				JSONArray o = new JSONArray(total.toString());
+				for (int i = 0; o.length() > i; i++) {
+					provinciaEN pro = new provinciaEN();
+					JSONObject jobj = o.getJSONObject(i);
+					pro.setNombre(jobj.getString("nombre"));
+					pro.setIdComunidad(jobj.getInt("idcomunidad"));
+					pro.setIdProvincia(jobj.getInt("idprovincia"));
+					lista.add(pro);
 				}
 			} else
 				lista = null;

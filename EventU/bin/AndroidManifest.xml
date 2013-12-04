@@ -70,7 +70,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyB20uM50WEMBjpRog2fg-Zcf7ynfrSKOAQ" />
+            android:value="AIzaSyB4lmspd5jyyaAbee5U4XOndEGFfHBGS3U" />
 
         <service android:name="com.desipal.eventu.Servicios.Localizacion" />
 
